@@ -7,9 +7,7 @@ import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.annotation.StringRes
-import com.dadino.quickstart3.core.entities.DoNotReactToThisAction
-import com.dadino.quickstart3.core.entities.UserAction
-import com.dadino.quickstart3.core.entities.UserActionable
+import com.dadino.quickstart3.core.components.InteractionEventSource
 import com.dadino.quickstart3.ui.R
 import com.dadino.quickstart3.ui.adapters.BaseSpinnerAdapter
 import com.dadino.quickstart3.ui.utils.gone
@@ -17,7 +15,7 @@ import com.dadino.quickstart3.ui.utils.visible
 import com.jakewharton.rxbinding2.widget.RxAdapterView
 import io.reactivex.Observable
 
-abstract class LoadingSpinner<ITEM, T : BaseSpinnerAdapter<ITEM, *>> : FrameLayout, UserActionable {
+abstract class LoadingSpinner<ITEM, T : BaseSpinnerAdapter<ITEM, *>> : FrameLayout, InteractionEventSource {
 
 	var adapter: T? = null
 
@@ -140,7 +138,7 @@ abstract class LoadingSpinner<ITEM, T : BaseSpinnerAdapter<ITEM, *>> : FrameLayo
 	}
 
 
-	override fun userActions(): Observable<UserAction> {
+	override fun interactionEvents(): Observable<UserAction> {
 		return RxAdapterView.itemSelections(spinner).map { position ->
 			when (position) {
 				transientSelectedPosition -> {

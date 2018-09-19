@@ -2,91 +2,87 @@ package com.dadino.quickstart3.core.components
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.dadino.quickstart3.core.entities.StateCommand
-import com.dadino.quickstart3.core.entities.UserAction
+import com.dadino.quickstart3.core.entities.*
 import com.dadino.quickstart3.core.utils.toAsync
-import com.jakewharton.rx.replayingShare
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
-import io.reactivex.functions.Consumer
-import io.reactivex.rxkotlin.subscribeBy
 
-abstract class BaseViewModel<STATE> : ViewModel() {
-	private val reducer by lazy { reducer() }
-	private val initialState by lazy { initialState() }
-	private val userActionRelay: PublishRelay<UserAction> by lazy { PublishRelay.create<UserAction>() }
-	private val userActionFlowable: Flowable<UserAction>  by lazy {
+abstract class BaseViewModel<STATE : Any> : ViewModel() {
+	private lateinit var state: STATE
+
+	private val userActionRelay: PublishRelay<Event> by lazy { PublishRelay.create<Event>() }
+
+	private val nexts: Flowable<Next<STATE>>  by lazy {
 		userActionRelay.doOnNext { Log.d(className(), "<---- ${it.javaClass.simpleName}") }
-				.retry()
-				.doOnError { onError(it) }
 				.toFlowable(BackpressureStrategy.BUFFER)
-				.toAsync()
-				.replayingShare()
-	}
-
-	private val stateCommandRelay: PublishRelay<StateCommand> by lazy {
-		PublishRelay.create<StateCommand>()
-	}
-
-	val states: Flowable<STATE>  by lazy {
-		stateCommandRelay
-				.doOnNext { Log.d(className(), "----> ${it.javaClass.simpleName}") }
-				.scan(initialState) { previous: STATE, command: StateCommand ->
-					Log.d(className(), "Reducing with command: ${command.javaClass.simpleName}")
-					reducer.reduce(previous, command)
+				.startWith(InitializeState)
+				.map { event ->
+					Log.d(className(), "Updating with event: ${event.javaClass.simpleName}")
+					update(state, event)
 				}
-				.doOnNext { Log.d(className(), "STATE: $it") }
-				.toFlowable(BackpressureStrategy.LATEST)
+				.doOnNext { next ->
+					if (next.state != null) {
+						state = next.state
+						publishNewState(state)
+					}
+					if (next.signals.isNotEmpty()) {
+						publishNewSignals(next.signals)
+					}
+					if (next.effects.isNotEmpty()) {
+						publishNewSideEffects(next.effects)
+					}
+				}
+				.doOnNext { Log.d(className(), "Next: $it") }
 				.toAsync()
 				.distinctUntilChanged()
 				.replay(1)
 				.autoConnect(0)
 	}
 
-	init {
-		userActionFlowable.subscribeBy(onNext = {
-			reactToUserAction(state(), it)
-		})
+	private fun publishNewState(state: STATE) {
+		//TODO
 	}
 
-	fun receiveUserAction(action: UserAction) {
-		userActionsConsumer().accept(action)
+	private fun publishNewSignals(signals: List<Signal>) {
+		//TODO
 	}
 
-	fun userActionsConsumer(): Consumer<UserAction> = userActionRelay
-
-	protected fun commandConsumer(): Consumer<StateCommand> = stateCommandRelay
-
-	protected fun pushCommand(command: StateCommand) {
-		commandConsumer().accept(command)
+	private fun publishNewSideEffects(sideEffect: List<SideEffect>) {
+		//TODO
 	}
 
-	fun state(): STATE {
-		return states.blockingMostRecent(initialState).first()
+	val states: Flowable<STATE>  by lazy {
+		nexts.filter { it.state != null }
+				.map { it.state!! }
+				.distinctUntilChanged()
+				.onBackpressureLatest()
 	}
 
-	protected abstract fun reducer(): Reducer<STATE>
-
-	abstract fun reactToUserAction(currentState: STATE, action: UserAction)
-
-	protected abstract fun initialState(): STATE
-
-	protected fun onError(error: Throwable) {
-		error.printStackTrace()
+	val signals: Flowable<List<Signal>>  by lazy {
+		nexts.filter { it.signals.isNotEmpty() }
+				.map { it.signals }
 	}
+
+	fun dispatchEvent(action: Event) {
+		userActionRelay.accept(action)
+	}
+
+
+	fun currentState(): STATE {
+		return state
+	}
+
+	protected abstract fun update(previous: STATE, event: Event): Next<STATE>
+
+	protected abstract fun initialState(): Next<STATE>
 
 	private fun className(): String {
 		return javaClass.simpleName
 	}
 
-	@Deprecated(message = "Do not use this method anymore, use the attribute states", replaceWith = ReplaceWith("states"), level = DeprecationLevel.ERROR)
-	fun states(): Flowable<STATE> {
-		throw RuntimeException("Do not use this method anymore, use the attribute states")
-	}
-
-	@Deprecated("Replace with a Reducer", replaceWith = ReplaceWith(""), level = DeprecationLevel.ERROR)
-	fun reduce(previous: STATE, command: StateCommand): STATE {
-		throw RuntimeException("Replace with a Reducer")
+	override fun onCleared() {
+		super.onCleared()
+		//todo dispose of effect handlers
 	}
 }

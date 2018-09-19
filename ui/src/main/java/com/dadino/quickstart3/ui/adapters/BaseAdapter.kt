@@ -2,14 +2,13 @@ package com.dadino.quickstart3.ui.adapters
 
 import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
-import com.dadino.quickstart3.core.entities.UserAction
-import com.dadino.quickstart3.core.entities.UserActionable
+import com.dadino.quickstart3.core.components.InteractionEventSource
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 
 abstract class BaseAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : RecyclerView.Adapter<HOLDER>()
-		, UserActionable {
+		, InteractionEventSource {
 
 	private val userActionsOnItems = PublishRelay.create<UserAction>()
 	private val userActions: Observable<UserAction> by lazy {
@@ -24,13 +23,13 @@ abstract class BaseAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : RecyclerView.Adapt
 
 	fun attachListenerToHolder(holder: HOLDER) {
 		holderListeners.add(
-				holder.userActions()
+				holder.interactionEvents()
 						.doOnNext { Log.d("Adapter", "<--- ${System.nanoTime()} Action: $it") }
 						.subscribe(userActionsOnItems)
 		)
 	}
 
-	override fun userActions(): Observable<UserAction> {
+	override fun interactionEvents(): Observable<UserAction> {
 		return userActions
 	}
 

@@ -3,19 +3,18 @@ package com.dadino.quickstart3.core
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
-import com.dadino.quickstart3.core.components.Actionable
 import com.dadino.quickstart3.core.components.BaseViewModel
-import com.dadino.quickstart3.core.components.UserActionsHandler
-import com.dadino.quickstart3.core.entities.UserAction
+import com.dadino.quickstart3.core.components.InteractionEventSourceHandler
+import com.dadino.quickstart3.core.components.SimpleInteractionEventSource
+import com.dadino.quickstart3.core.entities.Event
 import com.dadino.quickstart3.core.interfaces.DisposableLifecycleHolder
 import com.dadino.quickstart3.core.utils.DisposableLifecycle
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.subscribeBy
 
-abstract class BaseActivity : AppCompatActivity(), Actionable, DisposableLifecycleHolder {
+abstract class BaseActivity : AppCompatActivity(), SimpleInteractionEventSource, DisposableLifecycleHolder {
 
-	override lateinit var userActionsHandler: UserActionsHandler
+	lateinit var interactionEventSourceHandler: InteractionEventSourceHandler
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -24,20 +23,20 @@ abstract class BaseActivity : AppCompatActivity(), Actionable, DisposableLifecyc
 
 	private fun internalInitViews() {
 		initViews()
-		userActionsHandler = object : UserActionsHandler() {
-			override fun collectUserActions(): Observable<UserAction> {
+		interactionEventSourceHandler = object : InteractionEventSourceHandler() {
+			override fun collectUserActions(): Observable<Event> {
 				return this@BaseActivity.collectUserActions()
 			}
 
-			override fun interceptUserAction(action: UserAction): UserAction {
+			override fun interceptUserAction(action: Event): Event {
 				return this@BaseActivity.interceptUserAction(action)
 			}
 		}
-		userActionsHandler.connect()
+		interactionEventSourceHandler.connect()
 	}
 
 	override fun onDestroy() {
-		userActionsHandler.disconnect()
+		interactionEventSourceHandler.disconnect()
 		super.onDestroy()
 	}
 
@@ -51,15 +50,15 @@ abstract class BaseActivity : AppCompatActivity(), Actionable, DisposableLifecyc
 		when (minimumState) {
 			Lifecycle.State.RESUMED -> {
 				attachDisposableToResumePause { viewModel.states.subscribeBy(onNext = { render(it) }) }
-				attachDisposableToResumePause { userActions().subscribe(viewModel.userActionsConsumer()) }
+				attachDisposableToResumePause { interactionEvents().subscribe(viewModel.userActionsConsumer()) }
 			}
 			Lifecycle.State.STARTED -> {
 				attachDisposableToStartStop { viewModel.states.subscribeBy(onNext = { render(it) }) }
-				attachDisposableToStartStop { userActions().subscribe(viewModel.userActionsConsumer()) }
+				attachDisposableToStartStop { interactionEvents().subscribe(viewModel.userActionsConsumer()) }
 			}
 			Lifecycle.State.CREATED -> {
 				attachDisposableToCreateDestroy { viewModel.states.subscribeBy(onNext = { render(it) }) }
-				attachDisposableToCreateDestroy { userActions().subscribe(viewModel.userActionsConsumer()) }
+				attachDisposableToCreateDestroy { interactionEvents().subscribe(viewModel.userActionsConsumer()) }
 			}
 			else                    -> throw RuntimeException("minimumState $minimumState not supported")
 		}

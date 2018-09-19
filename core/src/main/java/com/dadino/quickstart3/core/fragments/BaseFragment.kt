@@ -6,41 +6,40 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
-import com.dadino.quickstart3.core.components.Actionable
 import com.dadino.quickstart3.core.components.BaseViewModel
-import com.dadino.quickstart3.core.components.UserActionsHandler
-import com.dadino.quickstart3.core.entities.UserAction
+import com.dadino.quickstart3.core.components.InteractionEventSourceHandler
+import com.dadino.quickstart3.core.components.SimpleInteractionEventSource
+import com.dadino.quickstart3.core.entities.Event
 import com.dadino.quickstart3.core.interfaces.DisposableLifecycleHolder
 import com.dadino.quickstart3.core.utils.DisposableLifecycle
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.subscribeBy
 
-abstract class BaseFragment : Fragment(), Actionable, DisposableLifecycleHolder {
+abstract class BaseFragment : Fragment(), SimpleInteractionEventSource, DisposableLifecycleHolder {
 
-	override lateinit var userActionsHandler: UserActionsHandler
+	lateinit var interactionEventSourceHandler: InteractionEventSourceHandler
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		return internalInitViews(inflater, container, savedInstanceState)
 	}
 
 	override fun onDestroyView() {
-		userActionsHandler.disconnect()
+		interactionEventSourceHandler.disconnect()
 		super.onDestroyView()
 	}
 
 	private fun internalInitViews(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 		val view = initViews(inflater, container, savedInstanceState)
-		userActionsHandler = object : UserActionsHandler() {
-			override fun collectUserActions(): Observable<UserAction> {
+		interactionEventSourceHandler = object : InteractionEventSourceHandler() {
+			override fun collectUserActions(): Observable<Event> {
 				return this@BaseFragment.collectUserActions()
 			}
 
-			override fun interceptUserAction(action: UserAction): UserAction {
+			override fun interceptUserAction(action: Event): Event {
 				return this@BaseFragment.interceptUserAction(action)
 			}
 		}
-		userActionsHandler.connect()
+		interactionEventSourceHandler.connect()
 		return view
 	}
 
@@ -56,15 +55,15 @@ abstract class BaseFragment : Fragment(), Actionable, DisposableLifecycleHolder 
 		when (minimumState) {
 			Lifecycle.State.RESUMED -> {
 				attachDisposableToResumePause { viewModel.states.subscribeBy(onNext = { render(it) }) }
-				attachDisposableToResumePause { userActions().subscribe(viewModel.userActionsConsumer()) }
+				attachDisposableToResumePause { interactionEvents().subscribe(viewModel.userActionsConsumer()) }
 			}
 			Lifecycle.State.STARTED -> {
 				attachDisposableToStartStop { viewModel.states.subscribeBy(onNext = { render(it) }) }
-				attachDisposableToStartStop { userActions().subscribe(viewModel.userActionsConsumer()) }
+				attachDisposableToStartStop { interactionEvents().subscribe(viewModel.userActionsConsumer()) }
 			}
 			Lifecycle.State.CREATED -> {
 				attachDisposableToCreateDestroy { viewModel.states.subscribeBy(onNext = { render(it) }) }
-				attachDisposableToCreateDestroy { userActions().subscribe(viewModel.userActionsConsumer()) }
+				attachDisposableToCreateDestroy { interactionEvents().subscribe(viewModel.userActionsConsumer()) }
 			}
 			else                    -> throw RuntimeException("minimumState $minimumState not supported")
 		}

@@ -8,9 +8,7 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.lifecycle.Lifecycle
 import com.dadino.quickstart3.core.BaseActivity
-import com.dadino.quickstart3.core.entities.DoNotReactToThisAction
 import com.dadino.quickstart3.core.entities.Signal
-import com.dadino.quickstart3.core.entities.UserAction
 import com.dadino.quickstart3.sample.entities.*
 import com.dadino.quickstart3.sample.viewmodels.CounterState
 import com.dadino.quickstart3.sample.viewmodels.CounterViewModel
@@ -73,7 +71,7 @@ class SpinnerActivity : BaseActivity() {
 				saveSession.clicks().map { OnSaveSessionRequested("First") },
 				counterButton.clicks().map { OnAdvanceCounterClicked() },
 				counterStateButton.clicks().map { OnShowCounterStateClicked() },
-				spinner.userActions()
+				spinner.interactionEvents()
 		)
 		)
 	}

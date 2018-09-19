@@ -1,52 +1,23 @@
 package com.dadino.quickstart3.core.entities
 
-class Signal {
+
+open class Signal(private val payload: SignalPayload) {
 	private var consumed: Boolean = false
 
-	fun doAndConsume(action: () -> Unit) {
+	fun doAndConsume(action: (SignalPayload) -> Unit) {
 		if (consumed.not()) {
-			action()
+			action(payload)
 			consumed = true
 		}
 	}
 
 	override fun toString(): String {
-		return "{consumed: $consumed}"
+		return "{value: $payload, consumed: $consumed}"
 	}
 
 	companion object {
-		fun doAndConsume(signal: Signal?, action: () -> Unit) {
-			signal?.let { it.doAndConsume { action() } }
+		fun doAndConsume(signal: Signal?, action: (SignalPayload) -> Unit) {
+			signal?.let { s -> s.doAndConsume { action(it) } }
 		}
 	}
 }
-
-open class SignalWithValue<out T>(private val value: T) {
-	private var consumed: Boolean = false
-
-	fun doAndConsume(action: (T) -> Unit) {
-		if (consumed.not()) {
-			action(value)
-			consumed = true
-		}
-	}
-
-	override fun toString(): String {
-		return "{value: $value, consumed: $consumed}"
-	}
-
-	companion object {
-		fun <T> doAndConsume(signal: SignalWithValue<T>?, action: (T) -> Unit) {
-			signal?.let { it.doAndConsume { action(it) } }
-		}
-	}
-}
-
-class ErrorSignal(error: Throwable) : SignalWithValue<Throwable>(error) {
-	companion object {
-		fun showError(signal: ErrorSignal?, action: (Throwable) -> Unit) {
-			signal?.let { it.doAndConsume { action(it) } }
-		}
-	}
-}
-

@@ -2,19 +2,19 @@ package com.dadino.quickstart3.core.entities
 
 sealed class Operation {
 
-	class Idle : Operation() {
+	object Idle : Operation() {
 		override fun toString(): String {
 			return "Operation.IDLE"
 		}
 	}
 
-	class InProgress : Operation() {
+	object InProgress : Operation() {
 		override fun toString(): String {
 			return "Operation.IN_PROGRESS"
 		}
 	}
 
-	class Done : Operation() {
+	object Done : Operation() {
 		override fun toString(): String {
 			return "Operation.DONE"
 		}

@@ -6,14 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SpinnerAdapter
 import androidx.annotation.LayoutRes
-import com.dadino.quickstart3.core.entities.UserAction
-import com.dadino.quickstart3.core.entities.UserActionable
+import com.dadino.quickstart3.core.components.InteractionEventSource
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.subjects.PublishSubject
 
-abstract class BaseSpinnerAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : android.widget.BaseAdapter(), SpinnerAdapter, UserActionable {
+abstract class BaseSpinnerAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : android.widget.BaseAdapter(), SpinnerAdapter, InteractionEventSource {
 	var items: List<ITEM> = ArrayList()
 		set(value) {
 			field = value
@@ -91,14 +90,14 @@ abstract class BaseSpinnerAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : android.wid
 
 	fun attachListenerToHolder(holder: HOLDER) {
 		holderListeners.add(
-				holder.userActions()
+				holder.interactionEvents()
 						.subscribeBy(onNext = { userActionsOnItems.onNext(it) },
 								onError = { userActionsOnItems.onError(it) }
 						)
 		)
 	}
 
-	override fun userActions(): Observable<UserAction> {
+	override fun interactionEvents(): Observable<UserAction> {
 
 		return userActionsOnItems.doOnDispose {
 			holderListeners.dispose()

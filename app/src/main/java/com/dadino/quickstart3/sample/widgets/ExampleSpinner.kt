@@ -7,8 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.dadino.quickstart3.core.entities.UserAction
-import com.dadino.quickstart3.core.entities.UserActionable
+import com.dadino.quickstart3.core.components.InteractionEventSource
 import com.dadino.quickstart3.sample.R
 import com.dadino.quickstart3.sample.entities.ExampleData
 import com.dadino.quickstart3.sample.entities.OnExampleDataSelected
@@ -19,10 +18,10 @@ import com.dadino.quickstart3.ui.widgets.OnItemSelected
 import io.reactivex.Observable
 
 
-class ExampleSpinner : LoadingSpinner<ExampleData, ExampleDataSpinnerAdapter>, UserActionable {
+class ExampleSpinner : LoadingSpinner<ExampleData, ExampleDataSpinnerAdapter>, InteractionEventSource {
 
-	override fun userActions(): Observable<UserAction> {
-		return super.userActions().map {
+	override fun interactionEvents(): Observable<UserAction> {
+		return super.interactionEvents().map {
 			when (it) {
 				is OnItemSelected -> OnExampleDataSelected(selectedItem)
 				else              -> it
@@ -65,7 +64,7 @@ class ExampleDataSpinnerAdapter : BaseSpinnerAdapter<ExampleData, ExampleDataHol
 }
 
 class ExampleDataHolder(view: View) : BaseHolder<ExampleData>(view) {
-	override fun userActions(): Observable<UserAction> {
+	override fun interactionEvents(): Observable<UserAction> {
 		return Observable.empty()
 	}
 
