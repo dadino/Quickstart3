@@ -1,8 +1,8 @@
 package com.dadino.quickstart3.core
 
-import android.arch.lifecycle.Lifecycle
+import androidx.lifecycle.Lifecycle
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.dadino.quickstart3.core.components.Actionable
 import com.dadino.quickstart3.core.components.BaseViewModel
 import com.dadino.quickstart3.core.components.UserActionsHandler

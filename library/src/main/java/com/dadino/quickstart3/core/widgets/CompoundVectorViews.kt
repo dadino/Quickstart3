@@ -3,10 +3,10 @@ package com.dadino.quickstart3.core.widgets
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Build
-import android.support.v7.content.res.AppCompatResources
-import android.support.v7.widget.AppCompatButton
-import android.support.v7.widget.AppCompatEditText
-import android.support.v7.widget.AppCompatTextView
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.appcompat.widget.AppCompatButton
+import androidx.appcompat.widget.AppCompatEditText
+import androidx.appcompat.widget.AppCompatTextView
 import android.util.AttributeSet
 import android.widget.TextView
 import com.dadino.quickstart3.core.R

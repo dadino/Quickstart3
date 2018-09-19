@@ -1,9 +1,9 @@
 package com.dadino.quickstart3.core.utils
 
-import android.support.annotation.ColorRes
-import android.support.annotation.StringRes
-import android.support.design.widget.Snackbar
-import android.support.v4.content.ContextCompat
+import androidx.annotation.ColorRes
+import androidx.annotation.StringRes
+import com.google.android.material.snackbar.Snackbar
+import androidx.core.content.ContextCompat
 import android.view.View
 import android.widget.TextView
 import com.dadino.quickstart3.core.R
@@ -45,7 +45,7 @@ object ErrorSnackbar {
 		snackBarView.setBackgroundColor(
 				ContextCompat.getColor(snackbar.context, backgroundColor))
 
-		val textView = snackBarView.findViewById<TextView>(android.support.design.R.id.snackbar_text)
+		val textView = snackBarView.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
 		textView.maxLines = 5
 		textView.setTextColor(ContextCompat.getColor(snackbar.context, textColor))
 

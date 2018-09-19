@@ -44,7 +44,7 @@ abstract class BaseSingleItemAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : BaseAdap
 		holder.bindItem(item, position)
 	}
 
-	protected fun inflate(parent: android.view.ViewGroup, @android.support.annotation.LayoutRes layoutId: Int): android.view.View {
+	protected fun inflate(parent: android.view.ViewGroup, @androidx.annotation.LayoutRes layoutId: Int): android.view.View {
 		return inflater(parent.context).inflate(layoutId, parent, false)
 	}
 

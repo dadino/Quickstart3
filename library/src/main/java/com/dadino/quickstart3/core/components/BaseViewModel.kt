@@ -1,6 +1,6 @@
 package com.dadino.quickstart3.core.components
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import android.util.Log
 import com.dadino.quickstart3.core.entities.StateCommand
 import com.dadino.quickstart3.core.entities.UserAction

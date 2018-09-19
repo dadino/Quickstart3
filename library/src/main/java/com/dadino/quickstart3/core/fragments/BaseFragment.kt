@@ -1,10 +1,11 @@
 package com.dadino.quickstart3.core.fragments
 
-import android.arch.lifecycle.Lifecycle
+import androidx.lifecycle.Lifecycle
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.dadino.quickstart3.core.components.Actionable
 import com.dadino.quickstart3.core.components.BaseViewModel
 import com.dadino.quickstart3.core.components.UserActionsHandler
@@ -15,7 +16,7 @@ import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 
-abstract class BaseFragment : android.support.v4.app.Fragment(), Actionable, DisposableLifecycleHolder {
+abstract class BaseFragment : Fragment(), Actionable, DisposableLifecycleHolder {
 
 	override lateinit var userActionsHandler: UserActionsHandler
 

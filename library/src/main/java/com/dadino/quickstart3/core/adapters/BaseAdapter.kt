@@ -1,6 +1,7 @@
 package com.dadino.quickstart3.core.adapters
 
 import android.util.Log
+import androidx.recyclerview.widget.RecyclerView
 import com.dadino.quickstart3.core.adapters.holders.BaseHolder
 import com.dadino.quickstart3.core.entities.UserAction
 import com.dadino.quickstart3.core.entities.UserActionable
@@ -8,7 +9,7 @@ import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 
-abstract class BaseAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : android.support.v7.widget.RecyclerView.Adapter<HOLDER>()
+abstract class BaseAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : RecyclerView.Adapter<HOLDER>()
 		, UserActionable {
 
 	private val userActionsOnItems = PublishRelay.create<UserAction>()

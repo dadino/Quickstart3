@@ -1,9 +1,9 @@
 package com.dadino.quickstart3.core.widgets
 
 import android.content.Context
-import android.support.annotation.StringRes
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.RecyclerView
+import androidx.annotation.StringRes
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.recyclerview.widget.RecyclerView
 import android.util.AttributeSet
 import android.widget.TextView
 import com.dadino.quickstart3.core.R

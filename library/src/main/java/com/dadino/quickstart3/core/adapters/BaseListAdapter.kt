@@ -105,7 +105,7 @@ abstract class BaseListAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : BaseAdapter<IT
 
 	protected abstract fun getHolder(parent: ViewGroup, viewType: Int): HOLDER
 
-	protected fun inflate(parent: ViewGroup, @android.support.annotation.LayoutRes layoutId: Int): android.view.View {
+	protected fun inflate(parent: ViewGroup, @androidx.annotation.LayoutRes layoutId: Int): android.view.View {
 		return inflater(parent.context).inflate(layoutId, parent, false)
 	}
 

@@ -1,7 +1,7 @@
 package com.dadino.quickstart3.core.widgets
 
 import android.content.Context
-import android.support.annotation.StringRes
+import androidx.annotation.StringRes
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.View
