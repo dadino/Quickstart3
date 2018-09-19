@@ -38,6 +38,9 @@ ext {
     minSdk = 16
     targetSdk = 28
 
-    versionCode = 1
-    versionName = "0.0.1"
+    coreVersionCode = 1
+    coreVersionName = "0.0.1"
+
+    uiVersionCode = 1
+    uiVersionName = "0.0.1"
 }

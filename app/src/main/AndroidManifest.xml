@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.dadino.quickstart3.core.sample">
+    package="com.dadino.quickstart3.sample">
 
     <application
-        android:name="com.dadino.quickstart3.core.sample.SampleApp"
+        android:name="com.dadino.quickstart3.sample.SampleApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.dadino.quickstart3.core.sample.SpinnerActivity"
+            android:name="com.dadino.quickstart3.sample.SpinnerActivity"
             android:label="@string/title_activity_spinner"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -21,13 +21,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.dadino.quickstart3.core.sample.SecondActivity"
+            android:name="com.dadino.quickstart3.sample.SecondActivity"
             android:label="@string/title_activity_second"
-            android:parentActivityName="com.dadino.quickstart3.core.sample.SpinnerActivity"
+            android:parentActivityName="com.dadino.quickstart3.sample.SpinnerActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.dadino.quickstart3.core.sample.SpinnerActivity" />
+                android:value="com.dadino.quickstart3.sample.SpinnerActivity" />
         </activity>
     </application>
 

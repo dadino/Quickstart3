@@ -7,7 +7,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".SpinnerActivity">
 
-    <com.dadino.quickstart3.core.sample.widgets.ExampleSpinner
+    <com.dadino.quickstart3.sample.widgets.ExampleSpinner
         android:id="@+id/example_data_spinner"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -22,8 +22,8 @@
         android:id="@+id/example_data_idle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:text="Idle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/example_data_loading"
@@ -35,8 +35,8 @@
         android:id="@+id/example_data_loading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:text="Loading"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/example_data_error"
@@ -48,8 +48,8 @@
         android:id="@+id/example_data_error"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:text="Error"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/example_data_done"
@@ -61,8 +61,8 @@
         android:id="@+id/example_data_done"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:text="Done"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -101,8 +101,8 @@
         android:id="@+id/example_data_counter_state"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:text="Counter state"
         app:layout_constraintBaseline_toBaselineOf="@+id/example_data_counter"
         app:layout_constraintStart_toEndOf="@+id/example_data_counter" />

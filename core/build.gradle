@@ -1,0 +1,107 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
+//todo apply plugin: 'com.novoda.bintray-release' // must be applied after your artifact generating plugin (eg. java / com.android.library)
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.novoda:bintray-release:0.8.1'
+    }
+}
+
+/*
+todo
+publish {
+    userOrg = 'dadino'
+    repoName = 'quickstart3'
+    groupId = 'com.dadino.quickstart3'
+    artifactId = 'core'
+    publishVersion = rootProject.coreVersionName
+    desc = 'Basic toolbox to quickly start coding'
+    website = 'https://github.com/dadino/basictoolbox'
+    bintrayUser = 'dadino'
+    bintrayKey = 'e23c567c5d38bdae821f0b74e855b07b37487762'
+    //bintray.gpg.password=88dadino88
+    autoPublish = true
+    //./gradlew clean build bintrayUpload -PbintrayUser=dadino -PbintrayKey=e23c567c5d38bdae821f0b74e855b07b37487762 -PdryRun=false
+}
+
+*/
+
+android {
+    compileSdkVersion rootProject.compileSdk
+
+    defaultConfig {
+        minSdkVersion rootProject.minSdk
+        targetSdkVersion rootProject.targetSdk
+        versionCode rootProject.coreVersionCode
+        versionName rootProject.coreVersionName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    api fileTree(dir: 'libs', include: ['*.jar'])
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
+    androidTestImplementation 'androidx.annotation:annotation:1.0.0-rc02'
+
+    //Support
+    api 'androidx.appcompat:appcompat:1.0.0-rc02'
+    api 'androidx.legacy:legacy-support-v4:1.0.0-rc02'
+    api 'androidx.legacy:legacy-support-v13:1.0.0-rc02'
+
+    //Square
+    api 'com.squareup.retrofit2:retrofit:2.3.0'
+    api 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+    api 'com.squareup.retrofit2:converter-gson:2.3.0'
+    api 'com.squareup.okhttp3:okhttp:3.10.0'
+    api('com.github.ihsanbal:LoggingInterceptor:2.0.2') {
+        exclude group: 'org.json', module: 'json'
+    }
+
+    //Arch Components
+    api 'androidx.lifecycle:lifecycle-runtime:2.0.0-rc01'
+    api 'androidx.lifecycle:lifecycle-common-java8:2.0.0-rc01'
+    api 'androidx.lifecycle:lifecycle-extensions:2.0.0-rc01'
+    api 'androidx.lifecycle:lifecycle-reactivestreams:2.0.0-rc01'
+    annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.0.0-rc01'
+    kapt 'androidx.lifecycle:lifecycle-compiler:2.0.0-rc01'
+
+    //RxJava
+    api 'io.reactivex.rxjava2:rxjava:2.1.6'
+    api 'io.reactivex.rxjava2:rxkotlin:2.0.3'
+    api 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    api 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
+    api 'com.jakewharton.rx2:replaying-share-kotlin:2.0.0'
+    api 'com.jakewharton.rxbinding2:rxbinding-kotlin:2.0.0'
+    api 'com.jakewharton.rxbinding2:rxbinding-support-v4-kotlin:2.0.0'
+    api 'com.jakewharton.rxbinding2:rxbinding-appcompat-v7-kotlin:2.0.0'
+    api 'com.jakewharton.rxbinding2:rxbinding-design-kotlin:2.0.0'
+    api 'com.jakewharton.rxbinding2:rxbinding-recyclerview-v7-kotlin:2.0.0'
+}
+
+tasks.withType(Javadoc).all {
+    enabled = false
+}
+
+// $ ./gradlew clean build bintrayUpload -PdryRun=false
