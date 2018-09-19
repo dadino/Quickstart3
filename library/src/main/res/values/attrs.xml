@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <declare-styleable name="BoundedView">
+        <attr name="bounded_width" format="dimension" />
+        <attr name="bounded_height" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="LoadingSpinner">
+        <attr name="ls_label" format="string" />
+        <attr name="ls_retry" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="LabeledTextView">
+        <attr name="lt_label" format="string" />
+        <attr name="lt_value" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="CompountVector">
+        <attr name="drawableLeftCompat" format="reference" />
+        <attr name="drawableRightCompat" format="reference" />
+        <attr name="drawableTopCompat" format="reference" />
+        <attr name="drawableBottomCompat" format="reference" />
+    </declare-styleable>
+</resources>
