@@ -5,6 +5,11 @@ import com.dadino.quickstart3.core.components.RxSingleSideEffectHandler
 import com.dadino.quickstart3.core.components.SideEffectHandler
 import com.dadino.quickstart3.core.components.SingleSideEffectHandler
 import com.dadino.quickstart3.core.entities.*
+import com.dadino.quickstart3.core.entities.Next.Companion.justEffect
+import com.dadino.quickstart3.core.entities.Next.Companion.justSignal
+import com.dadino.quickstart3.core.entities.Next.Companion.justState
+import com.dadino.quickstart3.core.entities.Next.Companion.noChanges
+import com.dadino.quickstart3.core.entities.Next.Companion.stateAndSignal
 import com.dadino.quickstart3.sample.entities.ExampleData
 import com.dadino.quickstart3.sample.entities.Session
 import com.dadino.quickstart3.sample.repositories.ISessionRepository
@@ -19,16 +24,16 @@ class SpinnerViewModel constructor(private val sessionRepo: ISessionRepository) 
 
 	override fun updateFunction() = { previous: SpinnerState, event: Event ->
 		when (event) {
-			is SpinnerEvent.OnSpinnerRetryClicked   -> Next.justEffect(SpinnerEffect.LoadSpinnerEntries)
-			is SpinnerEvent.OnSpinnerDoneClicked    -> Next.next(newState = previous.copy(list = event.list, loading = false, error = false), signals = listOf(SpinnerSignal.ShowDoneToast))
-			is SpinnerEvent.OnSpinnerLoadingClicked -> Next.next(newState = previous.copy(list = listOf(), loading = true, error = false))
-			is SpinnerEvent.OnSpinnerErrorClicked   -> Next.next(newState = previous.copy(list = listOf(), loading = false, error = true))
-			is SpinnerEvent.OnSpinnerIdleClicked    -> Next.next(newState = previous.copy(list = listOf(), loading = false, error = false))
-			is SpinnerEvent.OnExampleDataSelected   -> Next.next(newState = previous.copy(selectedId = event.item?.id))
-			is SpinnerEvent.OnSaveSessionRequested  -> Next.justEffect(SpinnerEffect.SaveSession(event.id))
-			is SpinnerEvent.SetSaveSessionCompleted -> Next.justSignal(SpinnerSignal.ShowSaveSessionCompleted)
-			is SpinnerEvent.SetLoadSessionCompleted -> Next.next(newState = previous.copy(session = event.session), signals = listOf(SpinnerSignal.ShowLoadSessionCompleted(event.session)))
-			else                                    -> Next.noChanges()
+			is SpinnerEvent.OnSpinnerRetryClicked   -> justEffect(SpinnerEffect.LoadSpinnerEntries)
+			is SpinnerEvent.OnSpinnerDoneClicked    -> stateAndSignal(newState = previous.copy(list = event.list, loading = false, error = false), signal = SpinnerSignal.ShowDoneToast)
+			is SpinnerEvent.OnSpinnerLoadingClicked -> justState(previous.copy(list = listOf(), loading = true, error = false))
+			is SpinnerEvent.OnSpinnerErrorClicked   -> justState(previous.copy(list = listOf(), loading = false, error = true))
+			is SpinnerEvent.OnSpinnerIdleClicked    -> justState(previous.copy(list = listOf(), loading = false, error = false))
+			is SpinnerEvent.OnExampleDataSelected   -> justState(previous.copy(selectedId = event.item?.id))
+			is SpinnerEvent.OnSaveSessionRequested  -> justEffect(SpinnerEffect.SaveSession(event.id))
+			is SpinnerEvent.SetSaveSessionCompleted -> justSignal(SpinnerSignal.ShowSaveSessionCompleted)
+			is SpinnerEvent.SetLoadSessionCompleted -> stateAndSignal(newState = previous.copy(session = event.session), signal = SpinnerSignal.ShowLoadSessionCompleted(event.session))
+			else                                    -> noChanges()
 		}
 	}
 

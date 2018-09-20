@@ -8,10 +8,12 @@ import com.dadino.quickstart3.core.entities.State
 
 abstract class BaseViewModel<STATE : State> : ViewModel() {
 	private val loop: QuickLoop<STATE> by lazy {
-		QuickLoop(loopName = javaClass.simpleName,
+		QuickLoop(
+				loopName = javaClass.simpleName,
 				sideEffectHandlers = getSideEffectHandlers(),
 				start = getStart(),
-				update = updateFunction())
+				update = updateFunction()
+		)
 	}
 
 	protected fun connect() {
