@@ -1,4 +1,4 @@
-package com.dadino.quickstart3.core.utils
+package com.dadino.quickstart3.core.entities
 
 
 class Generic<T : Any>(val klass: Class<T>) {

@@ -5,12 +5,6 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import retrofit2.HttpException
-import retrofit2.Response
-
-fun <E, T : Response<E>> T.toSingle(): Single<E> {
-	return if (isSuccessful) Single.just(body()!!) else Single.error<E>(HttpException(this))
-}
 
 fun <E, T : Flowable<E>> T.toAsync(): Flowable<E> {
 	return subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())

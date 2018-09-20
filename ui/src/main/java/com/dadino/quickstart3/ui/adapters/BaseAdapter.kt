@@ -3,6 +3,7 @@ package com.dadino.quickstart3.ui.adapters
 import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import com.dadino.quickstart3.core.components.InteractionEventSource
+import com.dadino.quickstart3.core.entities.Event
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
@@ -10,9 +11,9 @@ import io.reactivex.disposables.CompositeDisposable
 abstract class BaseAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : RecyclerView.Adapter<HOLDER>()
 		, InteractionEventSource {
 
-	private val userActionsOnItems = PublishRelay.create<UserAction>()
-	private val userActions: Observable<UserAction> by lazy {
-		userActionsOnItems
+	private val interactionEventsOnItemsRelay = PublishRelay.create<Event>()
+	private val interactionEvents: Observable<Event> by lazy {
+		interactionEventsOnItemsRelay
 				.doOnDispose {
 					holderListeners.dispose()
 				}
@@ -25,12 +26,12 @@ abstract class BaseAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : RecyclerView.Adapt
 		holderListeners.add(
 				holder.interactionEvents()
 						.doOnNext { Log.d("Adapter", "<--- ${System.nanoTime()} Action: $it") }
-						.subscribe(userActionsOnItems)
+						.subscribe(interactionEventsOnItemsRelay)
 		)
 	}
 
-	override fun interactionEvents(): Observable<UserAction> {
-		return userActions
+	override fun interactionEvents(): Observable<Event> {
+		return interactionEvents
 	}
 
 }

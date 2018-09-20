@@ -1,4 +1,3 @@
 package com.dadino.quickstart3.core.entities
 
-
-open class Signal
+open class State

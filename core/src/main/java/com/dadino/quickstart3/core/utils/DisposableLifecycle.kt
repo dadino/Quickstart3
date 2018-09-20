@@ -7,7 +7,7 @@ import io.reactivex.disposables.Disposable
 
 object DisposableLifecycle {
 
-	fun attachToResumePause(lifecycleOwner: LifecycleOwner, createDisposable: () -> Disposable) {
+	fun attachAtResumeDetachAtPause(lifecycleOwner: LifecycleOwner, createDisposable: () -> Disposable) {
 		lifecycleOwner.lifecycle.addObserver(object :
 				DisposableLifecycleObserver(lifecycleOwner, Lifecycle.State.RESUMED, createDisposable) {
 
@@ -21,7 +21,7 @@ object DisposableLifecycle {
 		})
 	}
 
-	fun attachToStartStop(lifecycleOwner: LifecycleOwner, createDisposable: () -> Disposable) {
+	fun attachAtStartDetachAtStop(lifecycleOwner: LifecycleOwner, createDisposable: () -> Disposable) {
 		lifecycleOwner.lifecycle.addObserver(object :
 				DisposableLifecycleObserver(lifecycleOwner, Lifecycle.State.STARTED, createDisposable) {
 
@@ -35,7 +35,7 @@ object DisposableLifecycle {
 		})
 	}
 
-	fun attachToCreateDestroy(lifecycleOwner: LifecycleOwner, createDisposable: () -> Disposable) {
+	fun attachAtCreateDetachAtDestroy(lifecycleOwner: LifecycleOwner, createDisposable: () -> Disposable) {
 		lifecycleOwner.lifecycle.addObserver(object :
 				DisposableLifecycleObserver(lifecycleOwner, Lifecycle.State.CREATED, createDisposable) {
 

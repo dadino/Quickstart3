@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.SpinnerAdapter
 import androidx.annotation.LayoutRes
 import com.dadino.quickstart3.core.components.InteractionEventSource
+import com.dadino.quickstart3.core.entities.Event
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
@@ -84,22 +85,22 @@ abstract class BaseSpinnerAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : android.wid
 	}
 
 
-	private val userActionsOnItems = PublishSubject.create<UserAction>()
+	private val interactionEventsOnItemsRelay = PublishSubject.create<Event>()
 
 	private val holderListeners = CompositeDisposable()
 
 	fun attachListenerToHolder(holder: HOLDER) {
 		holderListeners.add(
 				holder.interactionEvents()
-						.subscribeBy(onNext = { userActionsOnItems.onNext(it) },
-								onError = { userActionsOnItems.onError(it) }
+						.subscribeBy(onNext = { interactionEventsOnItemsRelay.onNext(it) },
+								onError = { interactionEventsOnItemsRelay.onError(it) }
 						)
 		)
 	}
 
-	override fun interactionEvents(): Observable<UserAction> {
+	override fun interactionEvents(): Observable<Event> {
 
-		return userActionsOnItems.doOnDispose {
+		return interactionEventsOnItemsRelay.doOnDispose {
 			holderListeners.dispose()
 		}
 	}

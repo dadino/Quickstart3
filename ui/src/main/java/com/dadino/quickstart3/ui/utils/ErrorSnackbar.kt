@@ -5,7 +5,7 @@ import android.widget.TextView
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
-import com.dadino.quickstart3.core.interfaces.ErrorHandler
+import com.dadino.quickstart3.core.components.ErrorHandler
 import com.dadino.quickstart3.ui.R
 import com.google.android.material.snackbar.Snackbar
 

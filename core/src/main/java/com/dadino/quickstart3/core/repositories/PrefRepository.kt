@@ -1,7 +1,7 @@
 package com.dadino.quickstart3.core.repositories
 
 import android.content.SharedPreferences
-import com.dadino.quickstart3.core.interfaces.IRepository
+import com.dadino.quickstart3.core.components.IRepository
 
 abstract class PrefRepository(private val prefs: SharedPreferences) : IRepository, SharedPreferences.OnSharedPreferenceChangeListener {
 

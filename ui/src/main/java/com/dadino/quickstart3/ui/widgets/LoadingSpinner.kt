@@ -8,6 +8,8 @@ import android.view.View
 import android.widget.*
 import androidx.annotation.StringRes
 import com.dadino.quickstart3.core.components.InteractionEventSource
+import com.dadino.quickstart3.core.entities.Event
+import com.dadino.quickstart3.core.entities.NoOpEvent
 import com.dadino.quickstart3.ui.R
 import com.dadino.quickstart3.ui.adapters.BaseSpinnerAdapter
 import com.dadino.quickstart3.ui.utils.gone
@@ -138,21 +140,21 @@ abstract class LoadingSpinner<ITEM, T : BaseSpinnerAdapter<ITEM, *>> : FrameLayo
 	}
 
 
-	override fun interactionEvents(): Observable<UserAction> {
+	override fun interactionEvents(): Observable<Event> {
 		return RxAdapterView.itemSelections(spinner).map { position ->
 			when (position) {
 				transientSelectedPosition -> {
 					Log.d("Spinner", "New position is $position, old position is $transientSelectedPosition, DO NOT REACT")
-					DoNotReactToThisAction()
+					NoOpEvent
 				}
 				else                      -> {
 					Log.d("Spinner", "New position is $position, old position is $transientSelectedPosition, REACT")
 					transientSelectedPosition = position
-					OnItemSelected()
+					OnItemSelected
 				}
 			}
 		}
 	}
 }
 
-class OnItemSelected : UserAction()
+object OnItemSelected : Event()

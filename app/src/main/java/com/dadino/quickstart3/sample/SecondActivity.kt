@@ -6,8 +6,11 @@ import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Lifecycle
 import com.dadino.quickstart3.core.BaseActivity
-import com.dadino.quickstart3.core.entities.UserAction
-import com.dadino.quickstart3.sample.entities.OnSaveSessionRequested
+import com.dadino.quickstart3.core.entities.Event
+import com.dadino.quickstart3.core.entities.Signal
+import com.dadino.quickstart3.core.entities.State
+import com.dadino.quickstart3.sample.viewmodels.SpinnerEvent
+import com.dadino.quickstart3.sample.viewmodels.SpinnerSignal
 import com.dadino.quickstart3.sample.viewmodels.SpinnerState
 import com.dadino.quickstart3.sample.viewmodels.SpinnerViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -31,21 +34,31 @@ class SecondActivity : BaseActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 
-		attachViewModel(spinnerViewModel, Lifecycle.State.RESUMED) {
-			render(it)
+		attachViewModel(spinnerViewModel, Lifecycle.State.RESUMED)
+	}
+
+	override fun respondTo(signal: Signal) {
+		when (signal) {
+			is SpinnerSignal.ShowSaveSessionCompleted -> Toast.makeText(this, "Session saved", Toast.LENGTH_LONG).show()
 		}
 	}
 
-	override fun collectUserActions(): Observable<UserAction> {
+	override fun renderState(state: State) {
+		when (state) {
+			is SpinnerState -> render(state)
+		}
+	}
+
+	override fun collectInteractionEvents(): Observable<Event> {
 		return fab.clicks().map {
-			OnSaveSessionRequested("Second")
+			SpinnerEvent.OnSaveSessionRequested("Second")
 		}
 	}
 
 	private fun render(state: SpinnerState) {
 		Log.d("Second", "State: $state")
 
-		Toast.makeText(this, "Session: ${spinnerViewModel.state().session}", Toast.LENGTH_LONG).show()
+		Toast.makeText(this, "Session: ${spinnerViewModel.currentState().session}", Toast.LENGTH_LONG).show()
 	}
 
 }

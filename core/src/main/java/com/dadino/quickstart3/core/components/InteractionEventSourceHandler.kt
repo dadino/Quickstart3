@@ -7,69 +7,69 @@ import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 
 interface SimpleInteractionEventSource : InteractionEventSource {
-	val userActionsHandler: InteractionEventSourceHandler
+	var interactionEventSourceHandler: InteractionEventSourceHandler
 
-	fun userActionsConsumer(): PublishRelay<Event> {
-		return userActionsHandler.userActionsConsumer()
+	fun interactionEventsConsumer(): PublishRelay<Event> {
+		return interactionEventSourceHandler.interactionEventsConsumer()
 	}
 
-	fun receiveUserAction(userAction: Event) {
-		userActionsHandler.receiveUserAction(userAction)
+	fun receiveInteractionEvents(userAction: Event) {
+		interactionEventSourceHandler.receiveInteractionEvent(userAction)
 	}
 
 	override fun interactionEvents(): Observable<Event> {
-		return userActionsHandler.interactionEvents()
+		return interactionEventSourceHandler.interactionEvents()
 	}
 
-	fun collectUserActions(): Observable<Event> {
+	fun collectInteractionEvents(): Observable<Event> {
 		return Observable.empty()
 	}
 
-	fun interceptUserAction(action: Event): Event {
+	fun interceptInteractionEvents(action: Event): Event {
 		return action
 	}
 }
 
 abstract class InteractionEventSourceHandler : InteractionEventSource {
-	private val userActionsRelay: PublishRelay<Event> by lazy { PublishRelay.create<Event>() }
+	private val interactionEventsRelay: PublishRelay<Event> by lazy { PublishRelay.create<Event>() }
 
-	private val userActions: Observable<Event> by lazy {
-		Observable.merge(collectUserActions(), userActionsRelay)
+	private val interactionEvents: Observable<Event> by lazy {
+		Observable.merge(collectInteractionEvents(), interactionEventsRelay)
 				.doOnNext { Log.d("UserAction", "Original: $it") }
-				.map { interceptUserAction(it) }
+				.map { interceptInteractionEvents(it) }
 				.doOnNext { Log.d("UserAction", "Intercepted: $it") }
 				.publish()
 				.refCount()
 	}
 
-	private var userActionsDisposable: Disposable? = null
+	private var interactionEventsDisposable: Disposable? = null
 
 	fun connect() {
-		userActionsDisposable = interactionEvents().subscribe()
+		interactionEventsDisposable = interactionEvents().subscribe()
 	}
 
 	fun disconnect() {
-		userActionsDisposable?.dispose()
+		interactionEventsDisposable?.dispose()
 	}
 
-	open fun collectUserActions(): Observable<Event> {
+	open fun collectInteractionEvents(): Observable<Event> {
 		return Observable.empty()
 	}
 
-	fun userActionsConsumer(): PublishRelay<Event> {
-		return userActionsRelay
+	fun interactionEventsConsumer(): PublishRelay<Event> {
+		return interactionEventsRelay
 	}
 
-	fun receiveUserAction(userAction: Event) {
-		userActionsConsumer().accept(userAction)
+	fun receiveInteractionEvent(userAction: Event) {
+		interactionEventsConsumer().accept(userAction)
 	}
 
 	final override fun interactionEvents(): Observable<Event> {
-		return userActions
+		return interactionEvents
 	}
 
-	protected open fun interceptUserAction(action: Event): Event {
-		return action
+	protected open fun interceptInteractionEvents(event: Event): Event {
+		return event
 	}
 
 }
