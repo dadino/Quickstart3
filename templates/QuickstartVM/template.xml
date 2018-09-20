@@ -1,0 +1,25 @@
+<template format="4"
+        revision="1"
+        name="ViewModel"
+        description="Creates a new Quickstart ViewModel">
+ 
+    <category value="Quickstart"/>
+ 
+    <parameter id="featureName"
+        name="Feature Name"
+        type="string"
+        constraints="class|unique|nonempty"
+        default="Feature"
+        help="The name of the feature that requires the Quickstart ViewModel"/>
+
+    <parameter id="featurePackage"
+        name="Feature Package"
+        type="string"
+        constraints="class|unique|nonempty"
+        default="feature"
+        help="The name of the package for the feature that requires the Quickstart ViewModel"/>
+ 
+    <globals file="globals.xml.ftl" />
+    <execute file="recipe.xml.ftl" />
+ 
+</template>
