@@ -9,10 +9,10 @@ import com.dadino.quickstart3.core.BaseActivity
 import com.dadino.quickstart3.core.entities.Event
 import com.dadino.quickstart3.core.entities.Signal
 import com.dadino.quickstart3.core.entities.State
-import com.dadino.quickstart3.sample.viewmodels.SpinnerEvent
-import com.dadino.quickstart3.sample.viewmodels.SpinnerSignal
-import com.dadino.quickstart3.sample.viewmodels.SpinnerState
-import com.dadino.quickstart3.sample.viewmodels.SpinnerViewModel
+import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerEvent
+import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerSignal
+import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerState
+import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable

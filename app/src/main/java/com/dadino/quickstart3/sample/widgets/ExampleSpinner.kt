@@ -11,7 +11,7 @@ import com.dadino.quickstart3.core.components.InteractionEventSource
 import com.dadino.quickstart3.core.entities.Event
 import com.dadino.quickstart3.sample.R
 import com.dadino.quickstart3.sample.entities.ExampleData
-import com.dadino.quickstart3.sample.viewmodels.SpinnerEvent
+import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerEvent
 import com.dadino.quickstart3.ui.adapters.BaseHolder
 import com.dadino.quickstart3.ui.adapters.BaseSpinnerAdapter
 import com.dadino.quickstart3.ui.widgets.LoadingSpinner

@@ -13,7 +13,14 @@ import com.dadino.quickstart3.core.entities.NoOpEvent
 import com.dadino.quickstart3.core.entities.Signal
 import com.dadino.quickstart3.core.entities.State
 import com.dadino.quickstart3.sample.entities.OnGoToSecondPageClicked
-import com.dadino.quickstart3.sample.viewmodels.*
+import com.dadino.quickstart3.sample.viewmodels.counter.CounterEvent
+import com.dadino.quickstart3.sample.viewmodels.counter.CounterSignal
+import com.dadino.quickstart3.sample.viewmodels.counter.CounterState
+import com.dadino.quickstart3.sample.viewmodels.counter.CounterViewModel
+import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerEvent
+import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerSignal
+import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerState
+import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerViewModel
 import com.dadino.quickstart3.sample.widgets.ExampleSpinner
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable
