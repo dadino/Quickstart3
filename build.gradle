@@ -45,4 +45,6 @@ ext {
 
     versionCode = 1
     versionName = "0.0.1"
+
+    // ./gradlew clean build bintrayUpload -PdryRun=false
 }
