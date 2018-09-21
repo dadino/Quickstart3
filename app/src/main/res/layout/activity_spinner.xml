@@ -132,6 +132,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="top"
-        app:constraint_referenced_ids="example_data_counter,example_data_counter_state"
-        tools:layout_editor_absoluteY="567dp" />
+        app:constraint_referenced_ids="example_data_counter,example_data_counter_state" />
 </androidx.constraintlayout.widget.ConstraintLayout>

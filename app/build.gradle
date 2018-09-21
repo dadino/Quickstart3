@@ -11,8 +11,8 @@ android {
         targetSdkVersion rootProject.targetSdk
         applicationId "com.dadino.quickstart3.sample"
 
-        versionCode rootProject.coreVersionCode
-        versionName rootProject.coreVersionName
+        versionCode rootProject.versionCode
+        versionName rootProject.versionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

@@ -11,8 +11,8 @@ import io.reactivex.rxkotlin.subscribeBy
 
 class QuickLoop<STATE : State>(private val loopName: String,
 							   private val start: Start<STATE>,
-							   private val update: (STATE, Event) -> Next<STATE>,
-							   private val sideEffectHandlers: List<SideEffectHandler> = arrayListOf()
+							   private val sideEffectHandlers: List<SideEffectHandler> = arrayListOf(),
+							   private val update: (STATE, Event) -> Next<STATE>
 ) {
 	private lateinit var state: STATE
 

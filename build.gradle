@@ -10,8 +10,10 @@ buildscript {
         classpath 'com.android.tools.build:gradle:3.2.0-rc03'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
+
+        classpath 'guru.stefma.bintrayrelease:bintrayrelease:1.0.0'
     }
 }
 
@@ -29,18 +31,18 @@ task clean(type: Delete) {
 
 
 ext {
-    firebaseVersion = '15.0.0'
-    supportLibVersion = '27.1.1'
-    archRoomVersion = '1.0.0'
-    archRoomVersionB = '1.1.1'
-
     compileSdk = 28
     minSdk = 16
     targetSdk = 28
 
-    coreVersionCode = 1
-    coreVersionName = "0.0.1"
+    userOrg = "dadino"
+    repoName = "quickstart3"
+    groupId = "com.dadino.quickstart3"
+    website = "https://github.com/dadino/basictoolbox"
+    descr = "Basic toolbox to quickly start coding"
+    bintrayUser = 'dadino'
+    bintrayKey = 'e23c567c5d38bdae821f0b74e855b07b37487762'
 
-    uiVersionCode = 1
-    uiVersionName = "0.0.1"
+    versionCode = 1
+    versionName = "0.0.1"
 }
