@@ -54,8 +54,6 @@ dependencies {
 
     //Support
     api 'androidx.appcompat:appcompat:1.0.0-rc02'
-    api 'androidx.legacy:legacy-support-v4:1.0.0-rc02'
-    api 'androidx.legacy:legacy-support-v13:1.0.0-rc02'
     api 'androidx.core:core-ktx:1.0.0-rc02'
 
     //Square
