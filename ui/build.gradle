@@ -54,18 +54,10 @@ android {
 dependencies {
     implementation project(':core')
 
-    api fileTree(dir: 'libs', include: ['*.jar'])
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
-    androidTestImplementation 'androidx.annotation:annotation:1.0.0-rc02'
 
     //Support
     api 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
-    api 'androidx.appcompat:appcompat:1.0.0-rc02'
-    api 'androidx.legacy:legacy-support-v4:1.0.0-rc02'
-    api 'androidx.legacy:legacy-support-v13:1.0.0-rc02'
     api 'com.google.android.material:material:1.0.0-rc02'
     api 'androidx.recyclerview:recyclerview:1.0.0-rc02'
     api 'androidx.cardview:cardview:1.0.0-rc02'
@@ -84,5 +76,3 @@ dependencies {
 tasks.withType(Javadoc).all {
     enabled = false
 }
-
-// $ ./gradlew clean build bintrayUpload -PdryRun=false
