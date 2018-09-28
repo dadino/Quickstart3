@@ -47,6 +47,7 @@ class SpinnerActivity : BaseActivity() {
 
 		attachViewModel(spinnerViewModel)
 		attachViewModel(counterViewModel, Lifecycle.State.RESUMED)
+		counterViewModel.receiveEvent(CounterEvent.SetCounter(100))
 	}
 
 	override fun initViews() {
@@ -96,8 +97,8 @@ class SpinnerActivity : BaseActivity() {
 		)
 	}
 
-	override fun interceptInteractionEvents(action: Event): Event {
-		return when (action) {
+	override fun interceptInteractionEvents(event: Event): Event {
+		return when (event) {
 			is OnGoToSecondPageClicked                -> {
 				startActivity(Intent(this, SecondActivity::class.java))
 				NoOpEvent
@@ -106,7 +107,7 @@ class SpinnerActivity : BaseActivity() {
 				Toast.makeText(this, "Counter: ${counterViewModel.currentState().counter}", Toast.LENGTH_SHORT).show()
 				NoOpEvent
 			}
-			else                                      -> super.interceptInteractionEvents(action)
+			else                                      -> super.interceptInteractionEvents(event)
 		}
 	}
 }

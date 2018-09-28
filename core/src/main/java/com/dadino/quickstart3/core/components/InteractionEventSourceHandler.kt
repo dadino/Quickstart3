@@ -13,8 +13,8 @@ interface SimpleInteractionEventSource : InteractionEventSource {
 		return interactionEventSourceHandler.interactionEventsConsumer()
 	}
 
-	fun receiveInteractionEvents(userAction: Event) {
-		interactionEventSourceHandler.receiveInteractionEvent(userAction)
+	fun receiveInteractionEvents(event: Event) {
+		interactionEventSourceHandler.receiveInteractionEvent(event)
 	}
 
 	override fun interactionEvents(): Observable<Event> {
@@ -25,8 +25,8 @@ interface SimpleInteractionEventSource : InteractionEventSource {
 		return Observable.empty()
 	}
 
-	fun interceptInteractionEvents(action: Event): Event {
-		return action
+	fun interceptInteractionEvents(event: Event): Event {
+		return event
 	}
 }
 
@@ -60,8 +60,8 @@ abstract class InteractionEventSourceHandler : InteractionEventSource {
 		return interactionEventsRelay
 	}
 
-	fun receiveInteractionEvent(userAction: Event) {
-		interactionEventsConsumer().accept(userAction)
+	fun receiveInteractionEvent(event: Event) {
+		interactionEventsConsumer().accept(event)
 	}
 
 	final override fun interactionEvents(): Observable<Event> {

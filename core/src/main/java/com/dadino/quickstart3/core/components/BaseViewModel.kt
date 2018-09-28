@@ -6,19 +6,24 @@ import com.dadino.quickstart3.core.entities.Next
 import com.dadino.quickstart3.core.entities.Start
 import com.dadino.quickstart3.core.entities.State
 
-abstract class BaseViewModel<STATE : State> : ViewModel() {
+abstract class BaseViewModel<STATE : State> : ViewModel(), QuickLoop.ConnectionCallbacks {
+
 	private val loop: QuickLoop<STATE> by lazy {
 		QuickLoop(
 				loopName = javaClass.simpleName,
 				sideEffectHandlers = getSideEffectHandlers(),
 				start = getStart(),
 				update = updateFunction()
-		)
+		).apply { connectionCallbacks = this@BaseViewModel }
 	}
 
 	protected fun connect() {
 		loop.connect()
 	}
+
+	override fun onLoopConnected() {}
+
+	override fun onLoopDisconnected() {}
 
 	override fun onCleared() {
 		super.onCleared()

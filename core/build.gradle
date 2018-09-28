@@ -53,8 +53,8 @@ dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     //Support
-    api 'androidx.appcompat:appcompat:1.0.0-rc02'
-    api 'androidx.core:core-ktx:1.0.0-rc02'
+    api 'androidx.appcompat:appcompat:1.0.0'
+    api 'androidx.core:core-ktx:1.0.0'
 
     //Square
     api 'com.squareup.retrofit2:retrofit:2.3.0'
@@ -66,11 +66,11 @@ dependencies {
     }
 
     //Arch Components
-    api 'androidx.lifecycle:lifecycle-runtime:2.0.0-rc01'
-    api 'androidx.lifecycle:lifecycle-common-java8:2.0.0-rc01'
-    api 'androidx.lifecycle:lifecycle-extensions:2.0.0-rc01'
-    api 'androidx.lifecycle:lifecycle-reactivestreams:2.0.0-rc01'
-    kapt 'androidx.lifecycle:lifecycle-compiler:2.0.0-rc01'
+    api 'androidx.lifecycle:lifecycle-runtime:2.0.0'
+    api 'androidx.lifecycle:lifecycle-common-java8:2.0.0'
+    api 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    api 'androidx.lifecycle:lifecycle-reactivestreams:2.0.0'
+    kapt 'androidx.lifecycle:lifecycle-compiler:2.0.0'
 
     //RxJava
     api 'io.reactivex.rxjava2:rxjava:2.1.6'
