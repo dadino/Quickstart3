@@ -1,9 +1,5 @@
 package com.dadino.quickstart3.core.fragments
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import com.dadino.quickstart3.core.components.BaseViewModel
@@ -19,7 +15,6 @@ abstract class BaseFragment : Fragment(), DisposableLifecycleHolder {
 
 	protected val eventManager: EventManager by lazy { EventManager(this) }
 
-	abstract fun initViews(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View
 	abstract fun renderState(state: State)
 	abstract fun respondTo(signal: Signal)
 

@@ -39,7 +39,6 @@ class SpinnerActivity : BaseActivity() {
 	private val spinnerViewModel: SpinnerViewModel by viewModel()
 	private val counterViewModel: CounterViewModel by viewModel()
 
-
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_spinner)

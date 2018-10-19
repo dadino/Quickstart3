@@ -9,6 +9,7 @@ import androidx.lifecycle.Lifecycle
 import com.dadino.quickstart3.core.BaseActivity
 import com.dadino.quickstart3.core.entities.Signal
 import com.dadino.quickstart3.core.entities.State
+import com.dadino.quickstart3.sample.fragments.SampleFragment
 import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerEvent
 import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerSignal
 import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerState
@@ -33,6 +34,8 @@ class SecondActivity : BaseActivity() {
 		eventManager.eventCollection = fab.clicks().map {
 			SpinnerEvent.OnSaveSessionRequested("Second")
 		}
+
+		supportFragmentManager.beginTransaction().replace(R.id.fragment_container, SampleFragment()).commit()
 	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
