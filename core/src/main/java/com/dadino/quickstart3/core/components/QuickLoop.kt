@@ -42,12 +42,12 @@ class QuickLoop<STATE : State>(private val loopName: String,
 		sideEffectHandlers.forEach { it.connectTo(eventRelay) }
 
 		eventRelay.doOnNext { Log.d(loopName, "<---- ${it.javaClass.simpleName}") }
+				.filter { it !is NoOpEvent }
 				.toFlowable(BackpressureStrategy.BUFFER)
 				.startWith(InitializeState)
 				.map { event ->
 					Log.d(loopName, "Updating with Event: ${event.javaClass.simpleName}")
 					if (event is InitializeState) {
-
 						start
 					} else {
 						update(state, event)

@@ -9,6 +9,8 @@ import com.dadino.quickstart3.core.entities.Next.Companion.justState
 import com.dadino.quickstart3.core.entities.Next.Companion.noChanges
 import com.dadino.quickstart3.core.entities.Start.Companion.start
 import com.dadino.quickstart3.core.entities.State
+import com.dadino.quickstart3.sample.entities.OnGoToSecondPageClicked
+import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerSignal
 
 
 class CounterViewModel : BaseViewModel<CounterState>() {
@@ -21,6 +23,7 @@ class CounterViewModel : BaseViewModel<CounterState>() {
 			is CounterEvent.SetCounter                -> justState(previous.copy(counter = event.newCounter))
 			is CounterEvent.OnAdvanceCounterClicked   -> justEffect(CounterEffect.AdvanceCounter(previous.counter, 1))
 			is CounterEvent.OnShowCounterStateClicked -> justSignal(CounterSignal.ShowCounterState(previous.counter))
+			is OnGoToSecondPageClicked                -> justSignal(SpinnerSignal.OpenSecondActivity)
 			else                                      -> noChanges()
 		}
 	}

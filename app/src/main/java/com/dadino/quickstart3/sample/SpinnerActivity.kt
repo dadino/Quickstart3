@@ -8,8 +8,6 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.lifecycle.Lifecycle
 import com.dadino.quickstart3.core.BaseActivity
-import com.dadino.quickstart3.core.entities.Event
-import com.dadino.quickstart3.core.entities.NoOpEvent
 import com.dadino.quickstart3.core.entities.Signal
 import com.dadino.quickstart3.core.entities.State
 import com.dadino.quickstart3.sample.entities.OnGoToSecondPageClicked
@@ -44,16 +42,26 @@ class SpinnerActivity : BaseActivity() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+		setContentView(R.layout.activity_spinner)
+		spinner.setOnRetryClickListener(View.OnClickListener { eventManager.receiveInteractionEvent(SpinnerEvent.OnSpinnerRetryClicked()) })
 
 		attachViewModel(spinnerViewModel)
 		attachViewModel(counterViewModel, Lifecycle.State.RESUMED)
 		counterViewModel.receiveEvent(CounterEvent.SetCounter(100))
+
+		eventManager.eventCollection = Observable.merge(listOf(
+				idle.clicks().map { SpinnerEvent.OnSpinnerIdleClicked() },
+				loading.clicks().map { SpinnerEvent.OnSpinnerLoadingClicked() },
+				error.clicks().map { SpinnerEvent.OnSpinnerErrorClicked() },
+				done.clicks().map { SpinnerEvent.OnSpinnerDoneClicked() },
+				secondPage.clicks().map { OnGoToSecondPageClicked() },
+				saveSession.clicks().map { SpinnerEvent.OnSaveSessionRequested("First") },
+				counterButton.clicks().map { CounterEvent.OnAdvanceCounterClicked },
+				counterStateButton.clicks().map { CounterEvent.OnShowCounterStateClicked },
+				spinner.interactionEvents()
+		))
 	}
 
-	override fun initViews() {
-		setContentView(R.layout.activity_spinner)
-		spinner.setOnRetryClickListener(View.OnClickListener { interactionEventsConsumer().accept(SpinnerEvent.OnSpinnerRetryClicked()) })
-	}
 
 	override fun renderState(state: State) {
 		when (state) {
@@ -68,6 +76,7 @@ class SpinnerActivity : BaseActivity() {
 			is SpinnerSignal.ShowSaveSessionCompleted -> Toast.makeText(this, "Session saved", Toast.LENGTH_SHORT).show()
 			is SpinnerSignal.ShowLoadSessionCompleted -> Toast.makeText(this, "Session loaded: ${signal.session}", Toast.LENGTH_SHORT).show()
 			is CounterSignal.ShowCounterState         -> Toast.makeText(this, "Counter: ${signal.counter}", Toast.LENGTH_SHORT).show()
+			is SpinnerSignal.OpenSecondActivity       -> startActivity(Intent(this, SecondActivity::class.java))
 		}
 	}
 
@@ -80,34 +89,5 @@ class SpinnerActivity : BaseActivity() {
 	private fun render(state: CounterState) {
 		Log.d("Counter", "State: $state")
 		counterButton.text = state.counter.toString()
-	}
-
-	override fun collectInteractionEvents(): Observable<Event> {
-		return Observable.merge(listOf(
-				idle.clicks().map { SpinnerEvent.OnSpinnerIdleClicked() },
-				loading.clicks().map { SpinnerEvent.OnSpinnerLoadingClicked() },
-				error.clicks().map { SpinnerEvent.OnSpinnerErrorClicked() },
-				done.clicks().map { SpinnerEvent.OnSpinnerDoneClicked() },
-				secondPage.clicks().map { OnGoToSecondPageClicked() },
-				saveSession.clicks().map { SpinnerEvent.OnSaveSessionRequested("First") },
-				counterButton.clicks().map { CounterEvent.OnAdvanceCounterClicked },
-				counterStateButton.clicks().map { CounterEvent.OnShowCounterStateClicked },
-				spinner.interactionEvents()
-		)
-		)
-	}
-
-	override fun interceptInteractionEvents(event: Event): Event {
-		return when (event) {
-			is OnGoToSecondPageClicked                -> {
-				startActivity(Intent(this, SecondActivity::class.java))
-				NoOpEvent
-			}
-			is CounterEvent.OnShowCounterStateClicked -> {
-				Toast.makeText(this, "Counter: ${counterViewModel.currentState().counter}", Toast.LENGTH_SHORT).show()
-				NoOpEvent
-			}
-			else                                      -> super.interceptInteractionEvents(event)
-		}
 	}
 }

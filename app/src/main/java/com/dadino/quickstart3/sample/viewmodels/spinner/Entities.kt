@@ -16,6 +16,7 @@ sealed class SpinnerSignal : Signal() {
 	object ShowDoneToast : Signal()
 	object ShowSaveSessionCompleted : Signal()
 	class ShowLoadSessionCompleted(val session: Session) : Signal()
+	object OpenSecondActivity : Signal()
 }
 
 sealed class SpinnerEvent : Event() {
