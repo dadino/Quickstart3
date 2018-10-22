@@ -10,9 +10,8 @@ import io.reactivex.rxkotlin.subscribeBy
 
 
 class QuickLoop<STATE : State>(private val loopName: String,
-							   private val start: Start<STATE>,
-							   private val sideEffectHandlers: List<SideEffectHandler> = arrayListOf(),
-							   private val update: (STATE, Event) -> Next<STATE>
+							   private val updater: Updater<STATE>,
+							   private val sideEffectHandlers: List<SideEffectHandler> = arrayListOf()
 ) {
 	private lateinit var state: STATE
 
@@ -38,26 +37,14 @@ class QuickLoop<STATE : State>(private val loopName: String,
 	var enableLogging = false
 
 	fun connect() {
-		state = start.startState
+		state = updater.start().startState
 
 		sideEffectHandlers.forEach { it.connectTo(eventRelay) }
 
 		eventRelay.filter { it !is NoOpEvent }
 				.toFlowable(BackpressureStrategy.BUFFER)
 				.startWith(InitializeState)
-				.map { event ->
-					log { "______________________________________________" }
-					log { "IN: ${event.javaClass.simpleName}" }
-					if (event is InitializeState) {
-						start
-					} else {
-						update(state, event)
-					}
-				}
-				.doOnNext {
-					log { "OUT: $it" }
-					log { "¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯" }
-				}
+				.map { event -> updater.internalUpdate(state, event) }
 				.toAsync()
 				.subscribeBy(onNext = { next ->
 					onNext(next)
