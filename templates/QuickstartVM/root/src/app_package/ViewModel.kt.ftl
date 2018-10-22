@@ -9,6 +9,7 @@ import com.dadino.quickstart3.core.entities.Next.Companion.justSignal
 import com.dadino.quickstart3.core.entities.Next.Companion.justState
 import com.dadino.quickstart3.core.entities.Next.Companion.noChanges
 import com.dadino.quickstart3.core.entities.Next.Companion.stateAndSignal
+import com.dadino.quickstart3.core.entities.Start.Companion.start
 import com.dadino.quickstart3.core.entities.Start
 
 
@@ -16,15 +17,10 @@ class ${featureName}ViewModel : BaseViewModel<${featureName}State>() {
 	init {
 		connect()
 	}
-
-	override fun updateFunction() = { previous: ${featureName}State, event: Event ->
-		when (event) {
-			
-			else                                      -> noChanges()
-		}
+	
+	override fun updater(): Updater<${featureName}State> {
+		return ${featureName}Updater()
 	}
-
-	override fun getStart() = start(${featureName}State())
 
 	override fun getSideEffectHandlers() = 
 	listOf<SideEffectHandler>(
@@ -33,5 +29,19 @@ class ${featureName}ViewModel : BaseViewModel<${featureName}State>() {
 }
 
 data class ${featureName}State(
-
+    val deleteMe:String = ""
 ) : State()
+
+
+class ${featureName}Updater : Updater<${featureName}State>() {
+	override fun start(): Start<${featureName}State> {
+		return start(${featureName}State())
+	}
+
+	override fun update(previous: ${featureName}State, event: Event): Next<${featureName}State> {
+		return when (event) {
+				else                                      -> noChanges<${featureName}State>()
+}
+	}
+
+}

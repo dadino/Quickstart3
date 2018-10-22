@@ -1,6 +1,6 @@
 package com.dadino.quickstart3.core.fragments
 
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Lifecycle
 import com.dadino.quickstart3.core.components.BaseViewModel
 import com.dadino.quickstart3.core.components.DisposableLifecycleHolder
@@ -11,8 +11,7 @@ import com.dadino.quickstart3.core.utils.DisposableLifecycle
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 
-abstract class BaseFragment : Fragment(), DisposableLifecycleHolder {
-
+abstract class BaseDialogFragment : DialogFragment(), DisposableLifecycleHolder {
 	protected val eventManager: EventManager by lazy { EventManager(this) }
 
 	abstract fun renderState(state: State)

@@ -13,11 +13,26 @@ import com.dadino.quickstart3.ui.utils.goneIf
 
 open class RecyclerLayout<T : BaseAdapter<*, *>, E : RecyclerView.LayoutManager> : SwipeRefreshLayout {
 
-	private val mList: RecyclerView by lazy { findViewById<RecyclerView>(R.id.list) }
-	private val mEmptyText: TextView by lazy { findViewById<TextView>(R.id.empty_text) }
-	protected var mAdapter: T? = null
-	protected lateinit var mLayoutManager: E
-	private var mLoading: Boolean = false
+	private val emptyTextLabel: TextView by lazy { findViewById<TextView>(R.id.empty_text) }
+	protected val list: RecyclerView by lazy { findViewById<RecyclerView>(R.id.list) }
+
+	private var isLoading: Boolean = false
+	var adapter: T? = null
+		set(adapter) {
+			if (isInEditMode) return
+			field = adapter
+			field?.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+				override fun onChanged() {
+					super.onChanged()
+					updateLoadingState()
+					doOnItemsUpdate?.invoke(list, adapter!!)
+				}
+			})
+			list.adapter = field
+			updateLoadingState()
+		}
+
+	var doOnItemsUpdate: ((RecyclerView, T) -> Unit)? = null
 
 	constructor(context: Context) : super(context) {
 		init()
@@ -40,62 +55,30 @@ open class RecyclerLayout<T : BaseAdapter<*, *>, E : RecyclerView.LayoutManager>
 	protected fun initialize() {}
 
 	fun setListLoading(loading: Boolean) {
-		this.mLoading = loading
+		this.isLoading = loading
 		post {
-			isRefreshing = mLoading
+			isRefreshing = isLoading
 			updateEmptyTextVisibility()
 		}
 	}
 
 	fun updateLoadingState() {
-		setListLoading(mLoading)
+		setListLoading(isLoading)
 	}
 
 	private fun updateEmptyTextVisibility() {
-		val emptyAdapter = mAdapter == null || mAdapter!!.getItemCount() == 0
-		val shouldBeGone = emptyAdapter.not() || mLoading
-		mEmptyText.goneIf(shouldBeGone)
+		val emptyAdapter = adapter?.getItemCount() ?: 0 == 0
+		val shouldBeGone = emptyAdapter.not() || isLoading
+		emptyTextLabel.goneIf(shouldBeGone)
 	}
 
 	fun setEmptyText(text: String) {
-		mEmptyText.text = text
+		emptyTextLabel.text = text
 		updateEmptyTextVisibility()
 	}
 
 	fun setEmptyText(@StringRes text: Int) {
-		mEmptyText.setText(text)
+		emptyTextLabel.setText(text)
 		updateEmptyTextVisibility()
-	}
-
-	var adapter: T?
-		get() = mAdapter
-		set(adapter) {
-			if (isInEditMode) return
-			this.mAdapter = adapter
-			mAdapter?.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
-				override fun onChanged() {
-					super.onChanged()
-					updateLoadingState()
-				}
-			})
-			mList.adapter = mAdapter
-			updateLoadingState()
-		}
-
-	fun setLayoutManager(layoutManager: E) {
-		this.mLayoutManager = layoutManager
-		mList.layoutManager = layoutManager
-	}
-
-	fun setBottomPadding(paddingInPixel: Int) {
-		mList.setPadding(paddingLeft, paddingTop, paddingRight, paddingInPixel)
-	}
-
-	fun addItemDecoration(itemDecorator: RecyclerView.ItemDecoration) {
-		mList.addItemDecoration(itemDecorator)
-	}
-
-	fun setHasFixedSize(hasFixedSize: Boolean) {
-		mList.setHasFixedSize(hasFixedSize)
 	}
 }

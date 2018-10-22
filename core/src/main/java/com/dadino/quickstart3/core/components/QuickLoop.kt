@@ -10,9 +10,8 @@ import io.reactivex.rxkotlin.subscribeBy
 
 
 class QuickLoop<STATE : State>(private val loopName: String,
-							   private val start: Start<STATE>,
-							   private val sideEffectHandlers: List<SideEffectHandler> = arrayListOf(),
-							   private val update: (STATE, Event) -> Next<STATE>
+							   private val updater: Updater<STATE>,
+							   private val sideEffectHandlers: List<SideEffectHandler> = arrayListOf()
 ) {
 	private lateinit var state: STATE
 
@@ -31,34 +30,48 @@ class QuickLoop<STATE : State>(private val loopName: String,
 		signalRelay.toFlowable(BackpressureStrategy.BUFFER)
 	}
 
+	var connectionCallbacks: ConnectionCallbacks? = null
+	var isConnected: Boolean = false
+		private set
+	private val actionToPerformOnConnect = arrayListOf<() -> Unit>()
+	var enableLogging = false
+
 	fun connect() {
+		state = updater.start().startState
+
 		sideEffectHandlers.forEach { it.connectTo(eventRelay) }
 
-		eventRelay.doOnNext { Log.d(loopName, "<---- ${it.javaClass.simpleName}") }
+		eventRelay.filter { it !is NoOpEvent }
 				.toFlowable(BackpressureStrategy.BUFFER)
 				.startWith(InitializeState)
-				.map { event ->
-					Log.d(loopName, "Updating with Event: ${event.javaClass.simpleName}")
-					if (event is InitializeState) start
-					else update(state, event)
-				}
-				.doOnNext { Log.d(loopName, "----> Next: $it") }
+				.map { event -> updater.internalUpdate(state, event) }
 				.toAsync()
 				.subscribeBy(onNext = { next ->
 					onNext(next)
 				})
+
+
 	}
 
 	fun disconnect() {
 		sideEffectHandlers.forEach { it.dispose() }
+
+		isConnected = false
+
+		connectionCallbacks?.onLoopDisconnected()
+	}
+
+	fun doOnConnect(action: () -> Unit) {
+		actionToPerformOnConnect.add(action)
 	}
 
 	fun currentState(): STATE {
 		return state
 	}
 
-	fun receiveEvent(action: Event) {
-		eventRelay.accept(action)
+	fun receiveEvent(event: Event) {
+		if (isConnected) eventRelay.accept(event)
+		else doOnConnect { eventRelay.accept(event) }
 	}
 
 	private fun onNext(next: Next<STATE>) {
@@ -71,6 +84,15 @@ class QuickLoop<STATE : State>(private val loopName: String,
 		}
 		if (next.effects.isNotEmpty()) {
 			handleSideEffects(next.effects)
+		}
+
+		if (next is Start<STATE>) {
+			isConnected = true
+
+			connectionCallbacks?.onLoopConnected()
+
+			actionToPerformOnConnect.forEach { it() }
+			actionToPerformOnConnect.clear()
 		}
 	}
 
@@ -92,4 +114,14 @@ class QuickLoop<STATE : State>(private val loopName: String,
 			if (handled.not()) throw SideEffectNotHandledException(sideEffect)
 		}
 	}
+
+	private fun log(createMessage: () -> String) {
+		if (enableLogging) Log.d(loopName, createMessage())
+	}
+
+	interface ConnectionCallbacks {
+		fun onLoopConnected()
+		fun onLoopDisconnected()
+	}
 }
+
