@@ -3,11 +3,12 @@ package com.dadino.quickstart3.sample
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.lifecycle.Lifecycle
 import com.dadino.quickstart3.core.BaseActivity
+import com.dadino.quickstart3.core.components.EventTransformer
+import com.dadino.quickstart3.core.entities.Event
 import com.dadino.quickstart3.core.entities.Signal
 import com.dadino.quickstart3.core.entities.State
 import com.dadino.quickstart3.sample.entities.OnGoToSecondPageClicked
@@ -20,6 +21,7 @@ import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerSignal
 import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerState
 import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerViewModel
 import com.dadino.quickstart3.sample.widgets.ExampleSpinner
+import com.dadino.quickstart3.ui.widgets.LoadingSpinnerEvent
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable
 import org.koin.android.architecture.ext.viewModel
@@ -42,7 +44,6 @@ class SpinnerActivity : BaseActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_spinner)
-		spinner.setOnRetryClickListener(View.OnClickListener { eventManager.receiveInteractionEvent(SpinnerEvent.OnSpinnerRetryClicked()) })
 
 		attachViewModel(spinnerViewModel)
 		attachViewModel(counterViewModel, Lifecycle.State.RESUMED)
@@ -59,8 +60,9 @@ class SpinnerActivity : BaseActivity() {
 				counterStateButton.clicks().map { CounterEvent.OnShowCounterStateClicked },
 				spinner.interactionEvents()
 		))
+		eventManager.eventTransformer = SpinnerTransformer()
+		eventManager.tag = "SpinnerEventManager"
 	}
-
 
 	override fun renderState(state: State) {
 		when (state) {
@@ -88,5 +90,14 @@ class SpinnerActivity : BaseActivity() {
 	private fun render(state: CounterState) {
 		Log.d("Counter", "State: $state")
 		counterButton.text = state.counter.toString()
+	}
+}
+
+class SpinnerTransformer : EventTransformer(true) {
+	override fun transform(event: Event): Event? {
+		return when (event) {
+			is LoadingSpinnerEvent.OnRetryClicked -> SpinnerEvent.OnSpinnerRetryClicked()
+			else                                  -> null
+		}
 	}
 }

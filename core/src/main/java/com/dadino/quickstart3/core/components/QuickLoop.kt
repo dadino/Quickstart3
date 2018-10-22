@@ -35,25 +35,29 @@ class QuickLoop<STATE : State>(private val loopName: String,
 	var isConnected: Boolean = false
 		private set
 	private val actionToPerformOnConnect = arrayListOf<() -> Unit>()
+	var enableLogging = false
 
 	fun connect() {
 		state = start.startState
 
 		sideEffectHandlers.forEach { it.connectTo(eventRelay) }
 
-		eventRelay.doOnNext { Log.d(loopName, "<---- ${it.javaClass.simpleName}") }
-				.filter { it !is NoOpEvent }
+		eventRelay.filter { it !is NoOpEvent }
 				.toFlowable(BackpressureStrategy.BUFFER)
 				.startWith(InitializeState)
 				.map { event ->
-					Log.d(loopName, "Updating with Event: ${event.javaClass.simpleName}")
+					log { "______________________________________________" }
+					log { "IN: ${event.javaClass.simpleName}" }
 					if (event is InitializeState) {
 						start
 					} else {
 						update(state, event)
 					}
 				}
-				.doOnNext { Log.d(loopName, "----> Next: $it") }
+				.doOnNext {
+					log { "OUT: $it" }
+					log { "¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯" }
+				}
 				.toAsync()
 				.subscribeBy(onNext = { next ->
 					onNext(next)
@@ -122,6 +126,10 @@ class QuickLoop<STATE : State>(private val loopName: String,
 			}
 			if (handled.not()) throw SideEffectNotHandledException(sideEffect)
 		}
+	}
+
+	private fun log(createMessage: () -> String) {
+		if (enableLogging) Log.d(loopName, createMessage())
 	}
 
 	interface ConnectionCallbacks {

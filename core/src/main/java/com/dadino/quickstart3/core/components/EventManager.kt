@@ -14,7 +14,13 @@ class EventManager(lifecycleOwner: LifecycleOwner) : InteractionEventSource, Def
 		lifecycleOwner.lifecycle.addObserver(this)
 	}
 
-	var eventInterceptor: EventInterceptor? = null
+	var tag: String? = null
+		set(value) {
+			field = value
+			enableLogging = value != null
+		}
+	private var enableLogging = false
+	var eventTransformer: EventTransformer? = null
 	var eventCollection: Observable<Event>? = Observable.empty()
 
 	private var eventDisposable: Disposable? = null
@@ -22,12 +28,8 @@ class EventManager(lifecycleOwner: LifecycleOwner) : InteractionEventSource, Def
 	private val eventObservable: Observable<Event> by lazy {
 		Observable.merge(eventCollection, eventRelay)
 				.filter { it !is NoOpEvent }
-				.map {
-					if (eventInterceptor?.isLoggingEnabled == true) Log.d("Event", "Original: $it")
-					val intercepted = eventInterceptor?.intercept(it) ?: it
-					if (eventInterceptor?.isLoggingEnabled == true) Log.d("Event", "Intercepted: $it")
-					intercepted
-				}
+				.doOnNext { log { ">>> ${it.javaClass.simpleName} >>>" } }
+				.map { eventTransformer?.performTransform(it) ?: it }
 				.filter { it !is NoOpEvent }
 				.publish()
 				.refCount()
@@ -59,5 +61,10 @@ class EventManager(lifecycleOwner: LifecycleOwner) : InteractionEventSource, Def
 
 	override fun interactionEvents(): Observable<Event> {
 		return eventObservable
+	}
+
+
+	private fun log(createMessage: () -> String) {
+		if (enableLogging) Log.d(tag, createMessage())
 	}
 }

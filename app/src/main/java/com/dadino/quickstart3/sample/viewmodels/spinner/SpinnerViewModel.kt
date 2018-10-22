@@ -17,6 +17,7 @@ import com.dadino.quickstart3.sample.repositories.ISessionRepository
 class SpinnerViewModel constructor(private val sessionRepo: ISessionRepository) : BaseViewModel<SpinnerState>() {
 	init {
 		connect()
+		enableLogging(true)
 	}
 
 	override fun getStart() = Start.start(state = SpinnerState(), effects = listOf(SpinnerEffect.LoadSession))

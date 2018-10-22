@@ -17,6 +17,10 @@ abstract class BaseViewModel<STATE : State> : ViewModel(), QuickLoop.ConnectionC
 		).apply { connectionCallbacks = this@BaseViewModel }
 	}
 
+	protected fun enableLogging(enableLogging: Boolean) {
+		loop.enableLogging = enableLogging
+	}
+
 	protected fun connect() {
 		loop.connect()
 	}

@@ -23,7 +23,7 @@ interface SimpleInteractionEventSource : InteractionEventSource {
 		return Observable.empty()
 	}
 
-	fun setEventInterceptor(eventInterceptor: EventInterceptor) {
-		eventManager.eventInterceptor = eventInterceptor
+	fun setEventInterceptor(eventTransformer: EventTransformer) {
+		eventManager.eventTransformer = eventTransformer
 	}
 }
