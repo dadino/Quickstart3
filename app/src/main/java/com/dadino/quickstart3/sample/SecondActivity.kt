@@ -1,21 +1,21 @@
 package com.dadino.quickstart3.sample
 
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Lifecycle
 import com.dadino.quickstart3.core.BaseActivity
-import com.dadino.quickstart3.core.entities.Event
 import com.dadino.quickstart3.core.entities.Signal
 import com.dadino.quickstart3.core.entities.State
+import com.dadino.quickstart3.sample.fragments.SampleFragment
 import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerEvent
 import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerSignal
 import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerState
 import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.jakewharton.rxbinding2.view.clicks
-import io.reactivex.Observable
 import org.koin.android.architecture.ext.viewModel
 
 class SecondActivity : BaseActivity() {
@@ -24,11 +24,18 @@ class SecondActivity : BaseActivity() {
 
 	private val spinnerViewModel: SpinnerViewModel by viewModel()
 
-	override fun initViews() {
+	override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+		super.onCreate(savedInstanceState, persistentState)
 		setContentView(R.layout.activity_second)
 		setSupportActionBar(toolbar)
 
 		supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+		eventManager.eventCollection = fab.clicks().map {
+			SpinnerEvent.OnSaveSessionRequested("Second")
+		}
+
+		supportFragmentManager.beginTransaction().replace(R.id.fragment_container, SampleFragment()).commit()
 	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,12 +53,6 @@ class SecondActivity : BaseActivity() {
 	override fun renderState(state: State) {
 		when (state) {
 			is SpinnerState -> render(state)
-		}
-	}
-
-	override fun collectInteractionEvents(): Observable<Event> {
-		return fab.clicks().map {
-			SpinnerEvent.OnSaveSessionRequested("Second")
 		}
 	}
 

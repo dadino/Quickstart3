@@ -2,8 +2,6 @@ package com.dadino.quickstart3.core.components
 
 import androidx.lifecycle.ViewModel
 import com.dadino.quickstart3.core.entities.Event
-import com.dadino.quickstart3.core.entities.Next
-import com.dadino.quickstart3.core.entities.Start
 import com.dadino.quickstart3.core.entities.State
 
 abstract class BaseViewModel<STATE : State> : ViewModel(), QuickLoop.ConnectionCallbacks {
@@ -12,9 +10,12 @@ abstract class BaseViewModel<STATE : State> : ViewModel(), QuickLoop.ConnectionC
 		QuickLoop(
 				loopName = javaClass.simpleName,
 				sideEffectHandlers = getSideEffectHandlers(),
-				start = getStart(),
-				update = updateFunction()
+				updater = updater()
 		).apply { connectionCallbacks = this@BaseViewModel }
+	}
+
+	protected fun enableLogging(enableLogging: Boolean) {
+		loop.enableLogging = enableLogging
 	}
 
 	protected fun connect() {
@@ -38,9 +39,7 @@ abstract class BaseViewModel<STATE : State> : ViewModel(), QuickLoop.ConnectionC
 	fun states() = loop.states
 	fun signals() = loop.signals
 
-	abstract fun updateFunction(): (STATE, Event) -> Next<STATE>
-
-	abstract fun getStart(): Start<STATE>
+	abstract fun updater(): Updater<STATE>
 
 	abstract fun getSideEffectHandlers(): List<SideEffectHandler>
 }

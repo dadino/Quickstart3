@@ -15,7 +15,7 @@ import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerEvent
 import com.dadino.quickstart3.ui.adapters.BaseHolder
 import com.dadino.quickstart3.ui.adapters.BaseSpinnerAdapter
 import com.dadino.quickstart3.ui.widgets.LoadingSpinner
-import com.dadino.quickstart3.ui.widgets.OnItemSelected
+import com.dadino.quickstart3.ui.widgets.LoadingSpinnerEvent
 import io.reactivex.Observable
 
 
@@ -24,8 +24,8 @@ class ExampleSpinner : LoadingSpinner<ExampleData, ExampleDataSpinnerAdapter>, I
 	override fun interactionEvents(): Observable<Event> {
 		return super.interactionEvents().map {
 			when (it) {
-				is OnItemSelected -> SpinnerEvent.OnExampleDataSelected(selectedItem)
-				else              -> it
+				is LoadingSpinnerEvent.OnItemSelected -> SpinnerEvent.OnExampleDataSelected(selectedItem)
+				else                                  -> it
 			}
 		}
 	}

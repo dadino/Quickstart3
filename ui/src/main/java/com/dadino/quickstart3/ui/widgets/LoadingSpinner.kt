@@ -14,6 +14,7 @@ import com.dadino.quickstart3.ui.R
 import com.dadino.quickstart3.ui.adapters.BaseSpinnerAdapter
 import com.dadino.quickstart3.ui.utils.gone
 import com.dadino.quickstart3.ui.utils.visible
+import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.RxAdapterView
 import io.reactivex.Observable
 
@@ -99,20 +100,15 @@ abstract class LoadingSpinner<ITEM, T : BaseSpinnerAdapter<ITEM, *>> : FrameLayo
 			label.visibility = View.VISIBLE
 	}
 
-	fun setOnItemSelectedListener(listener: AdapterView.OnItemSelectedListener) {
-		spinner.onItemSelectedListener = listener
-	}
-
-	fun setOnRetryClickListener(listener: OnClickListener) {
-		retryAction.setOnClickListener(listener)
-	}
-
 	var selectedItem: ITEM? = null
+		private set
 		get() {
 			return adapter?.findItem(selection)
 		}
 
 	var transientSelectedPosition: Int = -1
+		private set
+
 	var selection: Int
 		get() = spinner.selectedItemPosition
 		set(position) {
@@ -141,20 +137,27 @@ abstract class LoadingSpinner<ITEM, T : BaseSpinnerAdapter<ITEM, *>> : FrameLayo
 
 
 	override fun interactionEvents(): Observable<Event> {
-		return RxAdapterView.itemSelections(spinner).map { position ->
-			when (position) {
-				transientSelectedPosition -> {
-					Log.d("Spinner", "New position is $position, old position is $transientSelectedPosition, DO NOT REACT")
-					NoOpEvent
-				}
-				else                      -> {
-					Log.d("Spinner", "New position is $position, old position is $transientSelectedPosition, REACT")
-					transientSelectedPosition = position
-					OnItemSelected
-				}
-			}
-		}
+		return Observable.merge(listOf(
+				RxAdapterView.itemSelections(spinner).map { position ->
+					when (position) {
+						transientSelectedPosition -> {
+							Log.d("Spinner", "New position is $position, old position is $transientSelectedPosition, DO NOT REACT")
+							NoOpEvent
+						}
+						else                      -> {
+							Log.d("Spinner", "New position is $position, old position is $transientSelectedPosition, REACT")
+							transientSelectedPosition = position
+							LoadingSpinnerEvent.OnItemSelected
+						}
+					}
+				},
+				retryAction.clicks().map { LoadingSpinnerEvent.OnRetryClicked })
+		)
 	}
 }
 
-object OnItemSelected : Event()
+sealed class LoadingSpinnerEvent {
+
+	object OnItemSelected : Event()
+	object OnRetryClicked : Event()
+}

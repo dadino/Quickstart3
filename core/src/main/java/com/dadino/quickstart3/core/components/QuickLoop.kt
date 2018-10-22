@@ -10,9 +10,8 @@ import io.reactivex.rxkotlin.subscribeBy
 
 
 class QuickLoop<STATE : State>(private val loopName: String,
-							   private val start: Start<STATE>,
-							   private val sideEffectHandlers: List<SideEffectHandler> = arrayListOf(),
-							   private val update: (STATE, Event) -> Next<STATE>
+							   private val updater: Updater<STATE>,
+							   private val sideEffectHandlers: List<SideEffectHandler> = arrayListOf()
 ) {
 	private lateinit var state: STATE
 
@@ -35,25 +34,17 @@ class QuickLoop<STATE : State>(private val loopName: String,
 	var isConnected: Boolean = false
 		private set
 	private val actionToPerformOnConnect = arrayListOf<() -> Unit>()
+	var enableLogging = false
 
 	fun connect() {
-		state = start.startState
+		state = updater.start().startState
 
 		sideEffectHandlers.forEach { it.connectTo(eventRelay) }
 
-		eventRelay.doOnNext { Log.d(loopName, "<---- ${it.javaClass.simpleName}") }
+		eventRelay.filter { it !is NoOpEvent }
 				.toFlowable(BackpressureStrategy.BUFFER)
 				.startWith(InitializeState)
-				.map { event ->
-					Log.d(loopName, "Updating with Event: ${event.javaClass.simpleName}")
-					if (event is InitializeState) {
-
-						start
-					} else {
-						update(state, event)
-					}
-				}
-				.doOnNext { Log.d(loopName, "----> Next: $it") }
+				.map { event -> updater.internalUpdate(state, event) }
 				.toAsync()
 				.subscribeBy(onNext = { next ->
 					onNext(next)
@@ -122,6 +113,10 @@ class QuickLoop<STATE : State>(private val loopName: String,
 			}
 			if (handled.not()) throw SideEffectNotHandledException(sideEffect)
 		}
+	}
+
+	private fun log(createMessage: () -> String) {
+		if (enableLogging) Log.d(loopName, createMessage())
 	}
 
 	interface ConnectionCallbacks {
