@@ -12,10 +12,10 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 
 abstract class BaseActivity : AppCompatActivity(), DisposableLifecycleHolder {
-	protected val eventManager: EventManager by lazy { EventManager(this) }
+	protected val eventManager: EventManager = EventManager()
 
-	abstract fun renderState(state: State)
-	abstract fun respondTo(signal: Signal)
+	open fun renderState(state: State) {}
+	open fun respondTo(signal: Signal) {}
 
 	protected fun <S : State, T : BaseViewModel<S>> attachViewModel(viewModel: T, minimumState: Lifecycle.State = Lifecycle.State.RESUMED) {
 		attachToLifecycle(viewModel, minimumState)

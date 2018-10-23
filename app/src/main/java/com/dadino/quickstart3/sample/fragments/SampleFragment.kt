@@ -23,7 +23,7 @@ class SampleFragment : BaseFragment() {
 		super.onViewCreated(view, savedInstanceState)
 		sampleButton = view.findViewById(R.id.sample_button)
 
-		eventManager.eventCollection = sampleButton.clicks().map { SpinnerEvent.OnSpinnerIdleClicked() }
+		eventManager.attachEventSource(sampleButton.clicks().map { SpinnerEvent.OnSpinnerIdleClicked() })
 	}
 
 	override fun renderState(state: State) {

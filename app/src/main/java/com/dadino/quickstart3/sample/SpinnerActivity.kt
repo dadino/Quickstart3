@@ -49,7 +49,7 @@ class SpinnerActivity : BaseActivity() {
 		attachViewModel(counterViewModel, Lifecycle.State.RESUMED)
 		counterViewModel.receiveEvent(CounterEvent.SetCounter(100))
 
-		eventManager.eventCollection = Observable.merge(listOf(
+		eventManager.attachEventSource(Observable.merge(listOf(
 				idle.clicks().map { SpinnerEvent.OnSpinnerIdleClicked() },
 				loading.clicks().map { SpinnerEvent.OnSpinnerLoadingClicked() },
 				error.clicks().map { SpinnerEvent.OnSpinnerErrorClicked() },
@@ -59,7 +59,7 @@ class SpinnerActivity : BaseActivity() {
 				counterButton.clicks().map { CounterEvent.OnAdvanceCounterClicked },
 				counterStateButton.clicks().map { CounterEvent.OnShowCounterStateClicked },
 				spinner.interactionEvents()
-		))
+		)))
 		eventManager.eventTransformer = SpinnerTransformer()
 		eventManager.tag = "SpinnerEventManager"
 	}

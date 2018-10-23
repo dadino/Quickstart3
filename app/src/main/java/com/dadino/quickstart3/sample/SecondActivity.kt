@@ -31,9 +31,9 @@ class SecondActivity : BaseActivity() {
 
 		supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-		eventManager.eventCollection = fab.clicks().map {
+		eventManager.attachEventSource(fab.clicks().map {
 			SpinnerEvent.OnSaveSessionRequested("Second")
-		}
+		})
 
 		supportFragmentManager.beginTransaction().replace(R.id.fragment_container, SampleFragment()).commit()
 	}
