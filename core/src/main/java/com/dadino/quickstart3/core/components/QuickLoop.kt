@@ -8,6 +8,7 @@ import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 
 
@@ -15,14 +16,22 @@ class QuickLoop<STATE : State>(private val loopName: String,
 							   private val updater: Updater<STATE>,
 							   private val sideEffectHandlers: List<SideEffectHandler> = arrayListOf()
 ) {
-	private lateinit var state: STATE
+	private var state: STATE = updater.start().startState
 
 	private val eventSourcesCompositeDisposable = CompositeDisposable()
 
-	private val eventRelay: PublishRelay<Event> by lazy { PublishRelay.create<Event>() }
-	private val stateRelay: PublishRelay<STATE> by lazy { PublishRelay.create<STATE>() }
-	private val signalRelay: PublishRelay<Signal> by lazy { PublishRelay.create<Signal>() }
 
+	private val eventRelay: PublishRelay<Event> = PublishRelay.create<Event>()
+	private val internalDisposable: Disposable = eventRelay.filter { it !is NoOpEvent }
+			.toFlowable(BackpressureStrategy.BUFFER)
+			.startWith(InitializeState)
+			.map { event -> updater.internalUpdate(state, event) }
+			.toAsync()
+			.subscribeBy(onNext = { next ->
+				onNext(next)
+			})
+
+	private val stateRelay: PublishRelay<STATE> by lazy { PublishRelay.create<STATE>() }
 	val states: Flowable<STATE>  by lazy {
 		stateRelay.toFlowable(BackpressureStrategy.LATEST)
 				.distinctUntilChanged()
@@ -30,43 +39,17 @@ class QuickLoop<STATE : State>(private val loopName: String,
 				.autoConnect(0)
 	}
 
+	private val signalRelay: PublishRelay<Signal> by lazy { PublishRelay.create<Signal>() }
 	val signals: Flowable<Signal>  by lazy {
 		signalRelay.toFlowable(BackpressureStrategy.BUFFER)
 	}
 
-	var connectionCallbacks: ConnectionCallbacks? = null
-	var isConnected: Boolean = false
-		private set
 	private val actionToPerformOnConnect = arrayListOf<() -> Unit>()
 	var enableLogging = false
 
-	fun connect() {
-		state = updater.start().startState
-
-		sideEffectHandlers.forEach { it.connectTo(eventRelay) }
-
-		eventRelay.filter { it !is NoOpEvent }
-				.toFlowable(BackpressureStrategy.BUFFER)
-				.startWith(InitializeState)
-				.map { event -> updater.internalUpdate(state, event) }
-				.toAsync()
-				.subscribeBy(onNext = { next ->
-					onNext(next)
-				})
-
-
-	}
-
 	fun disconnect() {
-		sideEffectHandlers.forEach { it.dispose() }
-
-		isConnected = false
+		internalDisposable.dispose()
 		eventSourcesCompositeDisposable.clear()
-		connectionCallbacks?.onLoopDisconnected()
-	}
-
-	fun doOnConnect(action: () -> Unit) {
-		actionToPerformOnConnect.add(action)
 	}
 
 	fun currentState(): STATE {
@@ -74,8 +57,7 @@ class QuickLoop<STATE : State>(private val loopName: String,
 	}
 
 	fun receiveEvent(event: Event) {
-		if (isConnected) eventRelay.accept(event)
-		else doOnConnect { eventRelay.accept(event) }
+		eventRelay.accept(event)
 	}
 
 	fun attachEventSource(eventObservable: Observable<Event>) {
@@ -95,10 +77,6 @@ class QuickLoop<STATE : State>(private val loopName: String,
 		}
 
 		if (next is Start<STATE>) {
-			isConnected = true
-
-			connectionCallbacks?.onLoopConnected()
-
 			actionToPerformOnConnect.forEach { it() }
 			actionToPerformOnConnect.clear()
 		}
@@ -116,20 +94,20 @@ class QuickLoop<STATE : State>(private val loopName: String,
 		sideEffects.forEach { sideEffect ->
 			var handled = false
 			for (handler in sideEffectHandlers) {
-				handled = handler.handle(sideEffect)
-				if (handled) break
+				val o = handler.createObservable(sideEffect)
+				if (o != null) {
+					attachEventSource(o)
+					handled = true
+					break
+				}
 			}
+
 			if (handled.not()) throw SideEffectNotHandledException(sideEffect)
 		}
 	}
 
 	private fun log(createMessage: () -> String) {
 		if (enableLogging) Log.d(loopName, createMessage())
-	}
-
-	interface ConnectionCallbacks {
-		fun onLoopConnected()
-		fun onLoopDisconnected()
 	}
 }
 

@@ -5,27 +5,19 @@ import com.dadino.quickstart3.core.entities.Event
 import com.dadino.quickstart3.core.entities.State
 import io.reactivex.Observable
 
-abstract class BaseViewModel<STATE : State> : ViewModel(), QuickLoop.ConnectionCallbacks {
+abstract class BaseViewModel<STATE : State> : ViewModel() {
 
 	private val loop: QuickLoop<STATE> by lazy {
 		QuickLoop(
 				loopName = javaClass.simpleName,
 				sideEffectHandlers = getSideEffectHandlers(),
 				updater = updater()
-		).apply { connectionCallbacks = this@BaseViewModel }
+		)
 	}
 
 	protected fun enableLogging(enableLogging: Boolean) {
 		loop.enableLogging = enableLogging
 	}
-
-	protected fun connect() {
-		loop.connect()
-	}
-
-	override fun onLoopConnected() {}
-
-	override fun onLoopDisconnected() {}
 
 	override fun onCleared() {
 		super.onCleared()

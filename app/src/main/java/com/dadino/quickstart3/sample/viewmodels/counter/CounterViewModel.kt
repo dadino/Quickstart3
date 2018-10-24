@@ -17,9 +17,6 @@ import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerSignal
 
 
 class CounterViewModel : BaseViewModel<CounterState>() {
-	init {
-		connect()
-	}
 
 	override fun updater(): Updater<CounterState> {
 		return CounterUpdater()
@@ -33,7 +30,7 @@ data class CounterState(
 
 class CounterUpdater : Updater<CounterState>() {
 	override fun start(): Start<CounterState> {
-		return start(CounterState())
+		return start(CounterState(counter = 150))
 	}
 
 	override fun update(previous: CounterState, event: Event): Next<CounterState> {

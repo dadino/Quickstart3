@@ -36,6 +36,12 @@ class EventManager : InteractionEventSource, DefaultLifecycleObserver {
 		compositeDisposable.add(events.subscribe(eventRelay))
 	}
 
+	fun attachEventSources(events: List<Observable<Event>>) {
+		events.forEach {
+			compositeDisposable.add(it.subscribe(eventRelay))
+		}
+	}
+
 	fun receiveEvent(event: Event) {
 		eventRelay.accept(event)
 	}
