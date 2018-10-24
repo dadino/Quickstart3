@@ -3,6 +3,7 @@ package com.dadino.quickstart3.core.components
 import androidx.lifecycle.ViewModel
 import com.dadino.quickstart3.core.entities.Event
 import com.dadino.quickstart3.core.entities.State
+import io.reactivex.Observable
 
 abstract class BaseViewModel<STATE : State> : ViewModel(), QuickLoop.ConnectionCallbacks {
 
@@ -33,6 +34,10 @@ abstract class BaseViewModel<STATE : State> : ViewModel(), QuickLoop.ConnectionC
 
 	fun receiveEvent(event: Event) {
 		loop.receiveEvent(event)
+	}
+
+	fun attachEventSource(eventObservable: Observable<Event>) {
+		loop.attachEventSource(eventObservable)
 	}
 
 	fun currentState() = loop.currentState()

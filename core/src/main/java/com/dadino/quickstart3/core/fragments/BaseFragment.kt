@@ -19,6 +19,7 @@ abstract class BaseFragment : Fragment(), DisposableLifecycleHolder {
 	open fun respondTo(signal: Signal) {}
 
 	protected fun <S : State, T : BaseViewModel<S>> attachViewModel(viewModel: T, minimumState: Lifecycle.State = Lifecycle.State.RESUMED) {
+		viewModel.attachEventSource(eventManager.interactionEvents())
 		attachToLifecycle(viewModel, minimumState)
 	}
 
@@ -27,17 +28,14 @@ abstract class BaseFragment : Fragment(), DisposableLifecycleHolder {
 			Lifecycle.State.RESUMED -> {
 				attachDisposableToResumePause { viewModel.states().subscribeBy(onNext = { renderState(it) }) }
 				attachDisposableToResumePause { viewModel.signals().subscribeBy(onNext = { respondTo(it) }) }
-				attachDisposableToResumePause { eventManager.interactionEvents().subscribeBy(onNext = { viewModel.receiveEvent(it) }) }
 			}
 			Lifecycle.State.STARTED -> {
 				attachDisposableToStartStop { viewModel.states().subscribeBy(onNext = { renderState(it) }) }
 				attachDisposableToStartStop { viewModel.signals().subscribeBy(onNext = { respondTo(it) }) }
-				attachDisposableToStartStop { eventManager.interactionEvents().subscribeBy(onNext = { viewModel.receiveEvent(it) }) }
 			}
 			Lifecycle.State.CREATED -> {
 				attachDisposableToCreateDestroy { viewModel.states().subscribeBy(onNext = { renderState(it) }) }
 				attachDisposableToCreateDestroy { viewModel.signals().subscribeBy(onNext = { respondTo(it) }) }
-				attachDisposableToCreateDestroy { eventManager.interactionEvents().subscribeBy(onNext = { viewModel.receiveEvent(it) }) }
 			}
 			else                    -> throw RuntimeException("minimumState $minimumState not supported")
 		}

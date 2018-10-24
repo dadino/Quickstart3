@@ -6,6 +6,8 @@ import com.dadino.quickstart3.core.utils.toAsync
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
+import io.reactivex.Observable
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 
 
@@ -14,6 +16,8 @@ class QuickLoop<STATE : State>(private val loopName: String,
 							   private val sideEffectHandlers: List<SideEffectHandler> = arrayListOf()
 ) {
 	private lateinit var state: STATE
+
+	private val eventSourcesCompositeDisposable = CompositeDisposable()
 
 	private val eventRelay: PublishRelay<Event> by lazy { PublishRelay.create<Event>() }
 	private val stateRelay: PublishRelay<STATE> by lazy { PublishRelay.create<STATE>() }
@@ -57,7 +61,7 @@ class QuickLoop<STATE : State>(private val loopName: String,
 		sideEffectHandlers.forEach { it.dispose() }
 
 		isConnected = false
-
+		eventSourcesCompositeDisposable.clear()
 		connectionCallbacks?.onLoopDisconnected()
 	}
 
@@ -72,6 +76,10 @@ class QuickLoop<STATE : State>(private val loopName: String,
 	fun receiveEvent(event: Event) {
 		if (isConnected) eventRelay.accept(event)
 		else doOnConnect { eventRelay.accept(event) }
+	}
+
+	fun attachEventSource(eventObservable: Observable<Event>) {
+		eventSourcesCompositeDisposable.add(eventObservable.subscribe(eventRelay))
 	}
 
 	private fun onNext(next: Next<STATE>) {
