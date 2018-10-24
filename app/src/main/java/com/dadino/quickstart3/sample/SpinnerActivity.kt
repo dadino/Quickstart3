@@ -47,7 +47,6 @@ class SpinnerActivity : BaseActivity() {
 
 		attachViewModel(spinnerViewModel)
 		attachViewModel(counterViewModel, Lifecycle.State.RESUMED)
-		counterViewModel.receiveEvent(CounterEvent.SetCounter(100))
 
 		eventManager.attachEventSource(Observable.merge(listOf(
 				idle.clicks().map { SpinnerEvent.OnSpinnerIdleClicked() },
@@ -62,6 +61,8 @@ class SpinnerActivity : BaseActivity() {
 		)))
 		eventManager.eventTransformer = SpinnerTransformer()
 		eventManager.tag = "SpinnerEventManager"
+
+		//eventManager.receiveEvent(CounterEvent.SetCounter(100))
 	}
 
 	override fun renderState(state: State) {
