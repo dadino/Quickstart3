@@ -20,7 +20,7 @@ import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerState
 import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerViewModel
 import com.dadino.quickstart3.sample.widgets.ExampleSpinner
 import com.dadino.quickstart3.ui.widgets.LoadingSpinnerEvent
-import com.jakewharton.rxbinding2.view.clicks
+import com.jakewharton.rxbinding3.view.clicks
 import io.reactivex.Observable
 import org.koin.android.architecture.ext.viewModel
 

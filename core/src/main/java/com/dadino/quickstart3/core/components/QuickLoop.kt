@@ -26,6 +26,12 @@ class QuickLoop<STATE : State>(private val loopName: String,
 			.toFlowable(BackpressureStrategy.BUFFER)
 			.startWith(InitializeState)
 			.map { event -> updater.internalUpdate(state, event) }
+			.map { next ->
+				if (next.state != null) {
+					state = next.state
+				}
+				next
+			}
 			.toAsync()
 			.subscribeBy(onNext = { next ->
 				onNext(next)
@@ -66,7 +72,6 @@ class QuickLoop<STATE : State>(private val loopName: String,
 
 	private fun onNext(next: Next<STATE>) {
 		if (next.state != null) {
-			state = next.state
 			propagateState(state)
 		}
 		if (next.signals.isNotEmpty()) {
