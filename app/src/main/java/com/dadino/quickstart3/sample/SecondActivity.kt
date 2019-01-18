@@ -15,7 +15,7 @@ import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerSignal
 import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerState
 import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.jakewharton.rxbinding2.view.clicks
+import com.jakewharton.rxbinding3.view.clicks
 import org.koin.android.architecture.ext.viewModel
 
 class SecondActivity : BaseActivity() {
