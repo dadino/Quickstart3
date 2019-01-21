@@ -1,7 +1,8 @@
 package com.dadino.quickstart3.core.components
 
+import com.dadino.quickstart3.core.entities.Error
+
 
 interface ErrorHandler {
-	fun formatError(error: Throwable?): String
-	fun getCustomErrorCode(error: Throwable?): Int
+	fun getError(error: Throwable?): Error
 }
