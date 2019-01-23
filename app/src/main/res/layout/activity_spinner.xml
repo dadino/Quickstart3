@@ -110,22 +110,42 @@
 
     <Button
         android:id="@+id/example_data_counter"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/example_data_save_session"
+        app:layout_constraintEnd_toStartOf="@+id/example_data_counter_delayed"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="3" />
+
+    <ImageButton
+        android:id="@+id/example_data_counter_delayed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/_16dp"
-        android:text="Counter"
-        app:layout_constraintBottom_toTopOf="@+id/example_data_save_session"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@+id/example_data_counter"
+        app:layout_constraintEnd_toStartOf="@+id/example_data_counter_state"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/example_data_counter"
+        app:layout_constraintTop_toTopOf="@+id/example_data_counter"
+        app:srcCompat="@drawable/ic_arrow_upward_black_24dp"
+        tools:text="34" />
 
     <Button
         android:id="@+id/example_data_counter_state"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:text="Counter state"
-        app:layout_constraintBaseline_toBaselineOf="@+id/example_data_counter"
-        app:layout_constraintStart_toEndOf="@+id/example_data_counter" />
+        app:layout_constraintBottom_toBottomOf="@+id/example_data_counter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/example_data_counter_delayed"
+        app:layout_constraintTop_toTopOf="@+id/example_data_counter" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier"

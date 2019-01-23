@@ -1,7 +1,6 @@
 package com.dadino.quickstart3.sample.viewmodels.counter
 
 import com.dadino.quickstart3.core.components.BaseViewModel
-import com.dadino.quickstart3.core.components.SideEffectHandler
 import com.dadino.quickstart3.core.components.Updater
 import com.dadino.quickstart3.core.entities.Event
 import com.dadino.quickstart3.core.entities.Next
@@ -22,7 +21,10 @@ class CounterViewModel : BaseViewModel<CounterState>() {
 		return CounterUpdater()
 	}
 
-	override fun getSideEffectHandlers() = listOf<SideEffectHandler>(AdvanceCounterSideEffectHandler())
+	override fun getSideEffectHandlers() = listOf(
+			AdvanceCounterSideEffectHandler(),
+			DelayedAdvanceCounterSideEffectHandler()
+	)
 }
 
 data class CounterState(
@@ -35,11 +37,12 @@ class CounterUpdater : Updater<CounterState>() {
 
 	override fun update(previous: CounterState, event: Event): Next<CounterState> {
 		return when (event) {
-			is CounterEvent.SetCounter                -> justState(previous.copy(counter = event.newCounter))
-			is CounterEvent.OnAdvanceCounterClicked   -> justEffect(CounterEffect.AdvanceCounter(previous.counter, 1))
-			is CounterEvent.OnShowCounterStateClicked -> justSignal(CounterSignal.ShowCounterState(previous.counter))
-			is OnGoToSecondPageClicked                -> justSignal(SpinnerSignal.OpenSecondActivity)
-			else                                      -> noChanges()
+			is CounterEvent.SetCounter                     -> justState(previous.copy(counter = event.newCounter))
+			is CounterEvent.OnAdvanceCounterClicked        -> justEffect(CounterEffect.AdvanceCounter(previous.counter, 1))
+			is CounterEvent.OnDelayedAdvanceCounterClicked -> justEffect(CounterEffect.DelayedAdvanceCounter(previous.counter, 1))
+			is CounterEvent.OnShowCounterStateClicked      -> justSignal(CounterSignal.ShowCounterState(previous.counter))
+			is OnGoToSecondPageClicked                     -> justSignal(SpinnerSignal.OpenSecondActivity)
+			else                                           -> noChanges()
 		}
 	}
 
