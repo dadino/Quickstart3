@@ -70,6 +70,10 @@ class QuickLoop<STATE : State>(private val loopName: String,
 		eventSourcesCompositeDisposable.add(eventObservable.subscribe(eventRelay))
 	}
 
+	fun attachEventSource(eventDisposable: Disposable) {
+		eventSourcesCompositeDisposable.add(eventDisposable)
+	}
+
 	private fun onNext(next: Next<STATE>) {
 		if (next.state != null) {
 			propagateState(state)
@@ -99,9 +103,9 @@ class QuickLoop<STATE : State>(private val loopName: String,
 		sideEffects.forEach { sideEffect ->
 			var handled = false
 			for (handler in sideEffectHandlers) {
-				val o = handler.createObservable(sideEffect)
-				if (o != null) {
-					attachEventSource(o)
+				val disposable = handler.createObservable(eventRelay, sideEffect)
+				if (disposable != null) {
+					attachEventSource(disposable)
 					handled = true
 					break
 				}
