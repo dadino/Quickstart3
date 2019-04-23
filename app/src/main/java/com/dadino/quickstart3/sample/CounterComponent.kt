@@ -15,7 +15,7 @@ import com.dadino.quickstart3.core.entities.VMStarter
 import com.dadino.quickstart3.sample.viewmodels.counter.CounterSignal
 import com.dadino.quickstart3.sample.viewmodels.counter.CounterState
 import com.dadino.quickstart3.sample.viewmodels.counter.CounterViewModel
-import org.koin.android.architecture.ext.viewModel
+import org.koin.android.viewmodel.ext.android.viewModel
 
 
 class CounterComponent(lifecycleOwner: LifecycleOwner, context: Context) : SignalResponder, StateRenderer, ViewModelAttacher {

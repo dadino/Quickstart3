@@ -16,7 +16,7 @@ import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerState
 import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.jakewharton.rxbinding3.view.clicks
-import org.koin.android.architecture.ext.viewModel
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class SecondActivity : BaseActivity() {
 	private val toolbar: Toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }

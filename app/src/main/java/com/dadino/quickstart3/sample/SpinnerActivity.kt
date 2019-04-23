@@ -23,7 +23,7 @@ import com.dadino.quickstart3.sample.widgets.ExampleSpinner
 import com.dadino.quickstart3.ui.widgets.LoadingSpinnerEvent
 import com.jakewharton.rxbinding3.view.clicks
 import io.reactivex.Observable
-import org.koin.android.architecture.ext.viewModel
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class SpinnerActivity : BaseActivity() {
 
