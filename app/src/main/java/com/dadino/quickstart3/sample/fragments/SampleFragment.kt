@@ -10,7 +10,7 @@ import com.dadino.quickstart3.core.entities.State
 import com.dadino.quickstart3.core.fragments.BaseFragment
 import com.dadino.quickstart3.sample.R
 import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerEvent
-import com.jakewharton.rxbinding2.view.clicks
+import com.jakewharton.rxbinding3.view.clicks
 
 
 class SampleFragment : BaseFragment() {
@@ -23,7 +23,7 @@ class SampleFragment : BaseFragment() {
 		super.onViewCreated(view, savedInstanceState)
 		sampleButton = view.findViewById(R.id.sample_button)
 
-		eventManager.eventCollection = sampleButton.clicks().map { SpinnerEvent.OnSpinnerIdleClicked() }
+		eventManager.attachEventSource(sampleButton.clicks().map { SpinnerEvent.OnSpinnerIdleClicked() })
 	}
 
 	override fun renderState(state: State) {

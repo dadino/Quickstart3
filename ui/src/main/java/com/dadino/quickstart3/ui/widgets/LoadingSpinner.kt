@@ -14,8 +14,8 @@ import com.dadino.quickstart3.ui.R
 import com.dadino.quickstart3.ui.adapters.BaseSpinnerAdapter
 import com.dadino.quickstart3.ui.utils.gone
 import com.dadino.quickstart3.ui.utils.visible
-import com.jakewharton.rxbinding2.view.clicks
-import com.jakewharton.rxbinding2.widget.RxAdapterView
+import com.jakewharton.rxbinding3.view.clicks
+import com.jakewharton.rxbinding3.widget.itemSelections
 import io.reactivex.Observable
 
 abstract class LoadingSpinner<ITEM, T : BaseSpinnerAdapter<ITEM, *>> : FrameLayout, InteractionEventSource {
@@ -138,7 +138,7 @@ abstract class LoadingSpinner<ITEM, T : BaseSpinnerAdapter<ITEM, *>> : FrameLayo
 
 	override fun interactionEvents(): Observable<Event> {
 		return Observable.merge(listOf(
-				RxAdapterView.itemSelections(spinner).map { position ->
+				spinner.itemSelections().map { position ->
 					when (position) {
 						transientSelectedPosition -> {
 							Log.d("Spinner", "New position is $position, old position is $transientSelectedPosition, DO NOT REACT")

@@ -12,7 +12,7 @@ import com.google.android.material.snackbar.Snackbar
 object ErrorSnackbar {
 
 	fun showErrorSnackbar(view: View, throwable: Throwable?, errorHandler: ErrorHandler, duration: Int = Snackbar.LENGTH_LONG, @StringRes actionLabel: Int = 0, action: (() -> Unit)? = null) {
-		val errorMessageForUser = errorHandler.formatError(throwable)
+		val errorMessageForUser = errorHandler.getError(throwable).format(view.context)
 		val snackbar = Snackbar.make(view, errorMessageForUser, duration)
 		if (action != null) {
 			snackbar.setAction(actionLabel) { action() }

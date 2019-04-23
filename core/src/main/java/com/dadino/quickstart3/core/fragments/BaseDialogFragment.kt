@@ -1,56 +1,32 @@
 package com.dadino.quickstart3.core.fragments
 
+import android.os.Bundle
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.Lifecycle
-import com.dadino.quickstart3.core.components.BaseViewModel
-import com.dadino.quickstart3.core.components.DisposableLifecycleHolder
+import com.dadino.quickstart3.core.components.AttachedComponent
+import com.dadino.quickstart3.core.components.AttachedComponentController
 import com.dadino.quickstart3.core.components.EventManager
 import com.dadino.quickstart3.core.entities.Signal
 import com.dadino.quickstart3.core.entities.State
-import com.dadino.quickstart3.core.utils.DisposableLifecycle
-import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.subscribeBy
+import com.dadino.quickstart3.core.entities.VMStarter
 
-abstract class BaseDialogFragment : DialogFragment(), DisposableLifecycleHolder {
-	protected val eventManager: EventManager by lazy { EventManager(this) }
+abstract class BaseDialogFragment : DialogFragment() {
 
-	abstract fun renderState(state: State)
-	abstract fun respondTo(signal: Signal)
-
-	protected fun <S : State, T : BaseViewModel<S>> attachViewModel(viewModel: T, minimumState: Lifecycle.State = Lifecycle.State.RESUMED) {
-		attachToLifecycle(viewModel, minimumState)
+	protected val eventManager: EventManager = EventManager()
+	protected val components: AttachedComponentController by lazy {
+		AttachedComponentController(lifecycleOwner = this,
+				eventManager = eventManager,
+				renderFun = { state -> renderState(state) },
+				respondFun = { signal -> respondTo(signal) })
 	}
 
-	private fun <S : State, T : BaseViewModel<S>> attachToLifecycle(viewModel: T, minimumState: Lifecycle.State) {
-		when (minimumState) {
-			Lifecycle.State.RESUMED -> {
-				attachDisposableToResumePause { viewModel.states().subscribeBy(onNext = { renderState(it) }) }
-				attachDisposableToResumePause { viewModel.signals().subscribeBy(onNext = { respondTo(it) }) }
-				attachDisposableToResumePause { eventManager.interactionEvents().subscribeBy(onNext = { viewModel.receiveEvent(it) }) }
-			}
-			Lifecycle.State.STARTED -> {
-				attachDisposableToStartStop { viewModel.states().subscribeBy(onNext = { renderState(it) }) }
-				attachDisposableToStartStop { viewModel.signals().subscribeBy(onNext = { respondTo(it) }) }
-				attachDisposableToStartStop { eventManager.interactionEvents().subscribeBy(onNext = { viewModel.receiveEvent(it) }) }
-			}
-			Lifecycle.State.CREATED -> {
-				attachDisposableToCreateDestroy { viewModel.states().subscribeBy(onNext = { renderState(it) }) }
-				attachDisposableToCreateDestroy { viewModel.signals().subscribeBy(onNext = { respondTo(it) }) }
-				attachDisposableToCreateDestroy { eventManager.interactionEvents().subscribeBy(onNext = { viewModel.receiveEvent(it) }) }
-			}
-			else                    -> throw RuntimeException("minimumState $minimumState not supported")
-		}
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+		components.addComponents(components())
+		components.attachViewModels(viewModels())
 	}
 
-	override fun attachDisposableToCreateDestroy(createDisposable: () -> Disposable) {
-		DisposableLifecycle.attachAtCreateDetachAtDestroy(this, createDisposable)
-	}
-
-	override fun attachDisposableToStartStop(createDisposable: () -> Disposable) {
-		DisposableLifecycle.attachAtStartDetachAtStop(this, createDisposable)
-	}
-
-	override fun attachDisposableToResumePause(createDisposable: () -> Disposable) {
-		DisposableLifecycle.attachAtResumeDetachAtPause(this, createDisposable)
-	}
+	open fun components(): List<AttachedComponent> = listOf()
+	open fun viewModels(): List<VMStarter> = listOf()
+	open fun renderState(state: State) {}
+	open fun respondTo(signal: Signal) {}
 }

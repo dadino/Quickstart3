@@ -18,7 +18,6 @@ import com.dadino.quickstart3.sample.repositories.ISessionRepository
 
 class SpinnerViewModel constructor(private val sessionRepo: ISessionRepository) : BaseViewModel<SpinnerState>() {
 	init {
-		connect()
 		enableLogging(true)
 	}
 
