@@ -56,6 +56,7 @@ class QuickLoop<STATE : State>(private val loopName: String,
 	fun disconnect() {
 		internalDisposable.dispose()
 		eventSourcesCompositeDisposable.clear()
+		sideEffectHandlers.forEach { it.onClear() }
 	}
 
 	fun currentState(): STATE {

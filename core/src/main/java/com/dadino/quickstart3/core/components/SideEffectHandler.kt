@@ -7,21 +7,24 @@ import io.reactivex.Flowable
 import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
 
 interface SideEffectHandler {
 	fun createObservable(eventRelay: Relay<Event>, effect: SideEffect): Disposable?
+	fun onClear()
 }
 
 
 abstract class RxSingleSideEffectHandler<E : SideEffect>(
 		private val disposeOnNewEffect: Boolean = false,
+		private val disposeOnClear: Boolean = true,
 		private val subscribeOn: Scheduler = Schedulers.io(),
 		private val observeOn: Scheduler = AndroidSchedulers.mainThread())
 	: SideEffectHandler {
-	private var internalDisposable: Disposable? = null
+	private var compositeDisposable: CompositeDisposable = CompositeDisposable()
 	override fun createObservable(eventRelay: Relay<Event>, effect: SideEffect): Disposable? {
 		val disposable = if (checkClass(effect)) {
 			effectToFlowable(effect as E)
@@ -34,10 +37,10 @@ abstract class RxSingleSideEffectHandler<E : SideEffect>(
 		}
 
 		if (disposable != null) {
-			if (disposeOnNewEffect && internalDisposable?.isDisposed?.not() == true) {
-				internalDisposable?.dispose()
+			if (disposeOnNewEffect) {
+				compositeDisposable.clear()
 			}
-			internalDisposable = disposable
+			compositeDisposable.add(disposable)
 		}
 		return disposable
 	}
@@ -45,12 +48,20 @@ abstract class RxSingleSideEffectHandler<E : SideEffect>(
 	abstract fun checkClass(effect: SideEffect): Boolean
 
 	protected abstract fun effectToFlowable(effect: E): Flowable<Event>
+
+	override fun onClear() {
+		if (disposeOnClear) compositeDisposable.clear()
+	}
 }
 
-abstract class SingleSideEffectHandler<E : SideEffect>
-	: SideEffectHandler {
+abstract class SingleSideEffectHandler<E : SideEffect>(
+		private val disposeOnNewEffect: Boolean = true,
+		private val disposeOnClear: Boolean = true
+) : SideEffectHandler {
+	private var compositeDisposable: CompositeDisposable = CompositeDisposable()
+
 	override fun createObservable(eventRelay: Relay<Event>, effect: SideEffect): Disposable? {
-		return if (checkClass(effect)) {
+		val disposable = if (checkClass(effect)) {
 			Single.fromCallable {
 				effectToEvent(effect as E)
 			}
@@ -59,10 +70,20 @@ abstract class SingleSideEffectHandler<E : SideEffect>
 		} else {
 			null
 		}
+
+		if (disposable != null) {
+			if (disposeOnNewEffect) {
+				compositeDisposable.clear()
+			}
+			compositeDisposable.add(disposable)
+		}
+		return disposable
 	}
 
 	abstract fun checkClass(effect: SideEffect): Boolean
 
 	protected abstract fun effectToEvent(effect: E): Event
-
+	override fun onClear() {
+		if (disposeOnClear) compositeDisposable.clear()
+	}
 }
