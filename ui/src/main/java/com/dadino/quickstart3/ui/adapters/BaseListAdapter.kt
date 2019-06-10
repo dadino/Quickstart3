@@ -2,22 +2,53 @@ package com.dadino.quickstart3.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import io.reactivex.Single
+import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.subscribeBy
 
 abstract class BaseListAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : BaseAdapter<ITEM, HOLDER>() {
 
 	protected var layoutInflater: LayoutInflater? = null
 
 	var items: List<ITEM>? = null
-		set(items) {
+		private set(items) {
 			field = items
 			count = NOT_COUNTED
-			notifyDataSetChanged()
 		}
+
+	private var diffDisposable: Disposable? = null
+	fun setItemsAsync(newItemList: List<ITEM>) {
+		diffDisposable?.dispose()
+		diffDisposable = Single.fromCallable {
+			val oldItemList = items ?: listOf()
+			val callbacks = getDiffCallbacks(oldItemList, newItemList)
+			if (callbacks != null) DiffUtil.calculateDiff(callbacks)
+			else throw RuntimeException("Trying to set items with Diff, but getDiffCallbacks is not set")
+		}
+				.subscribeBy(
+						onSuccess = {
+							items = newItemList
+							it.dispatchUpdatesTo(this)
+						},
+						onError = {
+							it.printStackTrace()
+						})
+	}
+
+	fun setItemsSync(newItemList: List<ITEM>) {
+		items = newItemList
+		notifyDataSetChanged()
+	}
 
 	private var count = NOT_COUNTED
 
 	init {
 		this.setHasStableIds(this.useStableId())
+	}
+
+	open fun getDiffCallbacks(oldList: List<ITEM>, newList: List<ITEM>): DiffUtil.Callback? {
+		return null
 	}
 
 	open fun useStableId(): Boolean {
