@@ -5,7 +5,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.1'
+        classpath 'com.android.tools.build:gradle:3.4.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
@@ -41,8 +41,8 @@ ext {
     bintrayUser = 'dadino'
     bintrayKey = 'e23c567c5d38bdae821f0b74e855b07b37487762'
 
-    versionCode = 19
-    versionName = "0.5.2"
+    versionCode = 20
+    versionName = "0.6.0"
 
     // ./gradlew clean build bintrayUpload -PdryRun=false
 }
