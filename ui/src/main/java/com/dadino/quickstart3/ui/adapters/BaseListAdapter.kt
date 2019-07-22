@@ -4,8 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 
 abstract class BaseListAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : BaseAdapter<ITEM, HOLDER>() {
 
@@ -18,22 +20,29 @@ abstract class BaseListAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : BaseAdapter<IT
 		}
 
 	private var diffDisposable: Disposable? = null
-	fun setItemsAsync(newItemList: List<ITEM>) {
+	fun setItemsAsyncWith(itemListCreationFunction: () -> List<ITEM>) {
 		diffDisposable?.dispose()
 		diffDisposable = Single.fromCallable {
+			val newItemList = itemListCreationFunction()
 			val oldItemList = items ?: listOf()
 			val callbacks = getDiffCallbacks(oldItemList, newItemList)
-			if (callbacks != null) DiffUtil.calculateDiff(callbacks)
+			if (callbacks != null) ListWithDiff(newItemList, DiffUtil.calculateDiff(callbacks))
 			else throw RuntimeException("Trying to set items with Diff, but getDiffCallbacks is not set")
 		}
+				.subscribeOn(Schedulers.computation())
+				.observeOn(AndroidSchedulers.mainThread())
 				.subscribeBy(
 						onSuccess = {
-							items = newItemList
-							it.dispatchUpdatesTo(this)
+							items = it.list
+							it.diffs.dispatchUpdatesTo(this)
 						},
 						onError = {
 							it.printStackTrace()
 						})
+	}
+
+	fun setItemsAsync(newItemList: List<ITEM>) {
+		setItemsAsyncWith { newItemList }
 	}
 
 	fun setItemsSync(newItemList: List<ITEM>) {
@@ -144,3 +153,5 @@ abstract class BaseListAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : BaseAdapter<IT
 		private const val NOT_COUNTED = -1
 	}
 }
+
+data class ListWithDiff<E>(val list: List<E>, val diffs: DiffUtil.DiffResult)
