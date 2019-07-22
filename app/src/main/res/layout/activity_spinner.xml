@@ -18,8 +18,9 @@
         app:ls_label="Label"
         app:ls_retry="Riprova" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/example_data_idle"
+        style="@style/Widget.MaterialComponents.Button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -36,8 +37,9 @@
         app:layout_constraintTop_toBottomOf="@+id/example_data_spinner"
         app:layout_constraintVertical_bias="0.0" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/example_data_loading"
+        style="@style/Widget.MaterialComponents.Button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -54,8 +56,9 @@
         app:layout_constraintTop_toBottomOf="@+id/example_data_spinner"
         app:layout_constraintVertical_bias="0.0" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/example_data_error"
+        style="@style/Widget.MaterialComponents.Button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -72,8 +75,9 @@
         app:layout_constraintTop_toBottomOf="@+id/example_data_spinner"
         app:layout_constraintVertical_bias="0.0" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/example_data_done"
+        style="@style/Widget.MaterialComponents.Button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -90,8 +94,9 @@
         app:layout_constraintTop_toBottomOf="@+id/example_data_spinner"
         app:layout_constraintVertical_bias="0.0" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/example_data_go_to_second_page"
+        style="@style/Widget.MaterialComponents.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/_16dp"
@@ -99,8 +104,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/example_data_save_session"
+        style="@style/Widget.MaterialComponents.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/_16dp"
@@ -108,8 +114,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/example_data_counter"
+        style="@style/Widget.MaterialComponents.Button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/_16dp"
@@ -121,21 +128,23 @@
         app:layout_constraintStart_toStartOf="parent"
         tools:text="3" />
 
-    <ImageButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/example_data_counter_delayed"
+        style="@style/Widget.MaterialComponents.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/_16dp"
+        app:icon="@drawable/ic_arrow_upward_black_24dp"
         app:layout_constraintBottom_toBottomOf="@+id/example_data_counter"
         app:layout_constraintEnd_toStartOf="@+id/example_data_counter_state"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/example_data_counter"
         app:layout_constraintTop_toTopOf="@+id/example_data_counter"
-        app:srcCompat="@drawable/ic_arrow_upward_black_24dp"
         tools:text="34" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/example_data_counter_state"
+        style="@style/Widget.MaterialComponents.Button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"

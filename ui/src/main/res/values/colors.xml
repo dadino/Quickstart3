@@ -1,27 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">@color/md_blue_300</color>
-    <color name="colorPrimaryLight">@color/md_blue_100</color>
-    <color name="colorPrimaryDark">@color/md_blue_500</color>
-    <color name="colorAccent">@color/md_orange_400</color>
-    <color name="colorAccentLight">@color/md_orange_300</color>
+    <color name="primaryColor">@color/md_blue_500</color>
+    <color name="primaryLightColor">@color/md_blue_200</color>
+    <color name="primaryDarkColor">@color/md_blue_700</color>
+    <color name="secondaryColor">@color/md_orange_400</color>
+    <color name="secondaryLightColor">@color/md_orange_300</color>
+    <color name="secondaryDarkColor">@color/md_orange_700</color>
     <color name="colorHighlight">@color/md_orange_200</color>
     <color name="colorAccentBackground">@color/md_orange_A100</color>
 
-    <color name="colorError">@color/md_red_500</color>
-    <color name="colorSuccess">@color/md_green_500</color>
-    <color name="textColorOnError">@color/white_primary_text</color>
-    <color name="textColorOnSuccess">@color/white_primary_text</color>
+    <color name="colorBackground">#fafafa</color>
+    <color name="colorBackgroundDark">#c9c9c9</color>
+    <color name="colorSurface">#ffffff</color>
+    <color name="colorError">#d32f2f</color>
 
-    <color name="white_primary_text">#ffffffff</color>
-    <color name="white_secondary_text">#b3ffffff</color>
-    <color name="white_hint_text">#4dffffff</color>
-    <color name="white_divider">#1fffffff</color>
-    <color name="black">#ff000000</color>
-    <color name="black_primary_text">#de000000</color>
-    <color name="black_secondary_text">#8a000000</color>
-    <color name="black_hint_text">#61000000</color>
-    <color name="black_divider">#1f000000</color>
-    <color name="transparent">#00000000</color>
-    <color name="background">#fafafa</color>
+    <color name="colorOnPrimary">@color/white_text</color>
+    <color name="colorOnSecondary">@color/black_text</color>
+    <color name="colorOnBackground">@color/black_text</color>
+    <color name="colorOnSurface">@color/black_text</color>
+    <color name="colorOnError">@color/white_text</color>
 </resources>

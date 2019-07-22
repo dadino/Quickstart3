@@ -31,11 +31,11 @@ object ErrorSnackbar {
 	}
 
 	private fun formatAsError(snackbar: Snackbar) {
-		format(snackbar, R.color.colorError, R.color.textColorOnError)
+		format(snackbar, R.color.colorError, R.color.colorOnError)
 	}
 
 	private fun formatAsSuccess(snackbar: Snackbar) {
-		format(snackbar, R.color.colorSuccess, R.color.textColorOnSuccess)
+		format(snackbar, R.color.primaryColor, R.color.colorOnPrimary)
 	}
 
 	private fun format(snackbar: Snackbar, @ColorRes backgroundColor: Int,
