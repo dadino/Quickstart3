@@ -45,9 +45,10 @@ open class RecyclerLayout<T : BaseAdapter<*, *>, E : RecyclerView.LayoutManager>
 	private fun init() {
 		inflate(context, R.layout.view_recycler_layout, this)
 
-		setColorSchemeColors(Colors.getPrimaryColor(context),
-				Colors.getAccentColor(context),
-				Colors.getPrimaryDarkColor(context))
+		setColorSchemeColors(Colors.getColorPrimary(context),
+				Colors.getColorSecondary(context),
+				Colors.getColorPrimaryVariant(context),
+				Colors.getColorSecondaryVariant(context))
 		clipToPadding = false
 		initialize()
 	}

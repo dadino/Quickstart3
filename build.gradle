@@ -29,9 +29,9 @@ task clean(type: Delete) {
 
 
 ext {
-    compileSdk = 28
+    compileSdk = 29
     minSdk = 16
-    targetSdk = 28
+    targetSdk = 29
 
     userOrg = "dadino"
     repoName = "quickstart3"
@@ -41,8 +41,8 @@ ext {
     bintrayUser = 'dadino'
     bintrayKey = 'e23c567c5d38bdae821f0b74e855b07b37487762'
 
-    versionCode = 22
-    versionName = "0.6.2"
+    versionCode = 23
+    versionName = "0.6.3"
 
     // ./gradlew clean build bintrayUpload -PdryRun=false
 }

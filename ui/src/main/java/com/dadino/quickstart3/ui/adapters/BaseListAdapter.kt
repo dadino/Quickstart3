@@ -3,6 +3,7 @@ package com.dadino.quickstart3.ui.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
+import com.dadino.quickstart3.ui.utils.OnDiffDispatchedCallbacks
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -21,6 +22,10 @@ abstract class BaseListAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : BaseAdapter<IT
 
 	private var diffDisposable: Disposable? = null
 	fun setItemsAsyncWith(itemListCreationFunction: () -> List<ITEM>) {
+		setItemsAsyncWith(null, itemListCreationFunction)
+	}
+
+	fun setItemsAsyncWith(onDiffDispatchedCallbacks: OnDiffDispatchedCallbacks?, itemListCreationFunction: () -> List<ITEM>) {
 		diffDisposable?.dispose()
 		diffDisposable = Single.fromCallable {
 			val newItemList = itemListCreationFunction()
@@ -35,6 +40,7 @@ abstract class BaseListAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : BaseAdapter<IT
 						onSuccess = {
 							items = it.list
 							it.diffs.dispatchUpdatesTo(this)
+							onDiffDispatchedCallbacks?.onDiffDispatched()
 						},
 						onError = {
 							it.printStackTrace()
@@ -42,12 +48,21 @@ abstract class BaseListAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : BaseAdapter<IT
 	}
 
 	fun setItemsAsync(newItemList: List<ITEM>) {
-		setItemsAsyncWith { newItemList }
+		setItemsAsync(null, newItemList)
+	}
+
+	fun setItemsAsync(onDiffDispatchedCallbacks: OnDiffDispatchedCallbacks?, newItemList: List<ITEM>) {
+		setItemsAsyncWith(onDiffDispatchedCallbacks) { newItemList }
 	}
 
 	fun setItemsSync(newItemList: List<ITEM>) {
+		setItemsSync(null, newItemList)
+	}
+
+	fun setItemsSync(onDiffDispatchedCallbacks: OnDiffDispatchedCallbacks? = null, newItemList: List<ITEM>) {
 		items = newItemList
 		notifyDataSetChanged()
+		onDiffDispatchedCallbacks?.onDiffDispatched()
 	}
 
 	private var count = NOT_COUNTED
