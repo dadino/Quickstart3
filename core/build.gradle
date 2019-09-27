@@ -53,13 +53,13 @@ dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     //Support
-    api "com.google.android.material:material:1.1.0-alpha09"
-    api 'androidx.appcompat:appcompat:1.1.0-rc01'
-    api 'androidx.appcompat:appcompat-resources:1.1.0-rc01'
-    api 'androidx.core:core-ktx:1.0.2'
-    api 'androidx.activity:activity-ktx:1.1.0-alpha01'
-    api 'androidx.fragment:fragment-ktx:1.2.0-alpha01'
-    api 'androidx.preference:preference-ktx:1.1.0-rc01'
+    api "com.google.android.material:material:1.1.0-alpha10"
+    api 'androidx.appcompat:appcompat:1.1.0'
+    api 'androidx.appcompat:appcompat-resources:1.1.0'
+    api 'androidx.core:core-ktx:1.1.0'
+    api 'androidx.activity:activity-ktx:1.1.0-alpha03'
+    api 'androidx.fragment:fragment-ktx:1.2.0-alpha04'
+    api 'androidx.preference:preference-ktx:1.1.0'
 
     //Square
     api 'com.squareup.retrofit2:retrofit:2.5.0'
@@ -68,11 +68,12 @@ dependencies {
     api 'com.squareup.okhttp3:okhttp:3.12.1'
 
     //Arch Components
-    api 'androidx.lifecycle:lifecycle-runtime:2.0.0'
-    api 'androidx.lifecycle:lifecycle-common-java8:2.0.0'
-    api 'androidx.lifecycle:lifecycle-extensions:2.0.0'
-    api 'androidx.lifecycle:lifecycle-reactivestreams:2.0.0'
-    kapt 'androidx.lifecycle:lifecycle-compiler:2.0.0'
+    api 'androidx.lifecycle:lifecycle-runtime:2.1.0'
+    api 'androidx.lifecycle:lifecycle-common-java8:2.1.0'
+    api 'androidx.lifecycle:lifecycle-extensions:2.1.0'
+    api 'androidx.lifecycle:lifecycle-reactivestreams:2.1.0'
+    //kapt 'androidx.lifecycle:lifecycle-compiler:2.1.0'
+    api 'androidx.lifecycle:lifecycle-common-java8:2.1.0'
 
     //RxJava
     api 'io.reactivex.rxjava2:rxjava:2.2.9'
