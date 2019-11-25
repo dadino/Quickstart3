@@ -35,5 +35,5 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    implementation "org.koin:koin-android-viewmodel:2.0.0-rc-2"
+    implementation "org.koin:koin-android-viewmodel:2.0.1"
 }

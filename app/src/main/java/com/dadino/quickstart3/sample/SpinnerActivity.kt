@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
-import android.widget.ImageButton
 import android.widget.Toast
 import com.dadino.quickstart3.core.BaseActivity
 import com.dadino.quickstart3.core.components.AttachedComponent
@@ -35,7 +34,7 @@ class SpinnerActivity : BaseActivity() {
 	private val secondPage: Button by lazy { findViewById<Button>(R.id.example_data_go_to_second_page) }
 	private val saveSession: Button by lazy { findViewById<Button>(R.id.example_data_save_session) }
 	private val counterButton: Button by lazy { findViewById<Button>(R.id.example_data_counter) }
-	private val counterDelayedButton: ImageButton by lazy { findViewById<ImageButton>(R.id.example_data_counter_delayed) }
+	private val counterDelayedButton: Button by lazy { findViewById<Button>(R.id.example_data_counter_delayed) }
 	private val counterStateButton: Button by lazy { findViewById<Button>(R.id.example_data_counter_state) }
 
 	private val spinnerViewModel: SpinnerViewModel by viewModel()

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="text_black_high">#de000000</color>
+    <color name="text_black_medium">#8a000000</color>
+    <color name="text_black_disabled">#61000000</color>
+    <color name="text_black_divider">#1f000000</color>
+    <color name="text_black_checked">@color/secondaryDarkColor</color>
+
+    <color name="text_white_high">#ffffff</color>
+    <color name="text_white_medium">#b3ffffff</color>
+    <color name="text_white_disabled">#80ffffff</color>
+    <color name="text_white_divider">#1fffffff</color>
+    <color name="text_white_checked">@color/secondaryLightColor</color>
+</resources>

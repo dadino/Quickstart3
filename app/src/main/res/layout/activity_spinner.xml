@@ -18,139 +18,118 @@
         app:ls_label="Label"
         app:ls_retry="Riprova" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/example_data_idle"
+        style="@style/Widget.MaterialComponents.Button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
         android:text="Idle"
-        app:layout_constraintBottom_toTopOf="@+id/barrier"
-        app:layout_constraintEnd_toStartOf="@+id/example_data_loading"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintBottom_toTopOf="@+id/example_data_loading"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/example_data_spinner"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintVertical_chainStyle="packed" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/example_data_loading"
+        style="@style/Widget.MaterialComponents.Button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="Loading"
-        app:layout_constraintBottom_toTopOf="@+id/barrier"
-        app:layout_constraintEnd_toStartOf="@+id/example_data_error"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/example_data_idle"
-        app:layout_constraintTop_toBottomOf="@+id/example_data_spinner"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <Button
-        android:id="@+id/example_data_error"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="Error"
-        app:layout_constraintBottom_toTopOf="@+id/barrier"
-        app:layout_constraintEnd_toStartOf="@+id/example_data_done"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/example_data_loading"
-        app:layout_constraintTop_toBottomOf="@+id/example_data_spinner"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <Button
-        android:id="@+id/example_data_done"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="8dp"
-        android:text="Done"
-        app:layout_constraintBottom_toTopOf="@+id/barrier"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/example_data_error"
-        app:layout_constraintTop_toBottomOf="@+id/example_data_spinner"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <Button
-        android:id="@+id/example_data_go_to_second_page"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/_16dp"
-        android:text="Second Page"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <Button
-        android:id="@+id/example_data_save_session"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/_16dp"
-        android:text="Save session"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/example_data_counter"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/_16dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/example_data_save_session"
-        app:layout_constraintEnd_toStartOf="@+id/example_data_counter_delayed"
-        app:layout_constraintHorizontal_bias="0.5"
+        android:text="Loading"
+        app:layout_constraintBottom_toTopOf="@+id/example_data_error"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/example_data_idle" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/example_data_error"
+        style="@style/Widget.MaterialComponents.Button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:text="Error"
+        app:layout_constraintBottom_toTopOf="@+id/example_data_done"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/example_data_loading" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/example_data_done"
+        style="@style/Widget.MaterialComponents.Button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:text="Done"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/example_data_error" />
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/example_data_counter_state"
+        style="@style/Widget.MaterialComponents.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:text="Counter state"
+        app:layout_constraintBottom_toTopOf="@+id/example_data_counter"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/example_data_done"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/example_data_counter"
+        style="@style/Widget.MaterialComponents.Button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/example_data_counter_delayed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/example_data_counter_state"
         tools:text="3" />
 
-    <ImageButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/example_data_counter_delayed"
+        style="@style/Widget.MaterialComponents.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/_16dp"
-        app:layout_constraintBottom_toBottomOf="@+id/example_data_counter"
-        app:layout_constraintEnd_toStartOf="@+id/example_data_counter_state"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/example_data_counter"
-        app:layout_constraintTop_toTopOf="@+id/example_data_counter"
-        app:srcCompat="@drawable/ic_arrow_upward_black_24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        app:icon="@drawable/ic_arrow_upward_black_24dp"
+        app:layout_constraintBottom_toTopOf="@+id/example_data_save_session"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/example_data_counter"
         tools:text="34" />
 
-    <Button
-        android:id="@+id/example_data_counter_state"
-        android:layout_width="0dp"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/example_data_go_to_second_page"
+        style="@style/Widget.MaterialComponents.Button"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:text="Counter state"
-        app:layout_constraintBottom_toBottomOf="@+id/example_data_counter"
+        android:layout_marginBottom="16dp"
+        android:text="Second Page"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/example_data_counter_delayed"
-        app:layout_constraintTop_toTopOf="@+id/example_data_counter" />
+        app:layout_constraintStart_toEndOf="@+id/example_data_save_session" />
 
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/barrier"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/example_data_save_session"
+        style="@style/Widget.MaterialComponents.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:barrierDirection="top"
-        app:constraint_referenced_ids="example_data_counter,example_data_counter_state" />
+        android:layout_marginBottom="16dp"
+        android:text="Save session"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/example_data_go_to_second_page"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

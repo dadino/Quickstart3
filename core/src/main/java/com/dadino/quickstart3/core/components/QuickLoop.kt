@@ -20,7 +20,6 @@ class QuickLoop<STATE : State>(private val loopName: String,
 
 	private val eventSourcesCompositeDisposable = CompositeDisposable()
 
-
 	private val eventRelay: PublishRelay<Event> = PublishRelay.create<Event>()
 	private val internalDisposable: Disposable = eventRelay.filter { it !is NoOpEvent }
 			.toFlowable(BackpressureStrategy.BUFFER)
@@ -38,7 +37,7 @@ class QuickLoop<STATE : State>(private val loopName: String,
 			})
 
 	private val stateRelay: PublishRelay<STATE> by lazy { PublishRelay.create<STATE>() }
-	val states: Flowable<STATE>  by lazy {
+	val states: Flowable<STATE> by lazy {
 		stateRelay.toFlowable(BackpressureStrategy.LATEST)
 				.distinctUntilChanged()
 				.replay(1)
@@ -46,7 +45,7 @@ class QuickLoop<STATE : State>(private val loopName: String,
 	}
 
 	private val signalRelay: PublishRelay<Signal> by lazy { PublishRelay.create<Signal>() }
-	val signals: Flowable<Signal>  by lazy {
+	val signals: Flowable<Signal> by lazy {
 		signalRelay.toFlowable(BackpressureStrategy.BUFFER)
 	}
 

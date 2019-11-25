@@ -6,7 +6,7 @@ import com.dadino.quickstart3.core.R
 
 
 object Drawables {
-	fun getDrawableFromAttrRes(attrRes: Int, context: Context): Drawable {
+	fun getDrawableFromAttrRes(attrRes: Int, context: Context): Drawable? {
 		val a = context.obtainStyledAttributes(intArrayOf(attrRes))
 		try {
 			return a.getDrawable(0)
@@ -15,7 +15,7 @@ object Drawables {
 		}
 	}
 
-	fun getSelectableBackground(context: Context): Drawable {
+	fun getSelectableBackground(context: Context): Drawable? {
 		return getDrawableFromAttrRes(R.attr.selectableItemBackground, context)
 	}
 }

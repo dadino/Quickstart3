@@ -2,22 +2,77 @@ package com.dadino.quickstart3.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import com.dadino.quickstart3.ui.utils.OnDiffDispatchedCallbacks
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 
 abstract class BaseListAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : BaseAdapter<ITEM, HOLDER>() {
 
 	protected var layoutInflater: LayoutInflater? = null
 
 	var items: List<ITEM>? = null
-		set(items) {
+		private set(items) {
 			field = items
 			count = NOT_COUNTED
-			notifyDataSetChanged()
 		}
+
+	private var diffDisposable: Disposable? = null
+	fun setItemsAsyncWith(itemListCreationFunction: () -> List<ITEM>) {
+		setItemsAsyncWith(null, itemListCreationFunction)
+	}
+
+	fun setItemsAsyncWith(onDiffDispatchedCallbacks: OnDiffDispatchedCallbacks?, itemListCreationFunction: () -> List<ITEM>) {
+		diffDisposable?.dispose()
+		diffDisposable = Single.fromCallable {
+			val newItemList = itemListCreationFunction()
+			val oldItemList = items ?: listOf()
+			val callbacks = getDiffCallbacks(oldItemList, newItemList)
+			if (callbacks != null) ListWithDiff(newItemList, DiffUtil.calculateDiff(callbacks))
+			else throw RuntimeException("Trying to set items with Diff, but getDiffCallbacks is not set")
+		}
+				.subscribeOn(Schedulers.computation())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribeBy(
+						onSuccess = {
+							items = it.list
+							it.diffs.dispatchUpdatesTo(this)
+							onDiffDispatchedCallbacks?.onDiffDispatched()
+						},
+						onError = {
+							it.printStackTrace()
+						})
+	}
+
+	fun setItemsAsync(newItemList: List<ITEM>) {
+		setItemsAsync(null, newItemList)
+	}
+
+	fun setItemsAsync(onDiffDispatchedCallbacks: OnDiffDispatchedCallbacks?, newItemList: List<ITEM>) {
+		setItemsAsyncWith(onDiffDispatchedCallbacks) { newItemList }
+	}
+
+	fun setItemsSync(newItemList: List<ITEM>) {
+		setItemsSync(null, newItemList)
+	}
+
+	fun setItemsSync(onDiffDispatchedCallbacks: OnDiffDispatchedCallbacks? = null, newItemList: List<ITEM>) {
+		items = newItemList
+		notifyDataSetChanged()
+		onDiffDispatchedCallbacks?.onDiffDispatched()
+	}
 
 	private var count = NOT_COUNTED
 
 	init {
 		this.setHasStableIds(this.useStableId())
+	}
+
+	open fun getDiffCallbacks(oldList: List<ITEM>, newList: List<ITEM>): DiffUtil.Callback? {
+		return null
 	}
 
 	open fun useStableId(): Boolean {
@@ -113,3 +168,5 @@ abstract class BaseListAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : BaseAdapter<IT
 		private const val NOT_COUNTED = -1
 	}
 }
+
+data class ListWithDiff<E>(val list: List<E>, val diffs: DiffUtil.DiffResult)
