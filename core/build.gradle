@@ -55,10 +55,7 @@ dependencies {
     //Test
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.21.0'
-    testImplementation 'org.powermock:powermock-module-junit4-rule:2.0.0-beta.5'
-    testImplementation 'org.powermock:powermock-core:2.0.0-beta.5'
-    testImplementation 'org.powermock:powermock-module-junit4:2.0.0-beta.5'
-    testImplementation 'org.powermock:powermock-api-mockito2:2.0.0-beta.5'
+    testImplementation 'org.mockito:mockito-inline:2.21.0'
 
     //Support
     api "com.google.android.material:material:1.1.0-beta01"
