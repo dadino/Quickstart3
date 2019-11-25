@@ -25,7 +25,8 @@ class QuickLoopSignalTests {
 		quickLoop = QuickLoop("testloop", TestStateUpdater(false))
 		testObserver = TestObserver<Signal>()
 
-		//WHEN
+		Thread.sleep(100)
+
 		quickLoop.signals
 				.toObservable()
 				.subscribe(testObserver)

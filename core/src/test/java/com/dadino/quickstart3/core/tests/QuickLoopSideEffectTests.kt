@@ -36,7 +36,8 @@ class QuickLoopSideEffectTests {
 		quickLoop = QuickLoop("testloop", updater, listOf(sideEffectHandler))
 		testObserver = TestObserver<TestState>()
 
-		//WHEN
+		Thread.sleep(100)
+
 		quickLoop.states
 				.toObservable()
 				.subscribe(testObserver)

@@ -37,7 +37,8 @@ class QuickLoopEventTests {
 		quickLoop = QuickLoop("testloop", updater)
 		testObserver = TestObserver<TestState>()
 
-		//WHEN
+		Thread.sleep(100)
+
 		quickLoop.states
 				.toObservable()
 				.subscribe(testObserver)
