@@ -9,7 +9,7 @@ import com.dadino.quickstart3.core.entities.State
 
 data class TestState(val counter: Int = 0) : State()
 
-open class TestStateUpdater(useLogging: Boolean) : Updater<TestState>(useLogging) {
+open class TestStateUpdater(useLogging: Boolean = true) : Updater<TestState>(useLogging) {
 	override fun start(): Start<TestState> {
 		return Start.start(TestState())
 	}
@@ -24,4 +24,5 @@ open class TestStateUpdater(useLogging: Boolean) : Updater<TestState>(useLogging
 
 sealed class TestEntities {
 	object Add1ToCounter : Event()
+	object UnusedEvent : Event()
 }
