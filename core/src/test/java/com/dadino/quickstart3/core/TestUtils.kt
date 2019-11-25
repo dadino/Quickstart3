@@ -5,6 +5,6 @@ import org.mockito.Mockito
 
 object TestUtils {
 	fun <T> any(type: Class<T>): T = Mockito.any<T>(type)
-	const val MAC_WAIT_TIME = 5000L
+	const val MAX_WAIT_TIME_FOR_OBSERVABLES = 5000L
 
 }
