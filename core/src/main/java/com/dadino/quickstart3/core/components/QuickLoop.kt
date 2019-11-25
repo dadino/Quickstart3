@@ -20,7 +20,6 @@ class QuickLoop<STATE : State>(private val loopName: String,
 
 	private val eventSourcesCompositeDisposable = CompositeDisposable()
 
-
 	private val eventRelay: PublishRelay<Event> = PublishRelay.create<Event>()
 	private val internalDisposable: Disposable = eventRelay.filter { it !is NoOpEvent }
 			.toFlowable(BackpressureStrategy.BUFFER)
