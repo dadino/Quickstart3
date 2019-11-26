@@ -1,10 +1,13 @@
 package com.dadino.quickstart3.core.components
 
-import android.util.Log
 import com.dadino.quickstart3.core.entities.*
+import com.dadino.quickstart3.core.utils.ILogger
+import com.dadino.quickstart3.core.utils.LogcatLogger
 
 
 abstract class Updater<STATE : State>(var enableLogging: Boolean = false) {
+	var logger: ILogger = LogcatLogger()
+
 	abstract fun start(): Start<STATE>
 	abstract fun update(previous: STATE, event: Event): Next<STATE>
 
@@ -22,6 +25,6 @@ abstract class Updater<STATE : State>(var enableLogging: Boolean = false) {
 	}
 
 	private fun log(createMessage: () -> String) {
-		if (enableLogging) Log.d(javaClass.simpleName, createMessage())
+		if (enableLogging) logger.log(javaClass.simpleName, createMessage())
 	}
 }

@@ -8,9 +8,13 @@ import com.dadino.quickstart3.core.TestUtils.MAX_WAIT_TIME_FOR_OBSERVABLES
 import com.dadino.quickstart3.core.TestUtils.any
 import com.dadino.quickstart3.core.components.QuickLoop
 import com.dadino.quickstart3.core.entities.Event
+import com.dadino.quickstart3.core.utils.ConsoleLogger
+import io.reactivex.Observable
 import io.reactivex.observers.BaseTestConsumer.TestWaitStrategy
 import io.reactivex.observers.TestObserver
 import org.junit.After
+import org.junit.Assert
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -35,6 +39,8 @@ class QuickLoopEventTests {
 		Mockito.`when`(updater.internalUpdate(any(TestState::class.java), any(Event::class.java))).thenCallRealMethod()
 
 		quickLoop = QuickLoop("testloop", updater)
+		quickLoop.enableLogging = true
+		quickLoop.logger = ConsoleLogger()
 		testObserver = TestObserver<TestState>()
 
 		Thread.sleep(100)
@@ -61,5 +67,20 @@ class QuickLoopEventTests {
 		testObserver.awaitCount(2, TestWaitStrategy.SLEEP_10MS, MAX_WAIT_TIME_FOR_OBSERVABLES)
 		verify(updater, Mockito.times(2)).start()
 		verify(updater, Mockito.times(2)).update(any(TestState::class.java), any(Event::class.java))
+	}
+
+	@Test
+	fun addEventSource_eventSourceAdded() {
+		Assert.assertEquals(0, quickLoop.getEventSources().size())
+
+		quickLoop.attachEventSource(Observable.empty())
+
+		Assert.assertEquals(1, quickLoop.getEventSources().size())
+	}
+
+	@Test
+	fun newQuickLoop_hasState() {
+		val quickLoop = QuickLoop("testloop", updater)
+		assertNotNull(quickLoop.currentState())
 	}
 }

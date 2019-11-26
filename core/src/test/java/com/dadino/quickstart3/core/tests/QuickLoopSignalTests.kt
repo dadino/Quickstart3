@@ -5,6 +5,7 @@ import com.dadino.quickstart3.core.TestUtils.MAX_WAIT_TIME_FOR_OBSERVABLES
 import com.dadino.quickstart3.core.components.QuickLoop
 import com.dadino.quickstart3.core.entities.NoOpEvent
 import com.dadino.quickstart3.core.entities.Signal
+import com.dadino.quickstart3.core.utils.ConsoleLogger
 import io.reactivex.observers.BaseTestConsumer.TestWaitStrategy
 import io.reactivex.observers.TestObserver
 import org.junit.After
@@ -22,7 +23,11 @@ class QuickLoopSignalTests {
 	fun setup() {
 		RxJavaSchedulerConfigurator.prepareRxJava()
 
-		quickLoop = QuickLoop("testloop", TestStateUpdater(false))
+		val updater = TestStateUpdater(true)
+		updater.logger = ConsoleLogger()
+		quickLoop = QuickLoop("testloop", updater)
+		quickLoop.enableLogging = true
+		quickLoop.logger = ConsoleLogger()
 		testObserver = TestObserver<Signal>()
 
 		Thread.sleep(100)
