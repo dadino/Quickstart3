@@ -31,13 +31,13 @@ class QuickLoopSideEffectTests {
 
 		updater = Mockito.mock(TestStateUpdater::class.java)
 		Mockito.`when`(updater.start()).thenCallRealMethod()
-		Mockito.`when`(updater.update(TestUtils.any(TestState::class.java), TestUtils.any(Event::class.java))).thenCallRealMethod()
-		Mockito.`when`(updater.internalUpdate(TestUtils.any(TestState::class.java), TestUtils.any(Event::class.java))).thenCallRealMethod()
+		Mockito.`when`(updater.update(any(TestState::class.java), any(Event::class.java))).thenCallRealMethod()
+		Mockito.`when`(updater.internalUpdate(any(TestState::class.java), any(Event::class.java))).thenCallRealMethod()
 
 		quickLoop = QuickLoop("testloop", updater, listOf(sideEffectHandler))
 		quickLoop.enableLogging = true
 		quickLoop.logger = ConsoleLogger()
-		testObserver = TestObserver<TestState>()
+		testObserver = TestObserver()
 
 		Thread.sleep(100)
 

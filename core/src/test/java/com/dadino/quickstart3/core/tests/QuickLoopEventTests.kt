@@ -41,7 +41,7 @@ class QuickLoopEventTests {
 		quickLoop = QuickLoop("testloop", updater)
 		quickLoop.enableLogging = true
 		quickLoop.logger = ConsoleLogger()
-		testObserver = TestObserver<TestState>()
+		testObserver = TestObserver()
 
 		Thread.sleep(100)
 

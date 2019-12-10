@@ -1,7 +1,11 @@
 package com.dadino.quickstart3.core.tests
 
-import com.dadino.quickstart3.core.*
+import com.dadino.quickstart3.core.RxJavaSchedulerConfigurator
+import com.dadino.quickstart3.core.TestEvents
+import com.dadino.quickstart3.core.TestState
+import com.dadino.quickstart3.core.TestStateUpdater
 import com.dadino.quickstart3.core.TestUtils.MAX_WAIT_TIME_FOR_OBSERVABLES
+import com.dadino.quickstart3.core.TestUtils.any
 import com.dadino.quickstart3.core.components.QuickLoop
 import com.dadino.quickstart3.core.entities.Event
 import com.dadino.quickstart3.core.entities.NoOpEvent
@@ -27,13 +31,13 @@ class QuickLoopStateTests {
 
 		updater = Mockito.mock(TestStateUpdater::class.java)
 		Mockito.`when`(updater.start()).thenCallRealMethod()
-		Mockito.`when`(updater.update(TestUtils.any(TestState::class.java), TestUtils.any(Event::class.java))).thenCallRealMethod()
-		Mockito.`when`(updater.internalUpdate(TestUtils.any(TestState::class.java), TestUtils.any(Event::class.java))).thenCallRealMethod()
+		Mockito.`when`(updater.update(any(TestState::class.java), any(Event::class.java))).thenCallRealMethod()
+		Mockito.`when`(updater.internalUpdate(any(TestState::class.java), any(Event::class.java))).thenCallRealMethod()
 
 		quickLoop = QuickLoop("testloop", updater)
 		quickLoop.enableLogging = true
 		quickLoop.logger = ConsoleLogger()
-		testObserver = TestObserver<TestState>()
+		testObserver = TestObserver()
 
 		Thread.sleep(100)
 

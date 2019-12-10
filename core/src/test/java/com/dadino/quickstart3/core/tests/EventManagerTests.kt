@@ -57,7 +57,7 @@ class EventManagerTests {
 
 		//WHEN
 		testSubscriber.dispose()
-		Thread.sleep(500)
+		Thread.sleep(100)
 
 		//THEN
 		assertFalse(eventManager.getEventSources().isDisposed)

@@ -28,7 +28,7 @@ class QuickLoopSignalTests {
 		quickLoop = QuickLoop("testloop", updater)
 		quickLoop.enableLogging = true
 		quickLoop.logger = ConsoleLogger()
-		testObserver = TestObserver<Signal>()
+		testObserver = TestObserver()
 
 		Thread.sleep(100)
 
