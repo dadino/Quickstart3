@@ -61,10 +61,6 @@ object Intents {
 		}
 	}
 
-	fun openSacroMonteVarese(context: Context) {
-		openApp(context, "com.eb.mobbingProject.SacroMonteVa")
-	}
-
 	private fun openApp(context: Context, packageName: String) {
 		val launchIntent = context.packageManager.getLaunchIntentForPackage(packageName)
 		if (launchIntent != null) {

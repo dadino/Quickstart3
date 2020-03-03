@@ -1,15 +1,18 @@
 package com.dadino.quickstart3.core.components
 
-import android.util.Log
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.DefaultLifecycleObserver
 import com.dadino.quickstart3.core.entities.Event
 import com.dadino.quickstart3.core.entities.NoOpEvent
+import com.dadino.quickstart3.core.utils.ILogger
+import com.dadino.quickstart3.core.utils.LogcatLogger
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 
 class EventManager : InteractionEventSource, DefaultLifecycleObserver {
 
+	var logger: ILogger = LogcatLogger()
 	var tag: String? = null
 		set(value) {
 			field = value
@@ -32,12 +35,12 @@ class EventManager : InteractionEventSource, DefaultLifecycleObserver {
 				.refCount()
 	}
 
-	fun attachEventSource(events: Observable<Event>) {
-		compositeDisposable.add(events.subscribe(eventRelay))
+	fun attachEventSource(eventSource: Observable<Event>) {
+		compositeDisposable.add(eventSource.subscribe(eventRelay))
 	}
 
-	fun attachEventSources(events: List<Observable<Event>>) {
-		events.forEach {
+	fun attachEventSources(eventSources: List<Observable<Event>>) {
+		eventSources.forEach {
 			compositeDisposable.add(it.subscribe(eventRelay))
 		}
 	}
@@ -51,6 +54,9 @@ class EventManager : InteractionEventSource, DefaultLifecycleObserver {
 	}
 
 	private fun log(createMessage: () -> String) {
-		if (enableLogging) Log.d(tag, createMessage())
+		if (enableLogging) logger.log(tag ?: "EventManager", createMessage())
 	}
+
+	@VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+	fun getEventSources() = compositeDisposable
 }

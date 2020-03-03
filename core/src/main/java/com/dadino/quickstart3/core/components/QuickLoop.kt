@@ -1,7 +1,9 @@
 package com.dadino.quickstart3.core.components
 
-import android.util.Log
+import androidx.annotation.VisibleForTesting
 import com.dadino.quickstart3.core.entities.*
+import com.dadino.quickstart3.core.utils.ILogger
+import com.dadino.quickstart3.core.utils.LogcatLogger
 import com.dadino.quickstart3.core.utils.toAsync
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.BackpressureStrategy
@@ -16,10 +18,11 @@ class QuickLoop<STATE : State>(private val loopName: String,
 							   private val updater: Updater<STATE>,
 							   private val sideEffectHandlers: List<SideEffectHandler> = arrayListOf()
 ) {
+	var logger: ILogger = LogcatLogger()
+
 	private var state: STATE = updater.start().startState
 
 	private val eventSourcesCompositeDisposable = CompositeDisposable()
-
 
 	private val eventRelay: PublishRelay<Event> = PublishRelay.create<Event>()
 	private val internalDisposable: Disposable = eventRelay.filter { it !is NoOpEvent }
@@ -38,7 +41,7 @@ class QuickLoop<STATE : State>(private val loopName: String,
 			})
 
 	private val stateRelay: PublishRelay<STATE> by lazy { PublishRelay.create<STATE>() }
-	val states: Flowable<STATE>  by lazy {
+	val states: Flowable<STATE> by lazy {
 		stateRelay.toFlowable(BackpressureStrategy.LATEST)
 				.distinctUntilChanged()
 				.replay(1)
@@ -46,7 +49,7 @@ class QuickLoop<STATE : State>(private val loopName: String,
 	}
 
 	private val signalRelay: PublishRelay<Signal> by lazy { PublishRelay.create<Signal>() }
-	val signals: Flowable<Signal>  by lazy {
+	val signals: Flowable<Signal> by lazy {
 		signalRelay.toFlowable(BackpressureStrategy.BUFFER)
 	}
 
@@ -117,7 +120,10 @@ class QuickLoop<STATE : State>(private val loopName: String,
 	}
 
 	private fun log(createMessage: () -> String) {
-		if (enableLogging) Log.d(loopName, createMessage())
+		if (enableLogging) logger.log(loopName, createMessage())
 	}
+
+	@VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+	fun getEventSources() = eventSourcesCompositeDisposable
 }
 

@@ -6,17 +6,17 @@ sealed class Optional<out T> {
 
 	fun element(): T? {
 		return when (this) {
-			is Optional.None -> null
-			is Optional.Some -> element
+			is None -> null
+			is Some -> element
 		}
 	}
 
 	companion object {
 		fun <T> create(element: T?): Optional<T> {
 			return if (element != null) {
-				Optional.Some(element)
+				Some(element)
 			} else {
-				Optional.None
+				None
 			}
 		}
 	}
