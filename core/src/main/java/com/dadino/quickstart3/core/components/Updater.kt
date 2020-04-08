@@ -4,7 +4,6 @@ import com.dadino.quickstart3.core.entities.*
 import com.dadino.quickstart3.core.utils.ILogger
 import com.dadino.quickstart3.core.utils.LogcatLogger
 
-
 abstract class Updater<STATE : State>(var enableLogging: Boolean = false) {
 	var logger: ILogger = LogcatLogger()
 

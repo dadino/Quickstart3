@@ -1,8 +1,6 @@
 package com.dadino.quickstart3.core.components
 
-import com.dadino.quickstart3.core.entities.Signal
-import com.dadino.quickstart3.core.entities.State
-import com.dadino.quickstart3.core.entities.VMStarter
+import com.dadino.quickstart3.core.entities.*
 
 interface AttachedComponent
 

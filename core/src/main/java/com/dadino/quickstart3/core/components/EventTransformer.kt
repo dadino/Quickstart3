@@ -3,7 +3,6 @@ package com.dadino.quickstart3.core.components
 import android.util.Log
 import com.dadino.quickstart3.core.entities.Event
 
-
 abstract class EventTransformer(var enableLogging: Boolean = false) {
 
 	/**

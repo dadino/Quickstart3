@@ -5,7 +5,6 @@ import android.util.TypedValue
 import androidx.annotation.ColorInt
 import com.dadino.quickstart3.ui.R
 
-
 object Colors {
 	@ColorInt
 	fun getColorPrimary(context: Context): Int = getThemeColor(context, R.attr.colorPrimary)
@@ -27,6 +26,24 @@ object Colors {
 
 	@ColorInt
 	fun getColorError(context: Context): Int = getThemeColor(context, R.attr.colorError)
+
+	@ColorInt
+	fun getColorOnSurface(context: Context): Int = getThemeColor(context, R.attr.colorOnSurface)
+
+	@ColorInt
+	fun getColorOnBackground(context: Context): Int = getThemeColor(context, R.attr.colorOnBackground)
+
+	@ColorInt
+	fun getColorOnPrimary(context: Context): Int = getThemeColor(context, R.attr.colorOnPrimary)
+
+	@ColorInt
+	fun getColorOnError(context: Context): Int = getThemeColor(context, R.attr.colorOnError)
+
+	@ColorInt
+	fun getColorOnPrimarySurface(context: Context): Int = getThemeColor(context, R.attr.colorOnPrimarySurface)
+
+	@ColorInt
+	fun getColorOnSecondary(context: Context): Int = getThemeColor(context, R.attr.colorOnSecondary)
 
 	@ColorInt
 	private fun getThemeColor(context: Context, colorId: Int): Int {

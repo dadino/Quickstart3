@@ -1,15 +1,10 @@
 package com.dadino.quickstart3.core.components
 
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
-import com.dadino.quickstart3.core.entities.Signal
-import com.dadino.quickstart3.core.entities.State
-import com.dadino.quickstart3.core.entities.VMStarter
+import androidx.lifecycle.*
+import com.dadino.quickstart3.core.entities.*
 import com.dadino.quickstart3.core.utils.DisposableLifecycle
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
-
 
 class AttachedComponentController(private val lifecycleOwner: LifecycleOwner,
 								  private val eventManager: EventManager,

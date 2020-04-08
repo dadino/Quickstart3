@@ -26,13 +26,13 @@ class EventManager : InteractionEventSource, DefaultLifecycleObserver {
 
 	private val eventObservable: Observable<Event> by lazy {
 		eventRelay
-				.filter { it !is NoOpEvent }
-				.doOnNext { log { ">>> ${it.javaClass.simpleName} >>>" } }
-				.map { eventTransformer?.performTransform(it) ?: it }
-				.filter { it !is NoOpEvent }
-				.doOnDispose { compositeDisposable.clear() }
-				.publish()
-				.refCount()
+			.filter { it !is NoOpEvent }
+			.doOnNext { log { ">>> ${it.javaClass.simpleName} >>>" } }
+			.map { eventTransformer?.performTransform(it) ?: it }
+			.filter { it !is NoOpEvent }
+			.doOnDispose { compositeDisposable.clear() }
+			.publish()
+			.refCount()
 	}
 
 	fun attachEventSource(eventSource: Observable<Event>) {

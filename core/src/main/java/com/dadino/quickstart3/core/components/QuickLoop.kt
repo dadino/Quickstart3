@@ -15,10 +15,24 @@ class QuickLoop<STATE : State>(private val loopName: String,
 ) {
 
 	var logger: ILogger = LogcatLogger()
+	var enableLogging = false
 
 	private var state: STATE = updater.start().startState
-
 	private val eventSourcesCompositeDisposable = CompositeDisposable()
+	private val actionToPerformOnConnect = arrayListOf<() -> Unit>()
+
+	private val stateRelay: PublishRelay<STATE> by lazy { PublishRelay.create<STATE>() }
+	val states: Flowable<STATE> by lazy {
+		stateRelay.toFlowable(BackpressureStrategy.LATEST)
+			.distinctUntilChanged()
+			.replay(1)
+			.autoConnect(0)
+	}
+
+	private val signalRelay: PublishRelay<Signal> by lazy { PublishRelay.create<Signal>() }
+	val signals: Flowable<Signal> by lazy {
+		signalRelay.toFlowable(BackpressureStrategy.BUFFER)
+	}
 
 	private val eventRelay: PublishRelay<Event> = PublishRelay.create<Event>()
 	private val internalDisposable: Disposable = eventRelay.filter { it !is NoOpEvent }
@@ -35,22 +49,6 @@ class QuickLoop<STATE : State>(private val loopName: String,
 		.subscribeBy(onNext = { next ->
 			onNext(next)
 		})
-
-	private val stateRelay: PublishRelay<STATE> by lazy { PublishRelay.create<STATE>() }
-	val states: Flowable<STATE> by lazy {
-		stateRelay.toFlowable(BackpressureStrategy.LATEST)
-			.distinctUntilChanged()
-			.replay(1)
-			.autoConnect(0)
-	}
-
-	private val signalRelay: PublishRelay<Signal> by lazy { PublishRelay.create<Signal>() }
-	val signals: Flowable<Signal> by lazy {
-		signalRelay.toFlowable(BackpressureStrategy.BUFFER)
-	}
-
-	private val actionToPerformOnConnect = arrayListOf<() -> Unit>()
-	var enableLogging = false
 
 	fun disconnect() {
 		internalDisposable.dispose()
