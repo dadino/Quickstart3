@@ -2,22 +2,18 @@ package com.dadino.quickstart3.core.components
 
 import androidx.annotation.VisibleForTesting
 import com.dadino.quickstart3.core.entities.*
-import com.dadino.quickstart3.core.utils.ILogger
-import com.dadino.quickstart3.core.utils.LogcatLogger
-import com.dadino.quickstart3.core.utils.toAsync
+import com.dadino.quickstart3.core.utils.*
 import com.jakewharton.rxrelay2.PublishRelay
-import io.reactivex.BackpressureStrategy
-import io.reactivex.Flowable
-import io.reactivex.Observable
+import io.reactivex.*
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
-
 
 class QuickLoop<STATE : State>(private val loopName: String,
 							   private val updater: Updater<STATE>,
 							   private val sideEffectHandlers: List<SideEffectHandler> = arrayListOf()
 ) {
+
 	var logger: ILogger = LogcatLogger()
 
 	private var state: STATE = updater.start().startState
@@ -26,26 +22,26 @@ class QuickLoop<STATE : State>(private val loopName: String,
 
 	private val eventRelay: PublishRelay<Event> = PublishRelay.create<Event>()
 	private val internalDisposable: Disposable = eventRelay.filter { it !is NoOpEvent }
-			.toFlowable(BackpressureStrategy.BUFFER)
-			.startWith(InitializeState)
-			.map { event -> updater.internalUpdate(state, event) }
-			.map { next ->
-				if (next.state != null) {
-					state = next.state
-				}
-				next
+		.toFlowable(BackpressureStrategy.BUFFER)
+		.startWith(InitializeState)
+		.map { event -> updater.internalUpdate(state, event) }
+		.map { next ->
+			if (next.state != null) {
+				state = next.state
 			}
-			.toAsync()
-			.subscribeBy(onNext = { next ->
-				onNext(next)
-			})
+			next
+		}
+		.toAsync()
+		.subscribeBy(onNext = { next ->
+			onNext(next)
+		})
 
 	private val stateRelay: PublishRelay<STATE> by lazy { PublishRelay.create<STATE>() }
 	val states: Flowable<STATE> by lazy {
 		stateRelay.toFlowable(BackpressureStrategy.LATEST)
-				.distinctUntilChanged()
-				.replay(1)
-				.autoConnect(0)
+			.distinctUntilChanged()
+			.replay(1)
+			.autoConnect(0)
 	}
 
 	private val signalRelay: PublishRelay<Signal> by lazy { PublishRelay.create<Signal>() }
@@ -76,6 +72,19 @@ class QuickLoop<STATE : State>(private val loopName: String,
 
 	fun attachEventSource(eventDisposable: Disposable) {
 		eventSourcesCompositeDisposable.add(eventDisposable)
+	}
+
+	fun waitForSideEffect(sideEffect: SideEffect, handler: SideEffectHandler, doOnCompleted: (error: Throwable?) -> Unit) {
+		val em = PublishRelay.create<Event>()
+		val wait = em.subscribeBy(
+			onNext = {
+				when (it) {
+					is OnCompleteEvent -> doOnCompleted(null)
+				}
+			},
+			onError = { doOnCompleted(it) },
+			onComplete = { doOnCompleted(null) })
+		handler.createObservable(em, sideEffect)
 	}
 
 	private fun onNext(next: Next<STATE>) {

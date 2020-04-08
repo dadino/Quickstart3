@@ -1,17 +1,16 @@
 package com.dadino.quickstart3.core.components
 
 import androidx.lifecycle.ViewModel
-import com.dadino.quickstart3.core.entities.Event
-import com.dadino.quickstart3.core.entities.State
+import com.dadino.quickstart3.core.entities.*
 import io.reactivex.Observable
 
 abstract class BaseViewModel<STATE : State> : ViewModel() {
 
 	private val loop: QuickLoop<STATE> by lazy {
 		QuickLoop(
-				loopName = javaClass.simpleName,
-				sideEffectHandlers = getSideEffectHandlers(),
-				updater = updater()
+			loopName = javaClass.simpleName,
+			sideEffectHandlers = getSideEffectHandlers(),
+			updater = updater()
 		)
 	}
 
@@ -30,6 +29,10 @@ abstract class BaseViewModel<STATE : State> : ViewModel() {
 
 	fun attachEventSource(eventObservable: Observable<Event>) {
 		loop.attachEventSource(eventObservable)
+	}
+
+	fun waitForSideEffect(sideEffect: SideEffect, handler: SideEffectHandler, doOnComplete: (error: Throwable?) -> Unit) {
+		loop.waitForSideEffect(sideEffect, handler, doOnComplete)
 	}
 
 	fun currentState() = loop.currentState()
