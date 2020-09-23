@@ -4,24 +4,18 @@ import android.content.Context
 import android.util.Log
 import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
-import com.dadino.quickstart3.core.components.SignalResponder
-import com.dadino.quickstart3.core.components.StateRenderer
-import com.dadino.quickstart3.core.components.ViewModelAttacher
-import com.dadino.quickstart3.core.entities.Signal
-import com.dadino.quickstart3.core.entities.State
-import com.dadino.quickstart3.core.entities.VMStarter
-import com.dadino.quickstart3.sample.viewmodels.counter.CounterSignal
-import com.dadino.quickstart3.sample.viewmodels.counter.CounterState
-import com.dadino.quickstart3.sample.viewmodels.counter.CounterViewModel
+import com.dadino.quickstart3.core.components.*
+import com.dadino.quickstart3.core.entities.*
+import com.dadino.quickstart3.sample.viewmodels.counter.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
+class CounterComponent(activity: AppCompatActivity, context: Context) : SignalResponder, StateRenderer, ViewModelAttacher {
 
-class CounterComponent(lifecycleOwner: LifecycleOwner, context: Context) : SignalResponder, StateRenderer, ViewModelAttacher {
 	var counterButton: Button? = null
 	private val appContext: Context = context.applicationContext
-	private val counterViewModel: CounterViewModel by lifecycleOwner.viewModel()
+	private val counterViewModel: CounterViewModel by activity.viewModel()
 
 	override fun attachAdditionalViewModels(): List<VMStarter> {
 		return listOf(VMStarter(counterViewModel, Lifecycle.State.RESUMED))

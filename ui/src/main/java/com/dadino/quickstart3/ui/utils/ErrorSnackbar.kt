@@ -5,15 +5,14 @@ import android.widget.TextView
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
-import com.dadino.quickstart3.core.components.ErrorHandler
+import com.dadino.quickstart3.core.components.ContextFormattable
 import com.dadino.quickstart3.ui.R
 import com.google.android.material.snackbar.Snackbar
 
 object ErrorSnackbar {
 
-	fun showErrorSnackbar(view: View, throwable: Throwable?, errorHandler: ErrorHandler, duration: Int = Snackbar.LENGTH_LONG, @StringRes actionLabel: Int = 0, action: (() -> Unit)? = null) {
-		val errorMessageForUser = errorHandler.getError(throwable).format(view.context)
-		val snackbar = Snackbar.make(view, errorMessageForUser, duration)
+	fun showErrorSnackbar(view: View, formattable: ContextFormattable, duration: Int = Snackbar.LENGTH_LONG, @StringRes actionLabel: Int = 0, action: (() -> Unit)? = null) {
+		val snackbar = Snackbar.make(view, formattable.format(view.context) ?: "", duration)
 		if (action != null) {
 			snackbar.setAction(actionLabel) { action() }
 		}
@@ -21,8 +20,8 @@ object ErrorSnackbar {
 		snackbar.show()
 	}
 
-	fun showSuccessSnackbar(view: View, message: String, duration: Int = Snackbar.LENGTH_LONG, @StringRes actionLabel: Int = 0, action: (() -> Unit)? = null) {
-		val snackbar = Snackbar.make(view, message, duration)
+	fun showSuccessSnackbar(view: View, formattable: ContextFormattable, duration: Int = Snackbar.LENGTH_LONG, @StringRes actionLabel: Int = 0, action: (() -> Unit)? = null) {
+		val snackbar = Snackbar.make(view, formattable.format(view.context) ?: "", duration)
 		if (action != null) {
 			snackbar.setAction(actionLabel) { action() }
 		}
@@ -43,7 +42,8 @@ object ErrorSnackbar {
 		val snackBarView = snackbar.view
 
 		snackBarView.setBackgroundColor(
-				ContextCompat.getColor(snackbar.context, backgroundColor))
+			ContextCompat.getColor(snackbar.context, backgroundColor)
+		)
 
 		val textView = snackBarView.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
 		textView.maxLines = 5

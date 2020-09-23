@@ -15,6 +15,7 @@ android {
         versionName rootProject.versionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -35,5 +36,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    implementation "org.koin:koin-android-viewmodel:2.0.1"
+    implementation "org.koin:koin-android-viewmodel:2.1.6"
+    implementation 'androidx.multidex:multidex:2.0.1'
+
 }
