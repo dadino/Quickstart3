@@ -1,6 +1,5 @@
 package com.dadino.quickstart3.core.entities
 
-
 open class Next<S : State>(val state: S?,
 						   val signals: List<Signal>,
 						   val effects: List<SideEffect>) {
@@ -51,10 +50,44 @@ open class Next<S : State>(val state: S?,
 class Start<S : State>(val startState: S,
 					   signals: List<Signal>,
 					   effects: List<SideEffect>) : Next<S>(startState, signals, effects) {
+
 	companion object {
 		fun <S : State> start(state: S,
 							  signals: List<Signal> = listOf(),
 							  effects: List<SideEffect> = listOf()
 		) = Start(startState = state, signals = signals, effects = effects)
+	}
+}
+
+class NextBuilder<T : State> {
+	private var state: T? = null
+	private val effects: MutableList<SideEffect> = arrayListOf()
+	private val signals: MutableList<Signal> = arrayListOf()
+
+	fun build(): Next<T> = Next(state, signals, effects)
+
+	fun state(state: T?): NextBuilder<T> {
+		this.state = state
+		return this
+	}
+
+	fun addEffect(effect: SideEffect?): NextBuilder<T> {
+		if (effect != null) this.effects.add(effect)
+		return this
+	}
+
+	fun addEffects(effects: List<SideEffect?>): NextBuilder<T> {
+		this.effects.addAll(effects.filterIsInstance(SideEffect::class.java))
+		return this
+	}
+
+	fun addSignal(signal: Signal?): NextBuilder<T> {
+		if (signal != null) this.signals.add(signal)
+		return this
+	}
+
+	fun addSignals(signals: List<Signal?>): NextBuilder<T> {
+		this.signals.addAll(signals.filterIsInstance(Signal::class.java))
+		return this
 	}
 }

@@ -3,20 +3,16 @@ package com.dadino.quickstart3.core.components
 import com.dadino.quickstart3.core.entities.Event
 import com.dadino.quickstart3.core.entities.SideEffect
 import com.jakewharton.rxrelay2.Relay
-import io.reactivex.Flowable
-import io.reactivex.Scheduler
-import io.reactivex.Single
+import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
-
 interface SideEffectHandler {
 	fun createObservable(eventRelay: Relay<Event>, effect: SideEffect): Disposable?
 	fun onClear()
 }
-
 
 abstract class RxSingleSideEffectHandler<E : SideEffect>(
 		private val disposeOnNewEffect: Boolean = false,
@@ -24,14 +20,15 @@ abstract class RxSingleSideEffectHandler<E : SideEffect>(
 		private val subscribeOn: Scheduler = Schedulers.io(),
 		private val observeOn: Scheduler = AndroidSchedulers.mainThread())
 	: SideEffectHandler {
+
 	private var compositeDisposable: CompositeDisposable = CompositeDisposable()
 	override fun createObservable(eventRelay: Relay<Event>, effect: SideEffect): Disposable? {
 		val disposable = if (checkClass(effect)) {
 			effectToFlowable(effect as E)
-					.subscribeOn(subscribeOn)
-					.observeOn(observeOn)
-					.toObservable()
-					.subscribe(eventRelay)
+				.subscribeOn(subscribeOn)
+				.observeOn(observeOn)
+				.toObservable()
+				.subscribe(eventRelay)
 		} else {
 			null
 		}
@@ -58,6 +55,7 @@ abstract class SingleSideEffectHandler<E : SideEffect>(
 		private val disposeOnNewEffect: Boolean = true,
 		private val disposeOnClear: Boolean = true
 ) : SideEffectHandler {
+
 	private var compositeDisposable: CompositeDisposable = CompositeDisposable()
 
 	override fun createObservable(eventRelay: Relay<Event>, effect: SideEffect): Disposable? {
@@ -65,8 +63,8 @@ abstract class SingleSideEffectHandler<E : SideEffect>(
 			Single.fromCallable {
 				effectToEvent(effect as E)
 			}
-					.toObservable()
-					.subscribe(eventRelay)
+				.toObservable()
+				.subscribe(eventRelay)
 		} else {
 			null
 		}
