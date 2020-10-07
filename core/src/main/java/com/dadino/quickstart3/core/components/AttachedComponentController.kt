@@ -20,7 +20,7 @@ class AttachedComponentController(private val lifecycleOwner: LifecycleOwner,
 		val list: ArrayList<VMStarter> = arrayListOf()
 		list.addAll(VMS)
 		vmAttachers.forEach { list.addAll(it.attachAdditionalViewModels()) }
-		list.forEach { attachViewModel(it.viewModel, it.minimumState) }
+		list.forEach { attachViewModel(it) }
 	}
 
 	private fun renderState(state: State, render: (State) -> Unit) {
@@ -67,26 +67,35 @@ class AttachedComponentController(private val lifecycleOwner: LifecycleOwner,
 		stateRenderers.clear()
 	}
 
-	private fun attachViewModel(viewModel: BaseViewModel<*>, minimumState: Lifecycle.State = Lifecycle.State.RESUMED) {
-		viewModel.attachEventSource(eventManager.interactionEvents())
-		attachToLifecycle(viewModel, minimumState)
+	private fun attachViewModel(vmStarter: VMStarter) {
+		doAtLifecycle(vmStarter)
+		attachToLifecycle(vmStarter)
 	}
 
-	private fun attachToLifecycle(viewModel: BaseViewModel<*>, minimumState: Lifecycle.State) {
-		when (minimumState) {
+	private fun doAtLifecycle(vmStarter: VMStarter) {
+		when (vmStarter.minimumState) {
+			Lifecycle.State.RESUMED -> WorkerLifecycle.doAtResume(lifecycleOwner, { vmStarter.viewModel.attachEventSource(eventManager.interactionEvents()) })
+			Lifecycle.State.STARTED -> WorkerLifecycle.doAtStart(lifecycleOwner, { vmStarter.viewModel.attachEventSource(eventManager.interactionEvents()) })
+			Lifecycle.State.CREATED -> WorkerLifecycle.doAtCreate(lifecycleOwner, { vmStarter.viewModel.attachEventSource(eventManager.interactionEvents()) })
+			else                    -> throw RuntimeException("minimumState ${vmStarter.minimumState} not supported")
+		}
+	}
+
+	private fun attachToLifecycle(vmStarter: VMStarter) {
+		when (vmStarter.minimumState) {
 			Lifecycle.State.RESUMED -> {
-				attachDisposableToResumePause { viewModel.states().subscribeBy(onNext = { renderStateInternal(it) }) }
-				attachDisposableToResumePause { viewModel.signals().subscribeBy(onNext = { respondToInternal(it) }) }
+				attachDisposableToResumePause { vmStarter.viewModel.states().subscribeBy(onNext = { renderStateInternal(it) }) }
+				attachDisposableToResumePause { vmStarter.viewModel.signals().subscribeBy(onNext = { respondToInternal(it) }) }
 			}
 			Lifecycle.State.STARTED -> {
-				attachDisposableToStartStop { viewModel.states().subscribeBy(onNext = { renderStateInternal(it) }) }
-				attachDisposableToStartStop { viewModel.signals().subscribeBy(onNext = { respondToInternal(it) }) }
+				attachDisposableToStartStop { vmStarter.viewModel.states().subscribeBy(onNext = { renderStateInternal(it) }) }
+				attachDisposableToStartStop { vmStarter.viewModel.signals().subscribeBy(onNext = { respondToInternal(it) }) }
 			}
 			Lifecycle.State.CREATED -> {
-				attachDisposableToCreateDestroy { viewModel.states().subscribeBy(onNext = { renderStateInternal(it) }) }
-				attachDisposableToCreateDestroy { viewModel.signals().subscribeBy(onNext = { respondToInternal(it) }) }
+				attachDisposableToCreateDestroy { vmStarter.viewModel.states().subscribeBy(onNext = { renderStateInternal(it) }) }
+				attachDisposableToCreateDestroy { vmStarter.viewModel.signals().subscribeBy(onNext = { respondToInternal(it) }) }
 			}
-			else                    -> throw RuntimeException("minimumState $minimumState not supported")
+			else                    -> throw RuntimeException("minimumState ${vmStarter.minimumState} not supported")
 		}
 	}
 

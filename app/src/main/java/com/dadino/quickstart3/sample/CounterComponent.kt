@@ -5,7 +5,6 @@ import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Lifecycle
 import com.dadino.quickstart3.core.components.*
 import com.dadino.quickstart3.core.entities.*
 import com.dadino.quickstart3.sample.viewmodels.counter.*
@@ -18,7 +17,7 @@ class CounterComponent(activity: AppCompatActivity, context: Context) : SignalRe
 	private val counterViewModel: CounterViewModel by activity.viewModel()
 
 	override fun attachAdditionalViewModels(): List<VMStarter> {
-		return listOf(VMStarter(counterViewModel, Lifecycle.State.RESUMED))
+		return listOf(VMStarter { counterViewModel })
 	}
 
 	override fun respondTo(signal: Signal): Boolean {
