@@ -4,21 +4,16 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.Lifecycle
 import com.dadino.quickstart3.core.BaseActivity
 import com.dadino.quickstart3.core.components.AttachedComponent
-import com.dadino.quickstart3.core.entities.Signal
-import com.dadino.quickstart3.core.entities.State
-import com.dadino.quickstart3.core.entities.VMStarter
-import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerEvent
-import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerSignal
-import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerState
-import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerViewModel
+import com.dadino.quickstart3.core.entities.*
+import com.dadino.quickstart3.sample.viewmodels.spinner.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.jakewharton.rxbinding3.view.clicks
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class SecondActivity : BaseActivity() {
+
 	private val toolbar: Toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
 	private val fab: FloatingActionButton by lazy { findViewById<FloatingActionButton>(R.id.fab) }
 
@@ -28,6 +23,7 @@ class SecondActivity : BaseActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_second)
+		Log.d("Spinner", "onCreate")
 		setSupportActionBar(toolbar)
 
 		supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -39,15 +35,26 @@ class SecondActivity : BaseActivity() {
 		//supportFragmentManager.beginTransaction().replace(R.id.fragment_container, SampleFragment()).commit()
 	}
 
+	override fun onStart() {
+		super.onStart()
+
+		Log.d("Spinner", "onStart")
+	}
+
+	override fun onResume() {
+		super.onResume()
+		Log.d("Spinner", "onResume")
+	}
+
 	override fun components(): List<AttachedComponent> {
 		return listOf(
-				counterComponent
+			counterComponent
 		)
 	}
 
 	override fun viewModels(): List<VMStarter> {
 		return listOf(
-				VMStarter(spinnerViewModel, Lifecycle.State.RESUMED)
+			VMStarter { spinnerViewModel }
 		)
 	}
 
@@ -68,5 +75,4 @@ class SecondActivity : BaseActivity() {
 
 		Toast.makeText(this, "Session: ${spinnerViewModel.currentState().session}", Toast.LENGTH_LONG).show()
 	}
-
 }
