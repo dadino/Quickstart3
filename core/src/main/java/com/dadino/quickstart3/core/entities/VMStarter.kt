@@ -1,6 +1,5 @@
 package com.dadino.quickstart3.core.entities
 
-import android.util.Log
 import androidx.lifecycle.Lifecycle
 import com.dadino.quickstart3.core.components.BaseViewModel
 
@@ -9,8 +8,5 @@ data class VMStarter(
 		private val viewModelFactory: () -> BaseViewModel<*>
 ) {
 
-	val viewModel: BaseViewModel<*> by lazy {
-		Log.d("VMStarter", "Generating view model with minimumState: $minimumState")
-		viewModelFactory()
-	}
+	val viewModel: BaseViewModel<*> by lazy { viewModelFactory() }
 }
