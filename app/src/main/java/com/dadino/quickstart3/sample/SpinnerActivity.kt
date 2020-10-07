@@ -8,16 +8,10 @@ import android.widget.Toast
 import com.dadino.quickstart3.core.BaseActivity
 import com.dadino.quickstart3.core.components.AttachedComponent
 import com.dadino.quickstart3.core.components.EventTransformer
-import com.dadino.quickstart3.core.entities.Event
-import com.dadino.quickstart3.core.entities.Signal
-import com.dadino.quickstart3.core.entities.State
-import com.dadino.quickstart3.core.entities.VMStarter
+import com.dadino.quickstart3.core.entities.*
 import com.dadino.quickstart3.sample.entities.OnGoToSecondPageClicked
 import com.dadino.quickstart3.sample.viewmodels.counter.CounterEvent
-import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerEvent
-import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerSignal
-import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerState
-import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerViewModel
+import com.dadino.quickstart3.sample.viewmodels.spinner.*
 import com.dadino.quickstart3.sample.widgets.ExampleSpinner
 import com.dadino.quickstart3.ui.widgets.LoadingSpinnerEvent
 import com.jakewharton.rxbinding3.view.clicks
@@ -43,36 +37,51 @@ class SpinnerActivity : BaseActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_spinner)
-
+		Log.d("Spinner", "onCreate")
 		counterComponent.counterButton = counterButton
 
-		eventManager.attachEventSource(Observable.merge(listOf(
-				idle.clicks().map { SpinnerEvent.OnSpinnerIdleClicked() },
-				loading.clicks().map { SpinnerEvent.OnSpinnerLoadingClicked() },
-				error.clicks().map { SpinnerEvent.OnSpinnerErrorClicked() },
-				done.clicks().map { SpinnerEvent.OnSpinnerDoneClicked() },
-				secondPage.clicks().map { OnGoToSecondPageClicked() },
-				saveSession.clicks().map { SpinnerEvent.OnSaveSessionRequested("First") },
-				counterButton.clicks().map { CounterEvent.OnAdvanceCounterClicked },
-				counterDelayedButton.clicks().map { CounterEvent.OnDelayedAdvanceCounterClicked },
-				counterStateButton.clicks().map { CounterEvent.OnShowCounterStateClicked },
-				spinner.interactionEvents()
-		)))
+		eventManager.attachEventSource(
+			Observable.merge(
+				listOf(
+					idle.clicks().map { SpinnerEvent.OnSpinnerIdleClicked() },
+					loading.clicks().map { SpinnerEvent.OnSpinnerLoadingClicked() },
+					error.clicks().map { SpinnerEvent.OnSpinnerErrorClicked() },
+					done.clicks().map { SpinnerEvent.OnSpinnerDoneClicked() },
+					secondPage.clicks().map { OnGoToSecondPageClicked() },
+					saveSession.clicks().map { SpinnerEvent.OnSaveSessionRequested("First") },
+					counterButton.clicks().map { CounterEvent.OnAdvanceCounterClicked },
+					counterDelayedButton.clicks().map { CounterEvent.OnDelayedAdvanceCounterClicked },
+					counterStateButton.clicks().map { CounterEvent.OnShowCounterStateClicked },
+					spinner.interactionEvents()
+				)
+			)
+		)
 		eventManager.eventTransformer = SpinnerTransformer()
 		eventManager.tag = "SpinnerEventManager"
 
 		//eventManager.receiveEvent(CounterEvent.SetCounter(100))
 	}
 
+	override fun onStart() {
+		super.onStart()
+
+		Log.d("Spinner", "onStart")
+	}
+
+	override fun onResume() {
+		super.onResume()
+		Log.d("Spinner", "onResume")
+	}
+
 	override fun components(): List<AttachedComponent> {
 		return listOf(
-				counterComponent
+			counterComponent
 		)
 	}
 
 	override fun viewModels(): List<VMStarter> {
 		return listOf(
-				VMStarter(spinnerViewModel)
+			VMStarter { spinnerViewModel }
 		)
 	}
 
@@ -84,10 +93,10 @@ class SpinnerActivity : BaseActivity() {
 
 	override fun respondTo(signal: Signal) {
 		when (signal) {
-			is SpinnerSignal.ShowDoneToast            -> Toast.makeText(this, "Done", Toast.LENGTH_SHORT).show()
+			is SpinnerSignal.ShowDoneToast -> Toast.makeText(this, "Done", Toast.LENGTH_SHORT).show()
 			is SpinnerSignal.ShowSaveSessionCompleted -> Toast.makeText(this, "Session saved", Toast.LENGTH_SHORT).show()
 			is SpinnerSignal.ShowLoadSessionCompleted -> Toast.makeText(this, "Session loaded: ${signal.session}", Toast.LENGTH_SHORT).show()
-			is SpinnerSignal.OpenSecondActivity       -> startActivity(Intent(this, SecondActivity::class.java))
+			is SpinnerSignal.OpenSecondActivity -> startActivity(Intent(this, SecondActivity::class.java))
 		}
 	}
 
@@ -99,6 +108,7 @@ class SpinnerActivity : BaseActivity() {
 }
 
 class SpinnerTransformer : EventTransformer(true) {
+
 	override fun transform(event: Event): Event? {
 		return when (event) {
 			is LoadingSpinnerEvent.OnRetryClicked -> SpinnerEvent.OnSpinnerRetryClicked()
