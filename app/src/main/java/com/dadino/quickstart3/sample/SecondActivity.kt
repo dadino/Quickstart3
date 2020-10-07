@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar
 import com.dadino.quickstart3.core.BaseActivity
 import com.dadino.quickstart3.core.components.AttachedComponent
 import com.dadino.quickstart3.core.entities.*
+import com.dadino.quickstart3.core.utils.AttachDetachCallback
 import com.dadino.quickstart3.sample.viewmodels.spinner.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.jakewharton.rxbinding3.view.clicks
@@ -54,7 +55,27 @@ class SecondActivity : BaseActivity() {
 
 	override fun viewModels(): List<VMStarter> {
 		return listOf(
-			VMStarter { spinnerViewModel }
+			VMStarter(eventCallbacks = object : EventCallbacks {
+				override fun onEventManagerAttached() {
+					Log.d("VMStarter", "onEventManagerAttached")
+				}
+			}, stateUpdatesCallbacks = object : AttachDetachCallback {
+				override fun onAttach() {
+					Log.d("VMStarter", "onSubscribedToStateUpdates")
+				}
+
+				override fun onDetach() {
+					Log.d("VMStarter", "onUnsubscribedToStateUpdates")
+				}
+			}, signalUpdatesCallbacks = object : AttachDetachCallback {
+				override fun onAttach() {
+					Log.d("VMStarter", "onSubscribedToSignalUpdates")
+				}
+
+				override fun onDetach() {
+					Log.d("VMStarter", "onUnsubscribedToSignalUpdates")
+				}
+			}) { spinnerViewModel }
 		)
 	}
 
