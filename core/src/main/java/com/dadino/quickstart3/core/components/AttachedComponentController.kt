@@ -69,23 +69,20 @@ class AttachedComponentController(private val lifecycleOwner: LifecycleOwner,
 	}
 
 	private fun attachViewModel(vmStarter: VMStarter) {
-		doAtLifecycle(vmStarter)
 		attachToLifecycle(vmStarter)
+		doAtLifecycle(vmStarter)
 	}
 
 	private fun doAtLifecycle(vmStarter: VMStarter) {
 		when (vmStarter.minimumState) {
 			Lifecycle.State.RESUMED -> WorkerLifecycle.doAtResume(lifecycleOwner, {
 				vmStarter.viewModel.attachEventSource(eventManager.interactionEvents())
-				vmStarter.eventCallbacks?.onEventManagerAttached()
 			})
 			Lifecycle.State.STARTED -> WorkerLifecycle.doAtStart(lifecycleOwner, {
 				vmStarter.viewModel.attachEventSource(eventManager.interactionEvents())
-				vmStarter.eventCallbacks?.onEventManagerAttached()
 			})
 			Lifecycle.State.CREATED -> WorkerLifecycle.doAtCreate(lifecycleOwner, {
 				vmStarter.viewModel.attachEventSource(eventManager.interactionEvents())
-				vmStarter.eventCallbacks?.onEventManagerAttached()
 			})
 			else                    -> throw RuntimeException("minimumState ${vmStarter.minimumState} not supported")
 		}

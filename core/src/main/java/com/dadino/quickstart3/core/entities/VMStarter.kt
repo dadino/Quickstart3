@@ -9,10 +9,21 @@ data class VMStarter(
 		val stateUpdatesCallbacks: AttachDetachCallback? = null,
 		val signalUpdatesCallbacks: AttachDetachCallback? = null,
 		val minimumState: Lifecycle.State = Lifecycle.State.RESUMED,
+		val events: (() -> List<Event>)? = null,
 		private val viewModelFactory: () -> BaseViewModel<*>
 ) {
 
-	val viewModel: BaseViewModel<*> by lazy { viewModelFactory() }
+	val viewModel: BaseViewModel<*> by lazy {
+		viewModelFactory().apply {
+			actionsToPerformOnConnect = listOf(
+				{ eventCallbacks?.onEventManagerAttached() },
+				{
+					events?.let {
+						it().forEach { receiveEvent(it) }
+					}
+				})
+		}
+	}
 }
 
 interface EventCallbacks {

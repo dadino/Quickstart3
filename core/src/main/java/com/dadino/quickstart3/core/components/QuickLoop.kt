@@ -11,7 +11,8 @@ import io.reactivex.rxkotlin.subscribeBy
 
 class QuickLoop<STATE : State>(private val loopName: String,
 							   private val updater: Updater<STATE>,
-							   private val sideEffectHandlers: List<SideEffectHandler> = arrayListOf()
+							   private val sideEffectHandlers: List<SideEffectHandler> = listOf(),
+							   private val actionToPerformOnConnect: List<() -> Unit> = listOf()
 ) {
 
 	var logger: ILogger = LogcatLogger()
@@ -19,7 +20,6 @@ class QuickLoop<STATE : State>(private val loopName: String,
 
 	private var state: STATE = updater.start().startState
 	private val eventSourcesCompositeDisposable = CompositeDisposable()
-	private val actionToPerformOnConnect = arrayListOf<() -> Unit>()
 
 	private val stateRelay: PublishRelay<STATE> by lazy { PublishRelay.create<STATE>() }
 	val states: Flowable<STATE> by lazy {
@@ -98,7 +98,6 @@ class QuickLoop<STATE : State>(private val loopName: String,
 
 		if (next is Start<STATE>) {
 			actionToPerformOnConnect.forEach { it() }
-			actionToPerformOnConnect.clear()
 		}
 	}
 

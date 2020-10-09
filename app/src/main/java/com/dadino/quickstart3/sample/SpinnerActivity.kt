@@ -82,27 +82,28 @@ class SpinnerActivity : BaseActivity() {
 
 	override fun viewModels(): List<VMStarter> {
 		return listOf(
-			VMStarter(eventCallbacks = object : EventCallbacks {
-				override fun onEventManagerAttached() {
-					Log.d("VMStarter", "onEventManagerAttached")
-				}
-			}, stateUpdatesCallbacks = object : AttachDetachCallback {
-				override fun onAttach() {
-					Log.d("VMStarter", "onSubscribedToStateUpdates")
-				}
+			VMStarter(
+				eventCallbacks = object : EventCallbacks {
+					override fun onEventManagerAttached() {
+						Log.d("VMStarter", "onEventManagerAttached")
+					}
+				}, stateUpdatesCallbacks = object : AttachDetachCallback {
+					override fun onAttach() {
+						Log.d("VMStarter", "onSubscribedToStateUpdates")
+					}
 
-				override fun onDetach() {
-					Log.d("VMStarter", "onUnsubscribedToStateUpdates")
-				}
-			}, signalUpdatesCallbacks = object : AttachDetachCallback {
-				override fun onAttach() {
-					Log.d("VMStarter", "onSubscribedToSignalUpdates")
-				}
+					override fun onDetach() {
+						Log.d("VMStarter", "onUnsubscribedToStateUpdates")
+					}
+				}, signalUpdatesCallbacks = object : AttachDetachCallback {
+					override fun onAttach() {
+						Log.d("VMStarter", "onSubscribedToSignalUpdates")
+					}
 
-				override fun onDetach() {
-					Log.d("VMStarter", "onUnsubscribedToSignalUpdates")
-				}
-			}) { spinnerViewModel }
+					override fun onDetach() {
+						Log.d("VMStarter", "onUnsubscribedToSignalUpdates")
+					}
+				}) { spinnerViewModel }
 		)
 	}
 

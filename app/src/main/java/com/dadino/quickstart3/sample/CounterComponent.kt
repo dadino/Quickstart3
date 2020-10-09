@@ -17,7 +17,7 @@ class CounterComponent(activity: AppCompatActivity, context: Context) : SignalRe
 	private val counterViewModel: CounterViewModel by activity.viewModel()
 
 	override fun attachAdditionalViewModels(): List<VMStarter> {
-		return listOf(VMStarter { counterViewModel })
+		return listOf(VMStarter(events = { listOf(CounterEvent.OnAdvanceCounterClicked, CounterEvent.OnAdvanceCounterClicked) }) { counterViewModel })
 	}
 
 	override fun respondTo(signal: Signal): Boolean {
