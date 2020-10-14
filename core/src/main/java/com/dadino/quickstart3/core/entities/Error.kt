@@ -5,7 +5,7 @@ import com.dadino.quickstart3.core.components.ContextFormattable
 
 open class Error(val error: Throwable?, val formattable: ContextFormattable?) : ContextFormattable {
 
-	override fun format(context: Context): String? {
+	override fun format(context: Context): CharSequence? {
 		return formattable?.format(context)
 	}
 }
