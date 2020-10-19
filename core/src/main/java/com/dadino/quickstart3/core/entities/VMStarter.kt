@@ -19,6 +19,8 @@ data class VMStarter(
 					dequeueEvents()
 				}
 			}
+
+			if (canReceiveEvents()) dequeueEvents()
 		}
 	}
 
