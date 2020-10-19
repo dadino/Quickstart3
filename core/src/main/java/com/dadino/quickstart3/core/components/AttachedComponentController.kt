@@ -2,7 +2,6 @@ package com.dadino.quickstart3.core.components
 
 import androidx.lifecycle.*
 import com.dadino.quickstart3.core.entities.*
-import com.dadino.quickstart3.core.utils.AttachDetachCallback
 import com.dadino.quickstart3.core.utils.DisposableLifecycle
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
@@ -69,23 +68,20 @@ class AttachedComponentController(private val lifecycleOwner: LifecycleOwner,
 	}
 
 	private fun attachViewModel(vmStarter: VMStarter) {
-		doAtLifecycle(vmStarter)
 		attachToLifecycle(vmStarter)
+		doAtLifecycle(vmStarter)
 	}
 
 	private fun doAtLifecycle(vmStarter: VMStarter) {
 		when (vmStarter.minimumState) {
 			Lifecycle.State.RESUMED -> WorkerLifecycle.doAtResume(lifecycleOwner, {
 				vmStarter.viewModel.attachEventSource(eventManager.interactionEvents())
-				vmStarter.eventCallbacks?.onEventManagerAttached()
 			})
 			Lifecycle.State.STARTED -> WorkerLifecycle.doAtStart(lifecycleOwner, {
 				vmStarter.viewModel.attachEventSource(eventManager.interactionEvents())
-				vmStarter.eventCallbacks?.onEventManagerAttached()
 			})
 			Lifecycle.State.CREATED -> WorkerLifecycle.doAtCreate(lifecycleOwner, {
 				vmStarter.viewModel.attachEventSource(eventManager.interactionEvents())
-				vmStarter.eventCallbacks?.onEventManagerAttached()
 			})
 			else                    -> throw RuntimeException("minimumState ${vmStarter.minimumState} not supported")
 		}
@@ -94,31 +90,31 @@ class AttachedComponentController(private val lifecycleOwner: LifecycleOwner,
 	private fun attachToLifecycle(vmStarter: VMStarter) {
 		when (vmStarter.minimumState) {
 			Lifecycle.State.RESUMED -> {
-				attachDisposableToResumePause(vmStarter.stateUpdatesCallbacks) { vmStarter.viewModel.states().subscribeBy(onNext = { renderStateInternal(it) }) }
-				attachDisposableToResumePause(vmStarter.signalUpdatesCallbacks) { vmStarter.viewModel.signals().subscribeBy(onNext = { respondToInternal(it) }) }
+				attachDisposableToResumePause { vmStarter.viewModel.states().subscribeBy(onNext = { renderStateInternal(it) }) }
+				attachDisposableToResumePause { vmStarter.viewModel.signals().subscribeBy(onNext = { respondToInternal(it) }) }
 			}
 			Lifecycle.State.STARTED -> {
-				attachDisposableToStartStop(vmStarter.stateUpdatesCallbacks) { vmStarter.viewModel.states().subscribeBy(onNext = { renderStateInternal(it) }) }
-				attachDisposableToStartStop(vmStarter.signalUpdatesCallbacks) { vmStarter.viewModel.signals().subscribeBy(onNext = { respondToInternal(it) }) }
+				attachDisposableToStartStop { vmStarter.viewModel.states().subscribeBy(onNext = { renderStateInternal(it) }) }
+				attachDisposableToStartStop { vmStarter.viewModel.signals().subscribeBy(onNext = { respondToInternal(it) }) }
 			}
 			Lifecycle.State.CREATED -> {
-				attachDisposableToCreateDestroy(vmStarter.stateUpdatesCallbacks) { vmStarter.viewModel.states().subscribeBy(onNext = { renderStateInternal(it) }) }
-				attachDisposableToCreateDestroy(vmStarter.signalUpdatesCallbacks) { vmStarter.viewModel.signals().subscribeBy(onNext = { respondToInternal(it) }) }
+				attachDisposableToCreateDestroy { vmStarter.viewModel.states().subscribeBy(onNext = { renderStateInternal(it) }) }
+				attachDisposableToCreateDestroy { vmStarter.viewModel.signals().subscribeBy(onNext = { respondToInternal(it) }) }
 			}
 			else                    -> throw RuntimeException("minimumState ${vmStarter.minimumState} not supported")
 		}
 	}
 
-	private fun attachDisposableToCreateDestroy(callback: AttachDetachCallback?, createDisposable: () -> Disposable) {
-		DisposableLifecycle.attachAtCreateDetachAtDestroy(lifecycleOwner, callback, createDisposable)
+	private fun attachDisposableToCreateDestroy(createDisposable: () -> Disposable) {
+		DisposableLifecycle.attachAtCreateDetachAtDestroy(lifecycleOwner, createDisposable)
 	}
 
-	private fun attachDisposableToStartStop(callback: AttachDetachCallback?, createDisposable: () -> Disposable) {
-		DisposableLifecycle.attachAtStartDetachAtStop(lifecycleOwner, callback, createDisposable)
+	private fun attachDisposableToStartStop(createDisposable: () -> Disposable) {
+		DisposableLifecycle.attachAtStartDetachAtStop(lifecycleOwner, createDisposable)
 	}
 
-	private fun attachDisposableToResumePause(callback: AttachDetachCallback?, createDisposable: () -> Disposable) {
-		DisposableLifecycle.attachAtResumeDetachAtPause(lifecycleOwner, callback, createDisposable)
+	private fun attachDisposableToResumePause(createDisposable: () -> Disposable) {
+		DisposableLifecycle.attachAtResumeDetachAtPause(lifecycleOwner, createDisposable)
 	}
 
 	override fun onDestroy(owner: LifecycleOwner) {

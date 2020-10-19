@@ -5,9 +5,9 @@ import io.reactivex.disposables.Disposable
 
 object DisposableLifecycle {
 
-	fun attachAtResumeDetachAtPause(lifecycleOwner: LifecycleOwner, callback: AttachDetachCallback?, createDisposable: () -> Disposable) {
+	fun attachAtResumeDetachAtPause(lifecycleOwner: LifecycleOwner, createDisposable: () -> Disposable) {
 		lifecycleOwner.lifecycle.addObserver(object :
-													 DisposableLifecycleObserver(lifecycleOwner, Lifecycle.State.RESUMED, callback, createDisposable) {
+													 DisposableLifecycleObserver(lifecycleOwner, Lifecycle.State.RESUMED, createDisposable) {
 
 			override fun onResume(owner: LifecycleOwner) {
 				attach()
@@ -19,9 +19,9 @@ object DisposableLifecycle {
 		})
 	}
 
-	fun attachAtStartDetachAtStop(lifecycleOwner: LifecycleOwner, callback: AttachDetachCallback?, createDisposable: () -> Disposable) {
+	fun attachAtStartDetachAtStop(lifecycleOwner: LifecycleOwner, createDisposable: () -> Disposable) {
 		lifecycleOwner.lifecycle.addObserver(object :
-													 DisposableLifecycleObserver(lifecycleOwner, Lifecycle.State.STARTED, callback, createDisposable) {
+													 DisposableLifecycleObserver(lifecycleOwner, Lifecycle.State.STARTED, createDisposable) {
 
 			override fun onStart(owner: LifecycleOwner) {
 				attach()
@@ -33,9 +33,9 @@ object DisposableLifecycle {
 		})
 	}
 
-	fun attachAtCreateDetachAtDestroy(lifecycleOwner: LifecycleOwner, callback: AttachDetachCallback?, createDisposable: () -> Disposable) {
+	fun attachAtCreateDetachAtDestroy(lifecycleOwner: LifecycleOwner, createDisposable: () -> Disposable) {
 		lifecycleOwner.lifecycle.addObserver(object :
-													 DisposableLifecycleObserver(lifecycleOwner, Lifecycle.State.CREATED, callback, createDisposable) {
+													 DisposableLifecycleObserver(lifecycleOwner, Lifecycle.State.CREATED, createDisposable) {
 
 			override fun onCreate(owner: LifecycleOwner) {
 				attach()
@@ -48,7 +48,7 @@ object DisposableLifecycle {
 	}
 }
 
-abstract class DisposableLifecycleObserver(lifecycleOwner: LifecycleOwner, attachState: Lifecycle.State, private val callback: AttachDetachCallback?, private val createDisposable: () -> Disposable) :
+abstract class DisposableLifecycleObserver(lifecycleOwner: LifecycleOwner, attachState: Lifecycle.State, private val createDisposable: () -> Disposable) :
 		DefaultLifecycleObserver {
 
 	private var disposable: Disposable? = null
@@ -62,19 +62,11 @@ abstract class DisposableLifecycleObserver(lifecycleOwner: LifecycleOwner, attac
 	fun attach() {
 		if (disposable == null) {
 			disposable = createDisposable()
-			callback?.onAttach()
 		}
 	}
 
 	fun detach() {
 		disposable?.dispose()
 		disposable = null
-		callback?.onDetach()
 	}
-}
-
-interface AttachDetachCallback {
-
-	fun onAttach()
-	fun onDetach()
 }

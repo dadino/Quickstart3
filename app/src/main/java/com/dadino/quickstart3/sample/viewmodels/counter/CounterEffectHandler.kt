@@ -7,8 +7,8 @@ import com.dadino.quickstart3.core.entities.SideEffect
 import io.reactivex.Flowable
 import java.util.concurrent.TimeUnit
 
-
 class AdvanceCounterSideEffectHandler : SingleSideEffectHandler<CounterEffect.AdvanceCounter>() {
+
 	override fun checkClass(effect: SideEffect): Boolean {
 		return effect is CounterEffect.AdvanceCounter
 	}
@@ -27,7 +27,7 @@ class DelayedAdvanceCounterSideEffectHandler
 
 	override fun effectToFlowable(effect: CounterEffect.DelayedAdvanceCounter): Flowable<Event> {
 		return Flowable.just(effect)
-				.delay(400, TimeUnit.MILLISECONDS)
-				.map<Event> { CounterEvent.SetCounter(effect.currentCounter + effect.amount) }
+			.delay(400, TimeUnit.MILLISECONDS)
+			.map<Event> { CounterEvent.SetCounter(effect.currentCounter + effect.amount) }
 	}
 }
