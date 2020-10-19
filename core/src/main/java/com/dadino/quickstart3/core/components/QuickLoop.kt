@@ -17,6 +17,7 @@ class QuickLoop<STATE : State>(private val loopName: String,
 
 	var logger: ILogger = LogcatLogger()
 	var enableLogging = false
+	var canReceiveEvents = false
 
 	private var state: STATE = updater.start().startState
 	private val eventSourcesCompositeDisposable = CompositeDisposable()
@@ -97,6 +98,7 @@ class QuickLoop<STATE : State>(private val loopName: String,
 		}
 
 		if (next is Start<STATE>) {
+			canReceiveEvents = true
 			actionToPerformOnConnect.forEach { it() }
 		}
 	}

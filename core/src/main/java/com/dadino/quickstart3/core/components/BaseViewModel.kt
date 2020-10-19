@@ -44,4 +44,6 @@ abstract class BaseViewModel<STATE : State> : ViewModel() {
 	abstract fun updater(): Updater<STATE>
 
 	abstract fun getSideEffectHandlers(): List<SideEffectHandler>
+
+	fun canReceiveEvents() = loop.canReceiveEvents
 }

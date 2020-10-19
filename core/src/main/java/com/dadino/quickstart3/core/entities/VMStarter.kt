@@ -2,31 +2,46 @@ package com.dadino.quickstart3.core.entities
 
 import androidx.lifecycle.Lifecycle
 import com.dadino.quickstart3.core.components.BaseViewModel
-import com.dadino.quickstart3.core.utils.AttachDetachCallback
+import java.util.*
 
 data class VMStarter(
-		val eventCallbacks: EventCallbacks? = null,
-		val stateUpdatesCallbacks: AttachDetachCallback? = null,
-		val signalUpdatesCallbacks: AttachDetachCallback? = null,
 		val minimumState: Lifecycle.State = Lifecycle.State.RESUMED,
-		val events: (() -> List<Event>)? = null,
 		private val viewModelFactory: () -> BaseViewModel<*>
 ) {
 
-	val viewModel: BaseViewModel<*> by lazy {
+	private val eventQueue: Queue<Event> = LinkedList<Event>()
+
+	private val viewModelDelegate = lazy {
 		viewModelFactory().apply {
-			actionsToPerformOnConnect = listOf(
-				{ eventCallbacks?.onEventManagerAttached() },
-				{
-					events?.let {
-						it().forEach { receiveEvent(it) }
-					}
-				})
+			actionsToPerformOnConnect = listOf {
+				dequeueEvents()
+			}
 		}
 	}
-}
 
-interface EventCallbacks {
+	val viewModel: BaseViewModel<*> by viewModelDelegate
 
-	fun onEventManagerAttached()
+	fun queueEvent(event: Event) {
+		queueEvents(listOf(event))
+	}
+
+	fun queueEvents(events: List<Event>) {
+		events.forEach {
+			eventQueue.offer(it)
+		}
+		if (viewModelDelegate.isInitialized() && viewModel.canReceiveEvents()) dequeueEvents()
+	}
+
+	private fun dequeueEvents() {
+		var hasNext = true
+		while (hasNext) {
+			val event = eventQueue.poll()
+			if (event != null) {
+				viewModel.receiveEvent(event)
+				hasNext = true
+			} else {
+				hasNext = false
+			}
+		}
+	}
 }
