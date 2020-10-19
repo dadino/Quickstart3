@@ -6,13 +6,18 @@ import io.reactivex.Observable
 
 abstract class BaseViewModel<STATE : State> : ViewModel() {
 
-	var actionsToPerformOnConnect: List<() -> Unit> = listOf()
+	var onConnectCallback: OnConnectCallback? = null
+	private val internalOnConnectCallback = object : OnConnectCallback {
+		override fun onConnect() {
+			onConnectCallback?.onConnect()
+		}
+	}
 	private val loop: QuickLoop<STATE> by lazy {
 		QuickLoop(
 			loopName = javaClass.simpleName,
 			sideEffectHandlers = getSideEffectHandlers(),
 			updater = updater(),
-			actionToPerformOnConnect = actionsToPerformOnConnect
+			onConnectCallback = internalOnConnectCallback
 		)
 	}
 

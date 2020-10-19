@@ -78,7 +78,7 @@ class SpinnerActivity : BaseActivity() {
 
 	override fun components(): List<AttachedComponent> {
 		return listOf(
-			//counterComponent
+			counterComponent
 		)
 	}
 

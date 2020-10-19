@@ -12,7 +12,8 @@ import io.reactivex.rxkotlin.subscribeBy
 class QuickLoop<STATE : State>(private val loopName: String,
 							   private val updater: Updater<STATE>,
 							   private val sideEffectHandlers: List<SideEffectHandler> = listOf(),
-							   private val actionToPerformOnConnect: List<() -> Unit> = listOf()
+							   private val onConnectCallback: OnConnectCallback
+
 ) {
 
 	var logger: ILogger = LogcatLogger()
@@ -99,7 +100,7 @@ class QuickLoop<STATE : State>(private val loopName: String,
 
 		if (next is Start<STATE>) {
 			canReceiveEvents = true
-			actionToPerformOnConnect.forEach { it() }
+			onConnectCallback.onConnect()
 		}
 	}
 
@@ -133,5 +134,10 @@ class QuickLoop<STATE : State>(private val loopName: String,
 
 	@VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
 	fun getEventSources() = eventSourcesCompositeDisposable
+}
+
+interface OnConnectCallback {
+
+	fun onConnect()
 }
 

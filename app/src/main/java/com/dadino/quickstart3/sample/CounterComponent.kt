@@ -19,7 +19,7 @@ class CounterComponent(activity: AppCompatActivity, context: Context) : SignalRe
 	override fun attachAdditionalViewModels(): List<VMStarter> {
 		return listOf(
 			VMStarter { counterViewModel }
-			//	.apply { queueEvents(listOf(CounterEvent.OnAdvanceCounterClicked, CounterEvent.OnAdvanceCounterClicked)) }
+				.apply { queueEvents(listOf(CounterEvent.OnAdvanceCounterClicked, CounterEvent.OnAdvanceCounterClicked)) }
 		)
 	}
 

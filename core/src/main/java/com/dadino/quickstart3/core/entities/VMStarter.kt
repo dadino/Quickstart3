@@ -2,6 +2,7 @@ package com.dadino.quickstart3.core.entities
 
 import androidx.lifecycle.Lifecycle
 import com.dadino.quickstart3.core.components.BaseViewModel
+import com.dadino.quickstart3.core.components.OnConnectCallback
 import java.util.*
 
 data class VMStarter(
@@ -13,8 +14,10 @@ data class VMStarter(
 
 	private val viewModelDelegate = lazy {
 		viewModelFactory().apply {
-			actionsToPerformOnConnect = listOf {
-				dequeueEvents()
+			onConnectCallback = object : OnConnectCallback {
+				override fun onConnect() {
+					dequeueEvents()
+				}
 			}
 		}
 	}
