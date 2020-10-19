@@ -1,29 +1,29 @@
 package com.dadino.quickstart3.core.tests
 
-import com.dadino.quickstart3.core.RxJavaSchedulerConfigurator
-import com.dadino.quickstart3.core.TestEvents
-import com.dadino.quickstart3.core.TestState
-import com.dadino.quickstart3.core.TestStateUpdater
+import com.dadino.quickstart3.core.*
 import com.dadino.quickstart3.core.TestUtils.MAX_WAIT_TIME_FOR_OBSERVABLES
 import com.dadino.quickstart3.core.TestUtils.any
+import com.dadino.quickstart3.core.components.OnConnectCallback
 import com.dadino.quickstart3.core.components.QuickLoop
 import com.dadino.quickstart3.core.entities.Event
 import com.dadino.quickstart3.core.entities.NoOpEvent
 import com.dadino.quickstart3.core.utils.ConsoleLogger
 import io.reactivex.observers.BaseTestConsumer.TestWaitStrategy
 import io.reactivex.observers.TestObserver
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.*
 import org.junit.runner.RunWith
 import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
 class QuickLoopStateTests {
+
 	private lateinit var quickLoop: QuickLoop<TestState>
 	private lateinit var updater: TestStateUpdater
 	private lateinit var testObserver: TestObserver<TestState>
+	private val onConnectCallback = object : OnConnectCallback {
+		override fun onConnect() {}
+	}
 
 	@Before
 	fun setup() {
@@ -34,7 +34,7 @@ class QuickLoopStateTests {
 		Mockito.`when`(updater.update(any(TestState::class.java), any(Event::class.java))).thenCallRealMethod()
 		Mockito.`when`(updater.internalUpdate(any(TestState::class.java), any(Event::class.java))).thenCallRealMethod()
 
-		quickLoop = QuickLoop("testloop", updater)
+		quickLoop = QuickLoop("testloop", updater, listOf(), onConnectCallback)
 		quickLoop.enableLogging = true
 		quickLoop.logger = ConsoleLogger()
 		testObserver = TestObserver()
@@ -42,8 +42,8 @@ class QuickLoopStateTests {
 		Thread.sleep(100)
 
 		quickLoop.states
-				.toObservable()
-				.subscribe(testObserver)
+			.toObservable()
+			.subscribe(testObserver)
 	}
 
 	@After
@@ -51,7 +51,6 @@ class QuickLoopStateTests {
 		testObserver.dispose()
 		quickLoop.disconnect()
 	}
-
 
 	@Test
 	fun sendEvent_updateState() {

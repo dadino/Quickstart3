@@ -9,7 +9,6 @@ import com.dadino.quickstart3.core.BaseActivity
 import com.dadino.quickstart3.core.components.AttachedComponent
 import com.dadino.quickstart3.core.components.EventTransformer
 import com.dadino.quickstart3.core.entities.*
-import com.dadino.quickstart3.core.utils.AttachDetachCallback
 import com.dadino.quickstart3.sample.entities.OnGoToSecondPageClicked
 import com.dadino.quickstart3.sample.viewmodels.counter.CounterEvent
 import com.dadino.quickstart3.sample.viewmodels.spinner.*
@@ -34,6 +33,8 @@ class SpinnerActivity : BaseActivity() {
 
 	private val spinnerViewModel: SpinnerViewModel by viewModel()
 	private val counterComponent: CounterComponent by lazy { CounterComponent(this, this) }
+
+	private val spinnerVMStarter: VMStarter by lazy { VMStarter { spinnerViewModel } }
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -72,6 +73,7 @@ class SpinnerActivity : BaseActivity() {
 	override fun onResume() {
 		super.onResume()
 		Log.d("Spinner", "onResume")
+		spinnerVMStarter.queueEvent(SpinnerEvent.OnSpinnerLoadingClicked())
 	}
 
 	override fun components(): List<AttachedComponent> {
@@ -82,28 +84,7 @@ class SpinnerActivity : BaseActivity() {
 
 	override fun viewModels(): List<VMStarter> {
 		return listOf(
-			VMStarter(
-				eventCallbacks = object : EventCallbacks {
-					override fun onEventManagerAttached() {
-						Log.d("VMStarter", "onEventManagerAttached")
-					}
-				}, stateUpdatesCallbacks = object : AttachDetachCallback {
-					override fun onAttach() {
-						Log.d("VMStarter", "onSubscribedToStateUpdates")
-					}
-
-					override fun onDetach() {
-						Log.d("VMStarter", "onUnsubscribedToStateUpdates")
-					}
-				}, signalUpdatesCallbacks = object : AttachDetachCallback {
-					override fun onAttach() {
-						Log.d("VMStarter", "onSubscribedToSignalUpdates")
-					}
-
-					override fun onDetach() {
-						Log.d("VMStarter", "onUnsubscribedToSignalUpdates")
-					}
-				}) { spinnerViewModel }
+			spinnerVMStarter
 		)
 	}
 
