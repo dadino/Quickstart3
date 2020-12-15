@@ -16,7 +16,7 @@ class ResFormattable(
 ) : ContextFormattable {
 
 	override fun format(context: Context): String? {
-		return context.getString(textRes, args)
+		return context.getString(textRes, *args)
 	}
 }
 
@@ -26,7 +26,7 @@ class StringFormattable(
 ) : ContextFormattable {
 
 	override fun format(context: Context): String? {
-		return String.format(text, args)
+		return String.format(text, *args)
 	}
 }
 
