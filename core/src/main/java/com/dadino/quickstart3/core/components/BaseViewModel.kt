@@ -43,7 +43,7 @@ abstract class BaseViewModel<STATE : State> : ViewModel() {
 	}
 
 	fun currentState() = loop.currentState()
-	fun states() = loop.states
+	fun states() = loop.getStates()
 	fun signals() = loop.signals
 
 	abstract fun updater(): Updater<STATE>

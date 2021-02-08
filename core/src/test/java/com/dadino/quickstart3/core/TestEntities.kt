@@ -7,6 +7,13 @@ import com.dadino.quickstart3.core.entities.*
 data class TestState(
 		val counter: Int = 0,
 		val number: Int = 0
+) : State() {
+
+	val isGreaterThan3 = counter > 3
+}
+
+data class TestSubState(
+		val isCounterGreaterThan3: Boolean
 ) : State()
 
 open class TestStateUpdater(useLogging: Boolean = true) : Updater<TestState>(useLogging) {
@@ -25,8 +32,19 @@ open class TestStateUpdater(useLogging: Boolean = true) : Updater<TestState>(use
 		}
 	}
 
+	override fun updateSubStates(previous: TestState, updated: TestState, isInitialization: Boolean): List<State> {
+		val list = arrayListOf<State>()
+		if (previous.isGreaterThan3 != updated.isGreaterThan3 || isInitialization)
+			list.add(TestSubState(isCounterGreaterThan3 = updated.isGreaterThan3))
+		list.addAll(super.updateSubStates(previous, updated, isInitialization))
+		return list
+	}
+
 	override fun getSubStateClasses(): List<Class<*>> {
-		return listOf(TestState::class.java)
+		return listOf(
+			TestState::class.java,
+			TestSubState::class.java
+		)
 	}
 }
 

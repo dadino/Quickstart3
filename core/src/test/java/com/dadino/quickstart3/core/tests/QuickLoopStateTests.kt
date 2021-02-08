@@ -37,8 +37,7 @@ class QuickLoopStateTests {
 
 		Thread.sleep(100)
 
-		quickLoop.states
-			.first()
+		quickLoop.getStateFlow(TestState::class.java)
 			.toObservable()
 			.subscribe(testObserver)
 	}
@@ -62,6 +61,35 @@ class QuickLoopStateTests {
 		testObserver.assertValueAt(1) { (it as TestState).counter == 2 }
 
 		testObserver.assertNotComplete()
+	}
+
+	@Test
+	fun sendEvent_updateStateAndSubstate() {
+		val subtestObserver: TestObserver<in State> = TestObserver()
+		quickLoop.getStateFlow(TestSubState::class.java)
+			.toObservable()
+			.subscribe(subtestObserver)
+
+		//WHEN
+		quickLoop.receiveEvent(TestEvents.Add1ToCounter)
+		quickLoop.receiveEvent(TestEvents.Add1ToCounter)
+		quickLoop.receiveEvent(TestEvents.Add1ToCounter)
+		quickLoop.receiveEvent(TestEvents.Add1ToCounter)
+
+		//THEN
+		subtestObserver.awaitCount(2, TestWaitStrategy.SLEEP_10MS, MAX_WAIT_TIME_FOR_OBSERVABLES)
+		testObserver.awaitCount(4, TestWaitStrategy.SLEEP_10MS, MAX_WAIT_TIME_FOR_OBSERVABLES)
+		testObserver.assertValueAt(0) { (it as TestState).counter == 1 }
+		testObserver.assertValueAt(1) { (it as TestState).counter == 2 }
+		testObserver.assertValueAt(2) { (it as TestState).counter == 3 }
+		testObserver.assertValueAt(3) { (it as TestState).counter == 4 }
+
+		testObserver.assertNotComplete()
+
+		subtestObserver.assertValueAt(0) { !(it as TestSubState).isCounterGreaterThan3 }
+		subtestObserver.assertValueAt(1) { (it as TestSubState).isCounterGreaterThan3 }
+
+		subtestObserver.assertNotComplete()
 	}
 
 	@Test

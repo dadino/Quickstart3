@@ -42,8 +42,7 @@ class QuickLoopEventTests {
 
 		Thread.sleep(100)
 
-		quickLoop.states
-			.first()
+		quickLoop.getStateFlow(TestState::class.java)
 			.toObservable()
 			.subscribe(testObserver)
 	}

@@ -41,8 +41,7 @@ class QuickLoopSideEffectTests {
 
 		Thread.sleep(100)
 
-		quickLoop.states
-			.first()
+		quickLoop.getStateFlow(TestState::class.java)
 			.toObservable()
 			.subscribe(testObserver)
 	}
@@ -57,7 +56,7 @@ class QuickLoopSideEffectTests {
 	fun sendEvent_startSideEffect() {
 
 		//WHEN
-		quickLoop.states.first()
+		quickLoop.getStateFlow(TestState::class.java)
 			.toObservable()
 			.subscribe(testObserver)
 
