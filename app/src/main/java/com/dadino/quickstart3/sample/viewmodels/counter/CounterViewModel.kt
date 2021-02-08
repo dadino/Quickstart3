@@ -26,6 +26,8 @@ class CounterViewModel : BaseViewModel<CounterState>() {
 data class CounterState(
 		val counter: Int = 0) : State()
 
+data class CounterSubState(val isGreatEnough: Boolean) : State()
+
 class CounterUpdater : Updater<CounterState>(true) {
 
 	override fun start(): Start<CounterState> {
@@ -43,7 +45,17 @@ class CounterUpdater : Updater<CounterState>(true) {
 		}
 	}
 
+	override fun updateSubStates(previous: CounterState, updated: CounterState, isInitialization: Boolean): List<State> {
+		val list = arrayListOf<State>()
+		if (previous.counter > 155 != updated.counter > 155 || isInitialization) list.add(CounterSubState(isGreatEnough = updated.counter > 155))
+		list.addAll(super.updateSubStates(previous, updated, isInitialization))
+		return list
+	}
+
 	override fun getSubStateClasses(): List<Class<*>> {
-		return listOf(CounterState::class.java)
+		return listOf(
+			CounterState::class.java,
+			CounterSubState::class.java
+		)
 	}
 }

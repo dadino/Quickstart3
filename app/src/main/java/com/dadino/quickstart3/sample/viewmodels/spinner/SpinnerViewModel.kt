@@ -52,8 +52,8 @@ class SpinnerUpdater : Updater<SpinnerState>(true) {
 
 	override fun update(previous: SpinnerState, event: Event): Next<SpinnerState> {
 		return when (event) {
-			is SpinnerEvent.OnSpinnerRetryClicked -> justEffect(SpinnerEffect.LoadSpinnerEntries)
-			is SpinnerEvent.OnSpinnerDoneClicked -> stateAndSignal(newState = previous.copy(list = event.list, loading = false, error = false), signal = SpinnerSignal.ShowDoneToast)
+			is SpinnerEvent.OnSpinnerRetryClicked   -> justEffect(SpinnerEffect.LoadSpinnerEntries)
+			is SpinnerEvent.OnSpinnerDoneClicked    -> stateAndSignal(newState = previous.copy(list = event.list, loading = false, error = false), signal = SpinnerSignal.ShowDoneToast)
 			is SpinnerEvent.OnSpinnerLoadingClicked -> justState(previous.copy(list = listOf(), loading = true, error = false))
 			is SpinnerEvent.OnSpinnerErrorClicked -> justState(previous.copy(list = listOf(), loading = false, error = true))
 			is SpinnerEvent.OnSpinnerIdleClicked -> justState(previous.copy(list = listOf(), loading = false, error = false))
@@ -65,11 +65,11 @@ class SpinnerUpdater : Updater<SpinnerState>(true) {
 		}
 	}
 
-	override fun updateSubStates(previous: SpinnerState, updated: SpinnerState): List<State> {
-		return if (previous.canSave != updated.canSave) listOf(
-			updated,
-			SpinnerSaveState(updated.canSave)
-		) else listOf()
+	override fun updateSubStates(previous: SpinnerState, updated: SpinnerState, isInitialization: Boolean): List<State> {
+		val list = arrayListOf<State>()
+		if (previous.canSave != updated.canSave || isInitialization) list.add(SpinnerSaveState(updated.canSave))
+		list.addAll(super.updateSubStates(previous, updated, isInitialization))
+		return list
 	}
 
 	override fun getSubStateClasses(): List<Class<*>> {
