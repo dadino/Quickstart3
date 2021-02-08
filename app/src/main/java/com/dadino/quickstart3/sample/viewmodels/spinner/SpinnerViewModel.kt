@@ -72,7 +72,7 @@ class SpinnerUpdater : Updater<SpinnerState>(true) {
 		return list
 	}
 
-	override fun getSubStateClasses(): List<Class<*>> {
+	override fun getSubStateClasses(): List<Class<out State>> {
 		return listOf(
 			SpinnerState::class.java,
 			SpinnerSaveState::class.java

@@ -40,7 +40,7 @@ open class TestStateUpdater(useLogging: Boolean = true) : Updater<TestState>(use
 		return list
 	}
 
-	override fun getSubStateClasses(): List<Class<*>> {
+	override fun getSubStateClasses(): List<Class<out State>> {
 		return listOf(
 			TestState::class.java,
 			TestSubState::class.java

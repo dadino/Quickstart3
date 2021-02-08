@@ -91,20 +91,20 @@ class AttachedComponentController(private val lifecycleOwner: LifecycleOwner,
 		when (vmStarter.minimumState) {
 			Lifecycle.State.RESUMED -> {
 				attachDisposableToResumePause {
-					vmStarter.viewModel.states().map { it.subscribeBy(onNext = { renderStateInternal(it) }) } +
-							vmStarter.viewModel.signals().subscribeBy(onNext = { respondToInternal(it) })
+					vmStarter.viewModel.statesFlows().map { it.subscribeBy(onNext = { renderStateInternal(it) }) } +
+							vmStarter.viewModel.signalsFlows().subscribeBy(onNext = { respondToInternal(it) })
 				}
 			}
 			Lifecycle.State.STARTED -> {
 				attachDisposableToStartStop {
-					vmStarter.viewModel.states().map { it.subscribeBy(onNext = { renderStateInternal(it) }) } +
-							vmStarter.viewModel.signals().subscribeBy(onNext = { respondToInternal(it) })
+					vmStarter.viewModel.statesFlows().map { it.subscribeBy(onNext = { renderStateInternal(it) }) } +
+							vmStarter.viewModel.signalsFlows().subscribeBy(onNext = { respondToInternal(it) })
 				}
 			}
 			Lifecycle.State.CREATED -> {
 				attachDisposableToCreateDestroy {
-					vmStarter.viewModel.states().map { it.subscribeBy(onNext = { renderStateInternal(it) }) } +
-							vmStarter.viewModel.signals().subscribeBy(onNext = { respondToInternal(it) })
+					vmStarter.viewModel.statesFlows().map { it.subscribeBy(onNext = { renderStateInternal(it) }) } +
+							vmStarter.viewModel.signalsFlows().subscribeBy(onNext = { respondToInternal(it) })
 				}
 			}
 			else                    -> throw RuntimeException("minimumState ${vmStarter.minimumState} not supported")

@@ -40,14 +40,6 @@ class QuickLoop<STATE : State>(private val loopName: String,
 		flowables
 	}
 
-	fun getStates(): List<Flowable<out State>> = stateFlowableMap.entries.map { it.value }
-	fun getStateFlow(subStateClass: Class<*>): Flowable<out State> =
-		stateFlowableMap[subStateClass.name] ?: throw RuntimeException("No states for class ${subStateClass.name}")
-
-	fun getSubState(subStateClass: Class<*>): State? {
-		return stateRelayMap[subStateClass.name]?.value
-	}
-
 	private val signalRelay: PublishRelay<Signal> by lazy { PublishRelay.create<Signal>() }
 	val signals: Flowable<Signal> by lazy {
 		signalRelay.toFlowable(BackpressureStrategy.BUFFER)
@@ -74,6 +66,15 @@ class QuickLoop<STATE : State>(private val loopName: String,
 		internalDisposable.dispose()
 		eventSourcesCompositeDisposable.clear()
 		sideEffectHandlers.forEach { it.onClear() }
+	}
+
+	fun getStateFlows(): List<Flowable<out State>> = stateFlowableMap.entries.map { it.value }
+	fun getStateFlow(subStateClass: Class<*>): Flowable<out State> =
+		stateFlowableMap[subStateClass.name] ?: throw RuntimeException("No states for class ${subStateClass.name}")
+
+	fun getSubStates(): List<State> = stateRelayMap.entries.mapNotNull { it.value.value }
+	fun getSubState(subStateClass: Class<out State>): State? {
+		return stateRelayMap[subStateClass.name]?.value
 	}
 
 	fun currentState(): STATE {

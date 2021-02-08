@@ -52,7 +52,7 @@ class CounterUpdater : Updater<CounterState>(true) {
 		return list
 	}
 
-	override fun getSubStateClasses(): List<Class<*>> {
+	override fun getSubStateClasses(): List<Class<out State>> {
 		return listOf(
 			CounterState::class.java,
 			CounterSubState::class.java
