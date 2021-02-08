@@ -3,6 +3,7 @@ package com.dadino.quickstart3.core.components
 import androidx.annotation.VisibleForTesting
 import com.dadino.quickstart3.core.entities.*
 import com.dadino.quickstart3.core.utils.*
+import com.jakewharton.rxrelay2.BehaviorRelay
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.*
 import io.reactivex.disposables.CompositeDisposable
@@ -23,12 +24,22 @@ class QuickLoop<STATE : State>(private val loopName: String,
 	private var state: STATE = updater.start().startState
 	private val eventSourcesCompositeDisposable = CompositeDisposable()
 
-	private val stateRelay: PublishRelay<STATE> by lazy { PublishRelay.create<STATE>() }
-	val states: Flowable<STATE> by lazy {
-		stateRelay.toFlowable(BackpressureStrategy.LATEST)
-			.distinctUntilChanged()
-			.replay(1)
-			.autoConnect(0)
+	private val stateRelays: Map<String, BehaviorRelay<State>> by lazy {
+		val relays = hashMapOf<String, BehaviorRelay<State>>()
+		updater.getSubStateClasses().forEach { c -> relays[c.name] = BehaviorRelay.create<State>() }
+		relays
+	}
+	val states: List<Flowable<out State>> by lazy {
+		stateRelays.entries.map {
+			it.value
+				.toFlowable(BackpressureStrategy.LATEST)
+				.replay(1)
+				.autoConnect(0)
+		}
+	}
+
+	fun getSubState(subStateClass: Class<*>): State? {
+		return stateRelays[subStateClass.name]?.value
 	}
 
 	private val signalRelay: PublishRelay<Signal> by lazy { PublishRelay.create<Signal>() }
@@ -42,10 +53,10 @@ class QuickLoop<STATE : State>(private val loopName: String,
 		.startWith(InitializeState)
 		.map { event -> updater.internalUpdate(state, event) }
 		.map { next ->
-			if (next.state != null) {
-				state = next.state
-			}
-			next
+			val previous = state
+			state = next.state ?: previous
+			val updatedSubStates = updater.updateSubStates(previous, state)
+			InternalNext(states = updatedSubStates, signals = next.signals, effects = next.effects, isStartingState = next is Start<STATE>)
 		}
 		.toAsync()
 		.subscribeBy(onNext = { next ->
@@ -87,9 +98,9 @@ class QuickLoop<STATE : State>(private val loopName: String,
 		handler.createObservable(em, sideEffect)
 	}
 
-	private fun onNext(next: Next<STATE>) {
-		if (next.state != null) {
-			propagateState(state)
+	private fun onNext(next: InternalNext) {
+		if (next.states.isNotEmpty()) {
+			propagateStates(next.states)
 		}
 		if (next.signals.isNotEmpty()) {
 			propagateSignals(next.signals)
@@ -98,14 +109,17 @@ class QuickLoop<STATE : State>(private val loopName: String,
 			handleSideEffects(next.effects)
 		}
 
-		if (next is Start<STATE>) {
+		if (next.isStartingState) {
 			canReceiveEvents = true
 			onConnectCallback.onConnect()
 		}
 	}
 
-	private fun propagateState(state: STATE) {
-		stateRelay.accept(state)
+	private fun propagateStates(states: List<State>) {
+		states.forEach { state ->
+			val behaviorRelay: BehaviorRelay<State>? = stateRelays[state.javaClass.name]
+			behaviorRelay?.accept(state)
+		}
 	}
 
 	private fun propagateSignals(signals: List<Signal>) {

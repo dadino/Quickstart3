@@ -6,6 +6,7 @@ import com.dadino.quickstart3.core.TestUtils.any
 import com.dadino.quickstart3.core.components.OnConnectCallback
 import com.dadino.quickstart3.core.components.QuickLoop
 import com.dadino.quickstart3.core.entities.Event
+import com.dadino.quickstart3.core.entities.State
 import com.dadino.quickstart3.core.utils.ConsoleLogger
 import io.reactivex.Observable
 import io.reactivex.observers.BaseTestConsumer.TestWaitStrategy
@@ -22,7 +23,7 @@ class QuickLoopEventTests {
 
 	private lateinit var quickLoop: QuickLoop<TestState>
 	private lateinit var updater: TestStateUpdater
-	private lateinit var testObserver: TestObserver<TestState>
+	private lateinit var testObserver: TestObserver<in State>
 
 	private val onConnectCallback = object : OnConnectCallback {
 		override fun onConnect() {}
@@ -32,10 +33,7 @@ class QuickLoopEventTests {
 	fun setup() {
 		RxJavaSchedulerConfigurator.prepareRxJava()
 
-		updater = Mockito.mock(TestStateUpdater::class.java)
-		Mockito.`when`(updater.start()).thenCallRealMethod()
-		Mockito.`when`(updater.update(any(TestState::class.java), any(Event::class.java))).thenCallRealMethod()
-		Mockito.`when`(updater.internalUpdate(any(TestState::class.java), any(Event::class.java))).thenCallRealMethod()
+		updater = TestUtils.testUpdater()
 
 		quickLoop = QuickLoop("testloop", updater, listOf(), onConnectCallback)
 		quickLoop.enableLogging = true
@@ -45,6 +43,7 @@ class QuickLoopEventTests {
 		Thread.sleep(100)
 
 		quickLoop.states
+			.first()
 			.toObservable()
 			.subscribe(testObserver)
 	}

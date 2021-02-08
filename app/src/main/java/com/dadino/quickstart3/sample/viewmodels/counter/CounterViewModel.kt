@@ -42,4 +42,8 @@ class CounterUpdater : Updater<CounterState>(true) {
 			else                                           -> noChanges()
 		}
 	}
+
+	override fun getSubStateClasses(): List<Class<*>> {
+		return listOf(CounterState::class.java)
+	}
 }

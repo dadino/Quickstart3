@@ -5,10 +5,16 @@ import com.dadino.quickstart3.core.utils.ILogger
 import com.dadino.quickstart3.core.utils.LogcatLogger
 
 abstract class Updater<STATE : State>(var enableLogging: Boolean = false) {
+
 	var logger: ILogger = LogcatLogger()
 
 	abstract fun start(): Start<STATE>
 	abstract fun update(previous: STATE, event: Event): Next<STATE>
+	open fun updateSubStates(previous: STATE, updated: STATE): List<State> {
+		return if (previous != updated)
+			listOf(updated)
+		else listOf()
+	}
 
 	fun internalUpdate(previous: STATE, event: Event): Next<STATE> {
 		log { "______________________________________________" }
@@ -26,4 +32,6 @@ abstract class Updater<STATE : State>(var enableLogging: Boolean = false) {
 	private fun log(createMessage: () -> String) {
 		if (enableLogging) logger.log(javaClass.simpleName, createMessage())
 	}
+
+	abstract fun getSubStateClasses(): List<Class<*>>
 }
