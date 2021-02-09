@@ -11,7 +11,7 @@ abstract class Updater<STATE : State>(var enableLogging: Boolean = false) {
 	abstract fun start(): Start<STATE>
 	abstract fun update(previous: STATE, event: Event): Next<STATE>
 	open fun updateSubStates(previous: STATE, updated: STATE, isInitialization: Boolean): List<State> {
-		return if (previous != updated)
+		return if (updated.shouldPropagateUpdate(previous))
 			listOf(updated)
 		else listOf()
 	}
