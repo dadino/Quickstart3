@@ -33,7 +33,7 @@ class CounterComponent(activity: AppCompatActivity, context: Context) : SignalRe
 		}
 	}
 
-	override fun renderState(state: State): Boolean {
+	override fun renderState(state: State<*>): Boolean {
 		return when (state) {
 			is CounterState -> {
 				render(state)

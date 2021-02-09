@@ -36,7 +36,7 @@ open class TestStateUpdater(useLogging: Boolean = true) : Updater<TestState>(use
 		val list = arrayListOf<State>()
 		if (previous.isGreaterThan3 != updated.isGreaterThan3 || isInitialization)
 			list.add(TestSubState(isCounterGreaterThan3 = updated.isGreaterThan3))
-		list.addAll(super.updateSubStates(previous, updated, isInitialization))
+		list.addAll(super.getStatesToPropagate(previous, updated, isInitialization))
 		return list
 	}
 

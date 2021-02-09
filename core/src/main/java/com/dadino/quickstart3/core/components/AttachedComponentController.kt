@@ -8,7 +8,7 @@ import io.reactivex.rxkotlin.subscribeBy
 
 class AttachedComponentController(private val lifecycleOwner: LifecycleOwner,
 								  private val eventManager: EventManager,
-								  private val renderFun: (State) -> Unit,
+								  private val renderFun: (State<*>) -> Unit,
 								  private val respondFun: (Signal) -> Unit
 ) : DefaultLifecycleObserver {
 
@@ -23,7 +23,7 @@ class AttachedComponentController(private val lifecycleOwner: LifecycleOwner,
 		list.forEach { attachViewModel(it) }
 	}
 
-	private fun renderState(state: State, render: (State) -> Unit) {
+	private fun renderState(state: State<*>, render: (State<*>) -> Unit) {
 		var rendered = false
 		stateRenderers.forEach {
 			val r = it.renderState(state)
@@ -41,7 +41,7 @@ class AttachedComponentController(private val lifecycleOwner: LifecycleOwner,
 		if (responded.not()) respond(signal)
 	}
 
-	private fun renderStateInternal(state: State) {
+	private fun renderStateInternal(state: State<*>) {
 		renderState(state) { renderFun(state) }
 	}
 

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.dadino.quickstart3.core.entities.*
 import io.reactivex.Observable
 
-abstract class BaseViewModel<STATE : State> : ViewModel() {
+abstract class BaseViewModel<STATE : State<STATE>> : ViewModel() {
 
 	var onConnectCallback: OnConnectCallback? = null
 	private val internalOnConnectCallback = object : OnConnectCallback {
@@ -44,7 +44,7 @@ abstract class BaseViewModel<STATE : State> : ViewModel() {
 
 	fun currentState() = loop.currentState()
 	fun subStates() = loop.getSubStates()
-	fun subState(subStateClass: Class<out State>) = loop.getSubState(subStateClass)
+	fun subState(subStateClass: Class<out State<*>>) = loop.getSubState(subStateClass)
 	fun statesFlows() = loop.getStateFlows()
 	fun signalsFlows() = loop.signals
 

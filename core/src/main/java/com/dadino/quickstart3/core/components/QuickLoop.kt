@@ -10,10 +10,10 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 
-class QuickLoop<STATE : State>(private val loopName: String,
-							   private val updater: Updater<STATE>,
-							   private val sideEffectHandlers: List<SideEffectHandler> = listOf(),
-							   private val onConnectCallback: OnConnectCallback
+class QuickLoop<STATE : State<STATE>>(private val loopName: String,
+									  private val updater: Updater<STATE>,
+									  private val sideEffectHandlers: List<SideEffectHandler> = listOf(),
+									  private val onConnectCallback: OnConnectCallback
 
 ) {
 
@@ -24,13 +24,13 @@ class QuickLoop<STATE : State>(private val loopName: String,
 	private var state: STATE = updater.start().startState
 	private val eventSourcesCompositeDisposable = CompositeDisposable()
 
-	private val stateRelayMap: Map<String, BehaviorRelay<State>> by lazy {
-		val relays = hashMapOf<String, BehaviorRelay<State>>()
-		updater.getSubStateClasses().forEach { c -> relays[c.name] = BehaviorRelay.create<State>() }
+	private val stateRelayMap: Map<String, BehaviorRelay<State<*>>> by lazy {
+		val relays = hashMapOf<String, BehaviorRelay<State<*>>>()
+		updater.getSubStateClasses().forEach { c -> relays[c.name] = BehaviorRelay.create<State<*>>() }
 		relays
 	}
-	private val stateFlowableMap: Map<String, Flowable<out State>> by lazy {
-		val flowables = hashMapOf<String, Flowable<out State>>()
+	private val stateFlowableMap: Map<String, Flowable<out State<*>>> by lazy {
+		val flowables = hashMapOf<String, Flowable<out State<*>>>()
 		stateRelayMap.entries.forEach {
 			flowables[it.key] = it.value
 				.toFlowable(BackpressureStrategy.LATEST)
@@ -54,7 +54,7 @@ class QuickLoop<STATE : State>(private val loopName: String,
 			val previousState = state
 			state = next.state ?: previousState
 			val isInitialization = next is Start<STATE>
-			val updatedSubStates = updater.updateSubStates(previousState, state, isInitialization)
+			val updatedSubStates = updater.getStatesToPropagate(previousState, state, isInitialization)
 			InternalNext(states = updatedSubStates, signals = next.signals, effects = next.effects, isStartingState = isInitialization)
 		}
 		.toAsync()
@@ -68,12 +68,12 @@ class QuickLoop<STATE : State>(private val loopName: String,
 		sideEffectHandlers.forEach { it.onClear() }
 	}
 
-	fun getStateFlows(): List<Flowable<out State>> = stateFlowableMap.entries.map { it.value }
-	fun getStateFlow(subStateClass: Class<*>): Flowable<out State> =
+	fun getStateFlows(): List<Flowable<out State<*>>> = stateFlowableMap.entries.map { it.value }
+	fun getStateFlow(subStateClass: Class<*>): Flowable<out State<*>> =
 		stateFlowableMap[subStateClass.name] ?: throw RuntimeException("No states for class ${subStateClass.name}")
 
-	fun getSubStates(): List<State> = stateRelayMap.entries.mapNotNull { it.value.value }
-	fun getSubState(subStateClass: Class<out State>): State? {
+	fun getSubStates(): List<State<*>> = stateRelayMap.entries.mapNotNull { it.value.value }
+	fun getSubState(subStateClass: Class<out State<*>>): State<*>? {
 		return stateRelayMap[subStateClass.name]?.value
 	}
 
@@ -123,9 +123,11 @@ class QuickLoop<STATE : State>(private val loopName: String,
 		}
 	}
 
-	private fun propagateStates(states: List<State>) {
+	private fun propagateStates(states: List<State<*>
+			>) {
 		states.forEach { state ->
-			val behaviorRelay: BehaviorRelay<State>? = stateRelayMap[state.javaClass.name]
+			val behaviorRelay: BehaviorRelay<State<*>
+					>? = stateRelayMap[state.javaClass.name]
 			behaviorRelay?.accept(state)
 		}
 	}

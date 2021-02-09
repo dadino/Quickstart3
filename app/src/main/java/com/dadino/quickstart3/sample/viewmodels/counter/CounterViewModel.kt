@@ -24,9 +24,17 @@ class CounterViewModel : BaseViewModel<CounterState>() {
 }
 
 data class CounterState(
-		val counter: Int = 0) : State()
+		val counter: Int = 0) : State<CounterState>() {
 
-data class CounterSubState(val isGreatEnough: Boolean) : State()
+	override fun getStatesToPropagate(isInitialization: Boolean, previousState: CounterState): List<State<*>> {
+		val list = arrayListOf<State<*>>()
+		if (previousState.counter > 155 != counter > 155 || isInitialization) list.add(CounterSubState(isGreatEnough = counter > 155))
+		list.addAll(super.getStatesToPropagate(isInitialization, previousState))
+		return list
+	}
+}
+
+data class CounterSubState(val isGreatEnough: Boolean) : State<CounterSubState>()
 
 class CounterUpdater : Updater<CounterState>(true) {
 
@@ -45,14 +53,7 @@ class CounterUpdater : Updater<CounterState>(true) {
 		}
 	}
 
-	override fun updateSubStates(previous: CounterState, updated: CounterState, isInitialization: Boolean): List<State> {
-		val list = arrayListOf<State>()
-		if (previous.counter > 155 != updated.counter > 155 || isInitialization) list.add(CounterSubState(isGreatEnough = updated.counter > 155))
-		list.addAll(super.updateSubStates(previous, updated, isInitialization))
-		return list
-	}
-
-	override fun getSubStateClasses(): List<Class<out State>> {
+	override fun getSubStateClasses(): List<Class<out State<*>>> {
 		return listOf(
 			CounterState::class.java,
 			CounterSubState::class.java

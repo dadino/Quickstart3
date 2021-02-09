@@ -2,21 +2,17 @@ package com.dadino.quickstart3.core
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.dadino.quickstart3.core.components.AttachedComponent
-import com.dadino.quickstart3.core.components.AttachedComponentController
-import com.dadino.quickstart3.core.components.EventManager
-import com.dadino.quickstart3.core.entities.Signal
-import com.dadino.quickstart3.core.entities.State
-import com.dadino.quickstart3.core.entities.VMStarter
+import com.dadino.quickstart3.core.components.*
+import com.dadino.quickstart3.core.entities.*
 
 abstract class BaseActivity : AppCompatActivity() {
 
 	protected val eventManager: EventManager = EventManager()
 	protected val components: AttachedComponentController by lazy {
 		AttachedComponentController(lifecycleOwner = this,
-				eventManager = eventManager,
-				renderFun = { state -> renderState(state) },
-				respondFun = { signal -> respondTo(signal) })
+									eventManager = eventManager,
+									renderFun = { state -> renderState(state) },
+									respondFun = { signal -> respondTo(signal) })
 	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,6 +23,6 @@ abstract class BaseActivity : AppCompatActivity() {
 
 	open fun components(): List<AttachedComponent> = listOf()
 	open fun viewModels(): List<VMStarter> = listOf()
-	open fun renderState(state: State) {}
+	open fun renderState(state: State<*>) {}
 	open fun respondTo(signal: Signal) {}
 }
