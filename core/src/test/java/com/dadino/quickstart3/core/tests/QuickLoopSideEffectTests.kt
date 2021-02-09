@@ -20,8 +20,8 @@ class QuickLoopSideEffectTests {
 
 	private lateinit var quickLoop: QuickLoop<TestState>
 	private lateinit var updater: TestStateUpdater
-	private lateinit var testObserver: TestObserver<in State>
-	private lateinit var sideEffectHandler: StartSideEffectHandler
+	private lateinit var testObserver: TestObserver<in State<*>>
+	private lateinit var sideEffectHandler: SetNumberEffectHandler
 	private val onConnectCallback = object : OnConnectCallback {
 		override fun onConnect() {}
 	}
@@ -30,7 +30,7 @@ class QuickLoopSideEffectTests {
 	fun setup() {
 		RxJavaSchedulerConfigurator.prepareRxJava()
 
-		sideEffectHandler = Mockito.spy(StartSideEffectHandler())
+		sideEffectHandler = Mockito.spy(SetNumberEffectHandler())
 
 		updater = TestUtils.testUpdater()
 
@@ -64,9 +64,10 @@ class QuickLoopSideEffectTests {
 
 		//THEN
 		testObserver.awaitCount(1, TestWaitStrategy.SLEEP_10MS, MAX_WAIT_TIME_FOR_OBSERVABLES)
-		testObserver.assertValueAt(0) { (it as TestState).number == 1 }
+		testObserver.assertValueAt(0) { (it as TestState).number == 0 }
+		testObserver.assertValueAt(1) { (it as TestState).number == 1 }
 		testObserver.assertNotComplete()
 
-		verify(sideEffectHandler).checkClass(any(TestEffects.StartSideEffect::class.java))
+		verify(sideEffectHandler).checkClass(any(TestEffects.SetNumber::class.java))
 	}
 }

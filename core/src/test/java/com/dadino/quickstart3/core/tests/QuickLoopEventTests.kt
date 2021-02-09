@@ -23,7 +23,7 @@ class QuickLoopEventTests {
 
 	private lateinit var quickLoop: QuickLoop<TestState>
 	private lateinit var updater: TestStateUpdater
-	private lateinit var testObserver: TestObserver<in State>
+	private lateinit var testObserver: TestObserver<in State<*>>
 
 	private val onConnectCallback = object : OnConnectCallback {
 		override fun onConnect() {}

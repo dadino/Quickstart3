@@ -19,7 +19,7 @@ class QuickLoopStateTests {
 
 	private lateinit var quickLoop: QuickLoop<TestState>
 	private lateinit var updater: TestStateUpdater
-	private lateinit var testObserver: TestObserver<in State>
+	private lateinit var testObserver: TestObserver<in State<*>>
 	private val onConnectCallback = object : OnConnectCallback {
 		override fun onConnect() {}
 	}
@@ -57,15 +57,15 @@ class QuickLoopStateTests {
 
 		//THEN
 		testObserver.awaitCount(2, TestWaitStrategy.SLEEP_10MS, MAX_WAIT_TIME_FOR_OBSERVABLES)
-		testObserver.assertValueAt(0) { (it as TestState).counter == 1 }
-		testObserver.assertValueAt(1) { (it as TestState).counter == 2 }
+		testObserver.assertValueAt(1) { (it as TestState).counter == 1 }
+		testObserver.assertValueAt(2) { (it as TestState).counter == 2 }
 
 		testObserver.assertNotComplete()
 	}
 
 	@Test
 	fun sendEvent_updateStateAndSubstate() {
-		val subtestObserver: TestObserver<in State> = TestObserver()
+		val subtestObserver: TestObserver<in State<*>> = TestObserver()
 		quickLoop.getStateFlow(TestSubState::class.java)
 			.toObservable()
 			.subscribe(subtestObserver)
@@ -78,11 +78,11 @@ class QuickLoopStateTests {
 
 		//THEN
 		subtestObserver.awaitCount(2, TestWaitStrategy.SLEEP_10MS, MAX_WAIT_TIME_FOR_OBSERVABLES)
-		testObserver.awaitCount(4, TestWaitStrategy.SLEEP_10MS, MAX_WAIT_TIME_FOR_OBSERVABLES)
-		testObserver.assertValueAt(0) { (it as TestState).counter == 1 }
-		testObserver.assertValueAt(1) { (it as TestState).counter == 2 }
-		testObserver.assertValueAt(2) { (it as TestState).counter == 3 }
-		testObserver.assertValueAt(3) { (it as TestState).counter == 4 }
+		testObserver.awaitCount(5, TestWaitStrategy.SLEEP_10MS, MAX_WAIT_TIME_FOR_OBSERVABLES)
+		testObserver.assertValueAt(1) { (it as TestState).counter == 1 }
+		testObserver.assertValueAt(2) { (it as TestState).counter == 2 }
+		testObserver.assertValueAt(3) { (it as TestState).counter == 3 }
+		testObserver.assertValueAt(4) { (it as TestState).counter == 4 }
 
 		testObserver.assertNotComplete()
 
@@ -101,8 +101,8 @@ class QuickLoopStateTests {
 
 		//THEN
 		testObserver.awaitCount(2, TestWaitStrategy.SLEEP_10MS, MAX_WAIT_TIME_FOR_OBSERVABLES)
-		testObserver.assertValueAt(0) { (it as TestState).counter == 1 }
-		testObserver.assertValueAt(1) { (it as TestState).counter == 2 }
+		testObserver.assertValueAt(1) { (it as TestState).counter == 1 }
+		testObserver.assertValueAt(2) { (it as TestState).counter == 2 }
 
 		testObserver.assertNotComplete()
 	}
@@ -117,8 +117,8 @@ class QuickLoopStateTests {
 
 		//THEN
 		testObserver.awaitCount(2, TestWaitStrategy.SLEEP_10MS, MAX_WAIT_TIME_FOR_OBSERVABLES)
-		testObserver.assertValueAt(0) { (it as TestState).counter == 1 }
-		testObserver.assertValueAt(1) { (it as TestState).counter == 2 }
+		testObserver.assertValueAt(1) { (it as TestState).counter == 1 }
+		testObserver.assertValueAt(2) { (it as TestState).counter == 2 }
 
 		testObserver.assertNotComplete()
 	}
