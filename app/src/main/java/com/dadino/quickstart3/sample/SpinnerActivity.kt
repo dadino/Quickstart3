@@ -88,16 +88,16 @@ class SpinnerActivity : BaseActivity() {
 		)
 	}
 
-	override fun renderState(state: State<*>) {
+	override fun renderState(state: State) {
 		when (state) {
-			is SpinnerState -> render(state)
+			is SpinnerState     -> render(state)
 			is SpinnerSaveState -> render(state)
 		}
 	}
 
 	override fun respondTo(signal: Signal) {
 		when (signal) {
-			is SpinnerSignal.ShowDoneToast -> Toast.makeText(this, "Done", Toast.LENGTH_SHORT).show()
+			is SpinnerSignal.ShowDoneToast            -> Toast.makeText(this, "Done", Toast.LENGTH_SHORT).show()
 			is SpinnerSignal.ShowSaveSessionCompleted -> Toast.makeText(this, "Session saved", Toast.LENGTH_SHORT).show()
 			is SpinnerSignal.ShowLoadSessionCompleted -> Toast.makeText(this, "Session loaded: ${signal.session}", Toast.LENGTH_SHORT).show()
 			is SpinnerSignal.OpenSecondActivity -> startActivity(Intent(this, SecondActivity::class.java))

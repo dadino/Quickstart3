@@ -1,9 +1,10 @@
 
 buildscript {
-    ext.kotlin_version = '1.4.21'
+    ext.kotlin_version = '1.4.31'
     repositories {
         google()
-        jcenter()
+        mavenCentral()
+        //jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.2.0-beta06'
@@ -14,8 +15,7 @@ buildscript {
 allprojects {
     repositories {
         google()
-        maven { url 'https://jitpack.io' }
-        jcenter()
+        mavenCentral()
     }
 }
 
@@ -30,7 +30,7 @@ ext {
     targetSdk = 29
 
     versionCode = 38
-    versionName = "0.10.0-alpha02"
+    versionName = "0.10.0"
 
     groupId = "io.github.dadino"
     artifactIdCore = "quickstart3-core"

@@ -35,7 +35,7 @@ abstract class BaseFragment : Fragment() {
 
 	open fun components(): List<AttachedComponent> = listOf()
 	open fun viewModels(): List<VMStarter> = listOf()
-	open fun renderState(state: State<*>) {}
+	open fun renderState(state: State) {}
 	open fun respondTo(signal: Signal) {}
 	open fun doOnBackPress() {}
 }

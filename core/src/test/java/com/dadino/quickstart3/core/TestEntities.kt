@@ -7,12 +7,13 @@ import com.dadino.quickstart3.core.entities.*
 data class TestState(
 		val counter: Int = 0,
 		val number: Int = 0
-) : State<TestState>() {
+) : State() {
 
 	private val isGreaterThan3 = counter > 3
 
-	override fun getStatesToPropagate(isInitialization: Boolean, previousState: TestState): List<State<*>> {
-		val list = arrayListOf<State<*>>()
+	override fun getStatesToPropagate(isInitialization: Boolean, previousState: State): List<State> {
+		check(previousState is TestState)
+		val list = arrayListOf<State>()
 		list.addAll(super.getStatesToPropagate(isInitialization, previousState))
 		if (previousState.isGreaterThan3 != isGreaterThan3 || isInitialization)
 			list.add(TestSubState(isCounterGreaterThan3 = isGreaterThan3))
@@ -22,7 +23,7 @@ data class TestState(
 
 data class TestSubState(
 		val isCounterGreaterThan3: Boolean
-) : State<TestSubState>()
+) : State()
 
 open class TestStateUpdater(useLogging: Boolean = true) : Updater<TestState>(useLogging) {
 
@@ -32,15 +33,15 @@ open class TestStateUpdater(useLogging: Boolean = true) : Updater<TestState>(use
 
 	override fun update(previous: TestState, event: Event): Next<TestState> {
 		return when (event) {
-			TestEvents.Add1ToCounter -> Next.justState(previous.copy(counter = previous.counter + 1))
-			is TestEvents.AskForSignal -> Next.justSignal(TestSignals.ResponseSignal(event.number))
-			is TestEvents.AskForStartSideEffect -> Next.justEffect(TestEffects.SetNumber(event.number))
+			TestEvents.Add1ToCounter              -> Next.justState(previous.copy(counter = previous.counter + 1))
+			is TestEvents.AskForSignal            -> Next.justSignal(TestSignals.ResponseSignal(event.number))
+			is TestEvents.AskForStartSideEffect   -> Next.justEffect(TestEffects.SetNumber(event.number))
 			is TestEvents.AdaptToSideEffectResult -> Next.justState(previous.copy(number = event.number))
 			else                                  -> Next.noChanges()
 		}
 	}
 
-	override fun getSubStateClasses(): List<Class<out State<*>>> {
+	override fun getSubStateClasses(): List<Class<out State>> {
 		return listOf(
 			TestState::class.java,
 			TestSubState::class.java

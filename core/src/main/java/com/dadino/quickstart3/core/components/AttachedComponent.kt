@@ -11,7 +11,7 @@ interface SignalResponder : AttachedComponent {
 
 interface StateRenderer : AttachedComponent {
 
-	fun renderState(state: State<*>): Boolean
+	fun renderState(state: State): Boolean
 }
 
 interface ViewModelAttacher : AttachedComponent {

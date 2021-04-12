@@ -19,7 +19,7 @@ class QuickLoopStateTests {
 
 	private lateinit var quickLoop: QuickLoop<TestState>
 	private lateinit var updater: TestStateUpdater
-	private lateinit var testObserver: TestObserver<in State<*>>
+	private lateinit var testObserver: TestObserver<in State>
 	private val onConnectCallback = object : OnConnectCallback {
 		override fun onConnect() {}
 	}
@@ -65,7 +65,7 @@ class QuickLoopStateTests {
 
 	@Test
 	fun sendEvent_updateStateAndSubstate() {
-		val subtestObserver: TestObserver<in State<*>> = TestObserver()
+		val subtestObserver: TestObserver<in State> = TestObserver()
 		quickLoop.getStateFlow(TestSubState::class.java)
 			.toObservable()
 			.subscribe(subtestObserver)

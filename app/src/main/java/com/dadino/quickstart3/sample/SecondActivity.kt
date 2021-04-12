@@ -62,7 +62,7 @@ class SecondActivity : BaseActivity() {
 		}
 	}
 
-	override fun renderState(state: State<*>) {
+	override fun renderState(state: State) {
 		when (state) {
 			is SpinnerState -> render(state)
 		}

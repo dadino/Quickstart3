@@ -23,7 +23,7 @@ class SampleFragment : BaseFragment() {
 		eventManager.attachEventSource(sampleButton.clicks().map { SpinnerEvent.OnSpinnerIdleClicked() })
 	}
 
-	override fun renderState(state: State<*>) {
+	override fun renderState(state: State) {
 	}
 
 	override fun respondTo(signal: Signal) {
