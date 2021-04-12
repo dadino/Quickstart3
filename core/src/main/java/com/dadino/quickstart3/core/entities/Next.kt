@@ -5,6 +5,7 @@ open class Next<S : State>(val state: S?,
 						   val effects: List<SideEffect>) {
 
 	companion object {
+
 		fun <S : State> stateAndSignalsAndEffects(newState: S, signals: List<Signal>, effects: List<SideEffect>) = Next(newState, signals, effects)
 
 		fun <S : State> stateAndSignalAndEffects(newState: S, signal: Signal, effects: List<SideEffect>) = Next(newState, listOf(signal), effects)
@@ -52,6 +53,7 @@ class Start<S : State>(val startState: S,
 					   effects: List<SideEffect>) : Next<S>(startState, signals, effects) {
 
 	companion object {
+
 		fun <S : State> start(state: S,
 							  signals: List<Signal> = listOf(),
 							  effects: List<SideEffect> = listOf()
@@ -60,6 +62,7 @@ class Start<S : State>(val startState: S,
 }
 
 class NextBuilder<T : State> {
+
 	private var state: T? = null
 	private val effects: MutableList<SideEffect> = arrayListOf()
 	private val signals: MutableList<Signal> = arrayListOf()

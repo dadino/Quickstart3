@@ -5,7 +5,7 @@ import com.dadino.quickstart3.core.TestUtils.MAX_WAIT_TIME_FOR_OBSERVABLES
 import com.dadino.quickstart3.core.TestUtils.any
 import com.dadino.quickstart3.core.components.OnConnectCallback
 import com.dadino.quickstart3.core.components.QuickLoop
-import com.dadino.quickstart3.core.entities.Event
+import com.dadino.quickstart3.core.entities.State
 import com.dadino.quickstart3.core.utils.ConsoleLogger
 import io.reactivex.observers.BaseTestConsumer.TestWaitStrategy
 import io.reactivex.observers.TestObserver
@@ -20,8 +20,8 @@ class QuickLoopSideEffectTests {
 
 	private lateinit var quickLoop: QuickLoop<TestState>
 	private lateinit var updater: TestStateUpdater
-	private lateinit var testObserver: TestObserver<TestState>
-	private lateinit var sideEffectHandler: StartSideEffectHandler
+	private lateinit var testObserver: TestObserver<in State>
+	private lateinit var sideEffectHandler: SetNumberEffectHandler
 	private val onConnectCallback = object : OnConnectCallback {
 		override fun onConnect() {}
 	}
@@ -30,12 +30,9 @@ class QuickLoopSideEffectTests {
 	fun setup() {
 		RxJavaSchedulerConfigurator.prepareRxJava()
 
-		sideEffectHandler = Mockito.spy(StartSideEffectHandler())
+		sideEffectHandler = Mockito.spy(SetNumberEffectHandler())
 
-		updater = Mockito.mock(TestStateUpdater::class.java)
-		Mockito.`when`(updater.start()).thenCallRealMethod()
-		Mockito.`when`(updater.update(any(TestState::class.java), any(Event::class.java))).thenCallRealMethod()
-		Mockito.`when`(updater.internalUpdate(any(TestState::class.java), any(Event::class.java))).thenCallRealMethod()
+		updater = TestUtils.testUpdater()
 
 		quickLoop = QuickLoop("testloop", updater, listOf(sideEffectHandler), onConnectCallback)
 		quickLoop.enableLogging = true
@@ -44,7 +41,7 @@ class QuickLoopSideEffectTests {
 
 		Thread.sleep(100)
 
-		quickLoop.states
+		quickLoop.getStateFlow(TestState::class.java)
 			.toObservable()
 			.subscribe(testObserver)
 	}
@@ -59,16 +56,18 @@ class QuickLoopSideEffectTests {
 	fun sendEvent_startSideEffect() {
 
 		//WHEN
-		quickLoop.states
+		quickLoop.getStateFlow(TestState::class.java)
 			.toObservable()
 			.subscribe(testObserver)
+
 		quickLoop.receiveEvent(TestEvents.AskForStartSideEffect(1))
 
 		//THEN
 		testObserver.awaitCount(1, TestWaitStrategy.SLEEP_10MS, MAX_WAIT_TIME_FOR_OBSERVABLES)
-		testObserver.assertValueAt(0) { it.number == 1 }
+		testObserver.assertValueAt(0) { (it as TestState).number == 0 }
+		testObserver.assertValueAt(1) { (it as TestState).number == 1 }
 		testObserver.assertNotComplete()
 
-		verify(sideEffectHandler).checkClass(any(TestEffects.StartSideEffect::class.java))
+		verify(sideEffectHandler).checkClass(any(TestEffects.SetNumber::class.java))
 	}
 }

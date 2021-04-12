@@ -24,7 +24,18 @@ class CounterViewModel : BaseViewModel<CounterState>() {
 }
 
 data class CounterState(
-		val counter: Int = 0) : State()
+		val counter: Int = 0) : State() {
+
+	override fun getStatesToPropagate(isInitialization: Boolean, previousState: State): List<State> {
+		check(previousState is CounterState)
+		val list = arrayListOf<State>()
+		if (previousState.counter > 155 != counter > 155 || isInitialization) list.add(CounterSubState(isGreatEnough = counter > 155))
+		list.addAll(super.getStatesToPropagate(isInitialization, previousState))
+		return list
+	}
+}
+
+data class CounterSubState(val isGreatEnough: Boolean) : State()
 
 class CounterUpdater : Updater<CounterState>(true) {
 
@@ -34,12 +45,19 @@ class CounterUpdater : Updater<CounterState>(true) {
 
 	override fun update(previous: CounterState, event: Event): Next<CounterState> {
 		return when (event) {
-			is CounterEvent.SetCounter -> justState(previous.copy(counter = event.newCounter))
-			is CounterEvent.OnAdvanceCounterClicked -> justState(previous.copy(counter = previous.counter + 1))
+			is CounterEvent.SetCounter                     -> justState(previous.copy(counter = event.newCounter))
+			is CounterEvent.OnAdvanceCounterClicked        -> justState(previous.copy(counter = previous.counter + 1))
 			is CounterEvent.OnDelayedAdvanceCounterClicked -> justEffect(CounterEffect.DelayedAdvanceCounter(previous.counter, 1))
-			is CounterEvent.OnShowCounterStateClicked -> justSignal(CounterSignal.ShowCounterState(previous.counter))
-			is OnGoToSecondPageClicked -> justSignal(SpinnerSignal.OpenSecondActivity)
+			is CounterEvent.OnShowCounterStateClicked      -> justSignal(CounterSignal.ShowCounterState(previous.counter))
+			is OnGoToSecondPageClicked                     -> justSignal(SpinnerSignal.OpenSecondActivity)
 			else                                           -> noChanges()
 		}
+	}
+
+	override fun getSubStateClasses(): List<Class<out State>> {
+		return listOf(
+			CounterState::class.java,
+			CounterSubState::class.java
+		)
 	}
 }

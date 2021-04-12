@@ -2,29 +2,14 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: "guru.stefma.bintrayrelease"
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.novoda:bintray-release:0.8.1'
-    }
+ext {
+    PUBLISH_GROUP_ID = rootProject.groupId
+    PUBLISH_VERSION = rootProject.versionName
+    PUBLISH_ARTIFACT_ID = rootProject.artifactIdUi
 }
 
-version = rootProject.versionName
-group = rootProject.groupId
-publish {
-    userOrg = rootProject.userOrg
-    artifactId = 'ui'
-    repoName = rootProject.repoName
-    desc = rootProject.descr
-    website = rootProject.website
-    bintrayUser = rootProject.bintrayUser
-    bintrayKey = rootProject.bintrayKey
-}
-
+apply from: "${rootProject.projectDir}/scripts/publish-mavencentral.gradle"
 
 android {
     compileSdkVersion rootProject.compileSdk

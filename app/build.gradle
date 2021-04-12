@@ -3,6 +3,10 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 
+repositories {
+    jcenter()
+}
+
 android {
     compileSdkVersion rootProject.compileSdk
 
@@ -17,10 +21,27 @@ android {
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
     }
+
+    signingConfigs {
+        releaseConfig {
+            storeFile file("quickstart3_sample_key.jks")
+            storePassword("quickstart3")
+            keyAlias "Dadino"
+            keyPassword "quickstart3"
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.releaseConfig
+        }
+        debug {
+            initWith release
+            debuggable true
+            minifyEnabled false
+            versionNameSuffix '-DEBUG'
         }
     }
 
