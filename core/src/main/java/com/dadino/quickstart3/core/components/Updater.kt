@@ -4,11 +4,15 @@ import com.dadino.quickstart3.core.entities.*
 import com.dadino.quickstart3.core.utils.ILogger
 import com.dadino.quickstart3.core.utils.LogcatLogger
 
-abstract class Updater<STATE : State>(var enableLogging: Boolean = false) {
+abstract class Updater<STATE : State<STATE>>(var enableLogging: Boolean = false) {
+
 	var logger: ILogger = LogcatLogger()
 
 	abstract fun start(): Start<STATE>
 	abstract fun update(previous: STATE, event: Event): Next<STATE>
+	fun getStatesToPropagate(previous: STATE, updated: STATE, isInitialization: Boolean): List<State<*>> {
+		return updated.getStatesToPropagate(isInitialization, previous)
+	}
 
 	fun internalUpdate(previous: STATE, event: Event): Next<STATE> {
 		log { "______________________________________________" }
@@ -26,4 +30,6 @@ abstract class Updater<STATE : State>(var enableLogging: Boolean = false) {
 	private fun log(createMessage: () -> String) {
 		if (enableLogging) logger.log(javaClass.simpleName, createMessage())
 	}
+
+	abstract fun getSubStateClasses(): List<Class<out State<*>>>
 }

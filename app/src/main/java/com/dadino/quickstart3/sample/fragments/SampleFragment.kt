@@ -1,9 +1,7 @@
 package com.dadino.quickstart3.sample.fragments
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Button
 import com.dadino.quickstart3.core.entities.Signal
 import com.dadino.quickstart3.core.entities.State
@@ -11,7 +9,6 @@ import com.dadino.quickstart3.core.fragments.BaseFragment
 import com.dadino.quickstart3.sample.R
 import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerEvent
 import com.jakewharton.rxbinding3.view.clicks
-
 
 class SampleFragment : BaseFragment() {
 	private lateinit var sampleButton: Button
@@ -26,8 +23,7 @@ class SampleFragment : BaseFragment() {
 		eventManager.attachEventSource(sampleButton.clicks().map { SpinnerEvent.OnSpinnerIdleClicked() })
 	}
 
-	override fun renderState(state: State) {
-
+	override fun renderState(state: State<*>) {
 	}
 
 	override fun respondTo(signal: Signal) {

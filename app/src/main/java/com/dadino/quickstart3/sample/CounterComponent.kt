@@ -33,18 +33,26 @@ class CounterComponent(activity: AppCompatActivity, context: Context) : SignalRe
 		}
 	}
 
-	override fun renderState(state: State): Boolean {
+	override fun renderState(state: State<*>): Boolean {
 		return when (state) {
 			is CounterState -> {
 				render(state)
 				true
 			}
-			else            -> false
+			is CounterSubState -> {
+				render(state)
+				true
+			}
+			else               -> false
 		}
 	}
 
 	private fun render(state: CounterState) {
 		Log.d("Counter", "State: $state")
 		counterButton?.text = state.counter.toString()
+	}
+
+	private fun render(state: CounterSubState) {
+		Log.d("CounterSub", "State: $state")
 	}
 }

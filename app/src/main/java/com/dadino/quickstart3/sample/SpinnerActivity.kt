@@ -88,9 +88,10 @@ class SpinnerActivity : BaseActivity() {
 		)
 	}
 
-	override fun renderState(state: State) {
+	override fun renderState(state: State<*>) {
 		when (state) {
 			is SpinnerState -> render(state)
+			is SpinnerSaveState -> render(state)
 		}
 	}
 
@@ -107,6 +108,10 @@ class SpinnerActivity : BaseActivity() {
 		Log.d("Spinner", "State: $state")
 		spinner.setState(state.list, state.loading, state.error)
 		spinner.selectedId = state.selectedId ?: -1
+	}
+
+	private fun render(state: SpinnerSaveState) {
+		Log.d("SpinnerSave", "State: $state")
 	}
 }
 

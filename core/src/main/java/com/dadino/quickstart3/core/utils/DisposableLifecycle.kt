@@ -5,7 +5,8 @@ import io.reactivex.disposables.Disposable
 
 object DisposableLifecycle {
 
-	fun attachAtResumeDetachAtPause(lifecycleOwner: LifecycleOwner, createDisposable: () -> Disposable) {
+	fun attachAtResumeDetachAtPause(lifecycleOwner: LifecycleOwner, createDisposable: () -> List<Disposable>) {
+
 		lifecycleOwner.lifecycle.addObserver(object :
 													 DisposableLifecycleObserver(lifecycleOwner, Lifecycle.State.RESUMED, createDisposable) {
 
@@ -19,7 +20,7 @@ object DisposableLifecycle {
 		})
 	}
 
-	fun attachAtStartDetachAtStop(lifecycleOwner: LifecycleOwner, createDisposable: () -> Disposable) {
+	fun attachAtStartDetachAtStop(lifecycleOwner: LifecycleOwner, createDisposable: () -> List<Disposable>) {
 		lifecycleOwner.lifecycle.addObserver(object :
 													 DisposableLifecycleObserver(lifecycleOwner, Lifecycle.State.STARTED, createDisposable) {
 
@@ -33,7 +34,7 @@ object DisposableLifecycle {
 		})
 	}
 
-	fun attachAtCreateDetachAtDestroy(lifecycleOwner: LifecycleOwner, createDisposable: () -> Disposable) {
+	fun attachAtCreateDetachAtDestroy(lifecycleOwner: LifecycleOwner, createDisposable: () -> List<Disposable>) {
 		lifecycleOwner.lifecycle.addObserver(object :
 													 DisposableLifecycleObserver(lifecycleOwner, Lifecycle.State.CREATED, createDisposable) {
 
@@ -48,25 +49,25 @@ object DisposableLifecycle {
 	}
 }
 
-abstract class DisposableLifecycleObserver(lifecycleOwner: LifecycleOwner, attachState: Lifecycle.State, private val createDisposable: () -> Disposable) :
+abstract class DisposableLifecycleObserver(lifecycleOwner: LifecycleOwner, attachState: Lifecycle.State, private val createDisposable: () -> List<Disposable>) :
 		DefaultLifecycleObserver {
 
-	private var disposable: Disposable? = null
+	private var disposables: List<Disposable>? = null
 
 	init {
 		if (lifecycleOwner.lifecycle.currentState.isAtLeast(attachState)) {
-			disposable = createDisposable()
+			disposables = createDisposable()
 		}
 	}
 
 	fun attach() {
-		if (disposable == null) {
-			disposable = createDisposable()
+		if (disposables == null) {
+			disposables = createDisposable()
 		}
 	}
 
 	fun detach() {
-		disposable?.dispose()
-		disposable = null
+		disposables?.forEach { it.dispose() }
+		disposables = null
 	}
 }

@@ -8,7 +8,7 @@ import io.reactivex.rxkotlin.subscribeBy
 
 class AttachedComponentController(private val lifecycleOwner: LifecycleOwner,
 								  private val eventManager: EventManager,
-								  private val renderFun: (State) -> Unit,
+								  private val renderFun: (State<*>) -> Unit,
 								  private val respondFun: (Signal) -> Unit
 ) : DefaultLifecycleObserver {
 
@@ -23,7 +23,7 @@ class AttachedComponentController(private val lifecycleOwner: LifecycleOwner,
 		list.forEach { attachViewModel(it) }
 	}
 
-	private fun renderState(state: State, render: (State) -> Unit) {
+	private fun renderState(state: State<*>, render: (State<*>) -> Unit) {
 		var rendered = false
 		stateRenderers.forEach {
 			val r = it.renderState(state)
@@ -41,7 +41,7 @@ class AttachedComponentController(private val lifecycleOwner: LifecycleOwner,
 		if (responded.not()) respond(signal)
 	}
 
-	private fun renderStateInternal(state: State) {
+	private fun renderStateInternal(state: State<*>) {
 		renderState(state) { renderFun(state) }
 	}
 
@@ -90,30 +90,36 @@ class AttachedComponentController(private val lifecycleOwner: LifecycleOwner,
 	private fun attachToLifecycle(vmStarter: VMStarter) {
 		when (vmStarter.minimumState) {
 			Lifecycle.State.RESUMED -> {
-				attachDisposableToResumePause { vmStarter.viewModel.states().subscribeBy(onNext = { renderStateInternal(it) }) }
-				attachDisposableToResumePause { vmStarter.viewModel.signals().subscribeBy(onNext = { respondToInternal(it) }) }
+				attachDisposableToResumePause {
+					vmStarter.viewModel.statesFlows().map { it.subscribeBy(onNext = { renderStateInternal(it) }) } +
+							vmStarter.viewModel.signalsFlows().subscribeBy(onNext = { respondToInternal(it) })
+				}
 			}
 			Lifecycle.State.STARTED -> {
-				attachDisposableToStartStop { vmStarter.viewModel.states().subscribeBy(onNext = { renderStateInternal(it) }) }
-				attachDisposableToStartStop { vmStarter.viewModel.signals().subscribeBy(onNext = { respondToInternal(it) }) }
+				attachDisposableToStartStop {
+					vmStarter.viewModel.statesFlows().map { it.subscribeBy(onNext = { renderStateInternal(it) }) } +
+							vmStarter.viewModel.signalsFlows().subscribeBy(onNext = { respondToInternal(it) })
+				}
 			}
 			Lifecycle.State.CREATED -> {
-				attachDisposableToCreateDestroy { vmStarter.viewModel.states().subscribeBy(onNext = { renderStateInternal(it) }) }
-				attachDisposableToCreateDestroy { vmStarter.viewModel.signals().subscribeBy(onNext = { respondToInternal(it) }) }
+				attachDisposableToCreateDestroy {
+					vmStarter.viewModel.statesFlows().map { it.subscribeBy(onNext = { renderStateInternal(it) }) } +
+							vmStarter.viewModel.signalsFlows().subscribeBy(onNext = { respondToInternal(it) })
+				}
 			}
 			else                    -> throw RuntimeException("minimumState ${vmStarter.minimumState} not supported")
 		}
 	}
 
-	private fun attachDisposableToCreateDestroy(createDisposable: () -> Disposable) {
+	private fun attachDisposableToCreateDestroy(createDisposable: () -> List<Disposable>) {
 		DisposableLifecycle.attachAtCreateDetachAtDestroy(lifecycleOwner, createDisposable)
 	}
 
-	private fun attachDisposableToStartStop(createDisposable: () -> Disposable) {
+	private fun attachDisposableToStartStop(createDisposable: () -> List<Disposable>) {
 		DisposableLifecycle.attachAtStartDetachAtStop(lifecycleOwner, createDisposable)
 	}
 
-	private fun attachDisposableToResumePause(createDisposable: () -> Disposable) {
+	private fun attachDisposableToResumePause(createDisposable: () -> List<Disposable>) {
 		DisposableLifecycle.attachAtResumeDetachAtPause(lifecycleOwner, createDisposable)
 	}
 
