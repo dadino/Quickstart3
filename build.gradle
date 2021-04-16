@@ -30,11 +30,11 @@ ext {
     targetSdk = 29
 
     versionCode = 38
-    versionName = "0.10.0"
+    versionName = "0.10.1"
 
-    groupId = "io.github.dadino"
-    artifactIdCore = "quickstart3-core"
-    artifactIdUi = "quickstart3-ui"
+    groupId = "io.github.dadino.quickstart3"
+    artifactIdCore = "core"
+    artifactIdUi = "ui"
 
     ossrhUsername = System.properties['ossrhUsername']
     ossrhPassword = System.properties['ossrhPassword']
