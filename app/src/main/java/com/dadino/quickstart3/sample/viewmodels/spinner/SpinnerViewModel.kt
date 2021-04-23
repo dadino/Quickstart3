@@ -55,7 +55,7 @@ data class SpinnerSaveState(
 class SpinnerUpdater : Updater<SpinnerState>(true) {
 
 	override fun start(): Start<SpinnerState> {
-		return Start.start(state = SpinnerState(), effects = listOf(SpinnerEffect.LoadSession))
+		return Start.start(state = getInitialMainState(), effects = listOf(SpinnerEffect.LoadSession))
 	}
 
 	override fun update(previous: SpinnerState, event: Event): Next<SpinnerState> {
@@ -73,10 +73,13 @@ class SpinnerUpdater : Updater<SpinnerState>(true) {
 		}
 	}
 
-	override fun getSubStateClasses(): List<Class<out State>> {
+	override fun getInitialMainState(): SpinnerState {
+		return SpinnerState()
+	}
+
+	override fun getInitialSubStates(): List<State> {
 		return listOf(
-			SpinnerState::class.java,
-			SpinnerSaveState::class.java
+			SpinnerSaveState(false)
 		)
 	}
 }

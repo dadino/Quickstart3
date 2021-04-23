@@ -28,7 +28,7 @@ data class TestSubState(
 open class TestStateUpdater(useLogging: Boolean = true) : Updater<TestState>(useLogging) {
 
 	override fun start(): Start<TestState> {
-		return Start.start(TestState())
+		return Start.start(getInitialMainState())
 	}
 
 	override fun update(previous: TestState, event: Event): Next<TestState> {
@@ -41,10 +41,13 @@ open class TestStateUpdater(useLogging: Boolean = true) : Updater<TestState>(use
 		}
 	}
 
-	override fun getSubStateClasses(): List<Class<out State>> {
+	override fun getInitialMainState(): TestState {
+		return TestState()
+	}
+
+	override fun getInitialSubStates(): List<State> {
 		return listOf(
-			TestState::class.java,
-			TestSubState::class.java
+			TestSubState(false)
 		)
 	}
 }

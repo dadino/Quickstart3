@@ -3,6 +3,7 @@ package com.dadino.quickstart3.core.components
 import androidx.lifecycle.ViewModel
 import com.dadino.quickstart3.core.entities.*
 import io.reactivex.Observable
+import kotlin.reflect.KClass
 
 abstract class BaseViewModel<STATE : State> : ViewModel() {
 
@@ -44,7 +45,7 @@ abstract class BaseViewModel<STATE : State> : ViewModel() {
 
 	fun currentState() = loop.currentState()
 	fun subStates() = loop.getSubStates()
-	fun subState(subStateClass: Class<out State>) = loop.getSubState(subStateClass)
+	fun subState(subStateClass: KClass<out State>) = loop.getSubState(subStateClass)
 	fun statesFlows() = loop.getStateFlows()
 	fun signalsFlows() = loop.signals
 

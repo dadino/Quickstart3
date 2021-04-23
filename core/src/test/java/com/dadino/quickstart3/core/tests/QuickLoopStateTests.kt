@@ -37,7 +37,7 @@ class QuickLoopStateTests {
 
 		Thread.sleep(100)
 
-		quickLoop.getStateFlow(TestState::class.java)
+		quickLoop.getStateFlow(TestState::class)
 			.toObservable()
 			.subscribe(testObserver)
 	}
@@ -66,7 +66,7 @@ class QuickLoopStateTests {
 	@Test
 	fun sendEvent_updateStateAndSubstate() {
 		val subtestObserver: TestObserver<in State> = TestObserver()
-		quickLoop.getStateFlow(TestSubState::class.java)
+		quickLoop.getStateFlow(TestSubState::class)
 			.toObservable()
 			.subscribe(subtestObserver)
 
