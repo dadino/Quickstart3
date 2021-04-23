@@ -12,6 +12,7 @@ import io.reactivex.disposables.CompositeDisposable
 
 class EventManager : InteractionEventSource, DefaultLifecycleObserver {
 
+	var eventListener: EventListener? = null
 	var logger: ILogger = LogcatLogger()
 	var tag: String? = null
 		set(value) {
@@ -27,6 +28,7 @@ class EventManager : InteractionEventSource, DefaultLifecycleObserver {
 	private val eventObservable: Observable<Event> by lazy {
 		eventRelay
 			.filter { it !is NoOpEvent }
+			.doOnNext { eventListener?.onEvent(it) }
 			.doOnNext { log { ">>> ${it.javaClass.simpleName} >>>" } }
 			.map { eventTransformer?.performTransform(it) ?: it }
 			.filter { it !is NoOpEvent }
@@ -59,4 +61,9 @@ class EventManager : InteractionEventSource, DefaultLifecycleObserver {
 
 	@VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
 	fun getEventSources() = compositeDisposable
+}
+
+interface EventListener {
+
+	fun onEvent(event: Event)
 }
