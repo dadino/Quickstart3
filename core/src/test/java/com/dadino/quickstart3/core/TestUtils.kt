@@ -13,7 +13,8 @@ object TestUtils {
 		Mockito.`when`(updater.start()).thenCallRealMethod()
 		Mockito.`when`(updater.update(any(TestState::class.java), any(Event::class.java))).thenCallRealMethod()
 		Mockito.`when`(updater.internalUpdate(any(TestState::class.java), any(Event::class.java))).thenCallRealMethod()
-		Mockito.`when`(updater.getSubStateClasses()).thenCallRealMethod()
+		Mockito.`when`(updater.getInitialMainState()).thenCallRealMethod()
+		Mockito.`when`(updater.getInitialSubStates()).thenCallRealMethod()
 		Mockito.`when`(updater.getStatesToPropagate(any(TestState::class.java), any(TestState::class.java), any(Boolean::class.java))).thenCallRealMethod()
 		return updater
 	}

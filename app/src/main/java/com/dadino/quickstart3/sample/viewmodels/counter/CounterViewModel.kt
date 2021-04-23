@@ -40,7 +40,7 @@ data class CounterSubState(val isGreatEnough: Boolean) : State()
 class CounterUpdater : Updater<CounterState>(true) {
 
 	override fun start(): Start<CounterState> {
-		return start(CounterState(counter = 150))
+		return start(getInitialMainState())
 	}
 
 	override fun update(previous: CounterState, event: Event): Next<CounterState> {
@@ -54,10 +54,13 @@ class CounterUpdater : Updater<CounterState>(true) {
 		}
 	}
 
-	override fun getSubStateClasses(): List<Class<out State>> {
+	override fun getInitialMainState(): CounterState {
+		return CounterState(counter = 150)
+	}
+
+	override fun getInitialSubStates(): List<State> {
 		return listOf(
-			CounterState::class.java,
-			CounterSubState::class.java
+			CounterSubState(false)
 		)
 	}
 }

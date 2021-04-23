@@ -42,7 +42,7 @@ class QuickLoopEventTests {
 
 		Thread.sleep(100)
 
-		quickLoop.getStateFlow(TestState::class.java)
+		quickLoop.getStateFlow(TestState::class)
 			.toObservable()
 			.subscribe(testObserver)
 	}
@@ -62,7 +62,7 @@ class QuickLoopEventTests {
 
 		//THEN
 		testObserver.awaitCount(2, TestWaitStrategy.SLEEP_10MS, MAX_WAIT_TIME_FOR_OBSERVABLES)
-		verify(updater, Mockito.times(2)).start()
+		verify(updater, Mockito.times(1)).start()
 		verify(updater, Mockito.times(2)).update(any(TestState::class.java), any(Event::class.java))
 	}
 

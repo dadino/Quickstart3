@@ -31,5 +31,6 @@ abstract class Updater<STATE : State>(var enableLogging: Boolean = false) {
 		if (enableLogging) logger.log(javaClass.simpleName, createMessage())
 	}
 
-	abstract fun getSubStateClasses(): List<Class<out State>>
+	abstract fun getInitialMainState(): STATE
+	abstract fun getInitialSubStates(): List<State>
 }
