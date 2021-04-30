@@ -21,6 +21,13 @@ class CounterViewModel : BaseViewModel<CounterState>() {
 		AdvanceCounterSideEffectHandler(),
 		DelayedAdvanceCounterSideEffectHandler()
 	)
+
+	override fun wantOnCreateEvent() = true
+	override fun wantOnStartEvent() = true
+	override fun wantOnResumeEvent() = true
+	override fun wantOnPauseEvent() = true
+	override fun wantOnStopEvent() = true
+	override fun wantOnDestroyEvent() = true
 }
 
 data class CounterState(

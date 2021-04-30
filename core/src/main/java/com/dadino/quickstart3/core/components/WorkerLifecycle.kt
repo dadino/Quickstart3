@@ -6,8 +6,7 @@ import androidx.lifecycle.LifecycleOwner
 object WorkerLifecycle {
 
 	fun doAtResume(lifecycleOwner: LifecycleOwner, work: () -> Unit) {
-		lifecycleOwner.lifecycle.addObserver(object :
-													 DefaultLifecycleObserver {
+		lifecycleOwner.lifecycle.addObserver(object : DefaultLifecycleObserver {
 			override fun onResume(owner: LifecycleOwner) {
 				work()
 			}
@@ -15,8 +14,7 @@ object WorkerLifecycle {
 	}
 
 	fun doAtStart(lifecycleOwner: LifecycleOwner, work: () -> Unit) {
-		lifecycleOwner.lifecycle.addObserver(object :
-													 DefaultLifecycleObserver {
+		lifecycleOwner.lifecycle.addObserver(object : DefaultLifecycleObserver {
 			override fun onStart(owner: LifecycleOwner) {
 				work()
 			}
@@ -24,8 +22,7 @@ object WorkerLifecycle {
 	}
 
 	fun doAtCreate(lifecycleOwner: LifecycleOwner, work: () -> Unit) {
-		lifecycleOwner.lifecycle.addObserver(object :
-													 DefaultLifecycleObserver {
+		lifecycleOwner.lifecycle.addObserver(object : DefaultLifecycleObserver {
 			override fun onCreate(owner: LifecycleOwner) {
 				work()
 			}
