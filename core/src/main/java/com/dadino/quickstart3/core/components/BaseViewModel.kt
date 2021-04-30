@@ -1,11 +1,11 @@
 package com.dadino.quickstart3.core.components
 
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.dadino.quickstart3.core.entities.*
 import io.reactivex.Observable
 import kotlin.reflect.KClass
 
-abstract class BaseViewModel<STATE : State> : ViewModel() {
+abstract class BaseViewModel<STATE : State> : ViewModel(), DefaultLifecycleObserver {
 
 	var onConnectCallback: OnConnectCallback? = null
 	private val internalOnConnectCallback = object : OnConnectCallback {
@@ -31,6 +31,30 @@ abstract class BaseViewModel<STATE : State> : ViewModel() {
 		loop.disconnect()
 	}
 
+	override fun onCreate(owner: LifecycleOwner) {
+		if (wantOnCreateEvent()) loop.receiveEvent(LifecycleEvent.OnCreate)
+	}
+
+	override fun onStart(owner: LifecycleOwner) {
+		if (wantOnStartEvent()) loop.receiveEvent(LifecycleEvent.OnStart)
+	}
+
+	override fun onResume(owner: LifecycleOwner) {
+		if (wantOnResumeEvent()) loop.receiveEvent(LifecycleEvent.OnResume)
+	}
+
+	override fun onPause(owner: LifecycleOwner) {
+		if (wantOnPauseEvent()) loop.receiveEvent(LifecycleEvent.OnPause)
+	}
+
+	override fun onStop(owner: LifecycleOwner) {
+		if (wantOnStopEvent()) loop.receiveEvent(LifecycleEvent.OnStop)
+	}
+
+	override fun onDestroy(owner: LifecycleOwner) {
+		if (wantOnDestroyEvent()) loop.receiveEvent(LifecycleEvent.OnDestroy)
+	}
+
 	fun receiveEvent(event: Event) {
 		loop.receiveEvent(event)
 	}
@@ -54,4 +78,10 @@ abstract class BaseViewModel<STATE : State> : ViewModel() {
 	abstract fun getSideEffectHandlers(): List<SideEffectHandler>
 
 	fun canReceiveEvents() = loop.canReceiveEvents
+	open protected fun wantOnCreateEvent() = false
+	open protected fun wantOnStartEvent() = false
+	open protected fun wantOnResumeEvent() = false
+	open protected fun wantOnPauseEvent() = false
+	open protected fun wantOnStopEvent() = false
+	open protected fun wantOnDestroyEvent() = false
 }
