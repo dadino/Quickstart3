@@ -63,10 +63,6 @@ abstract class BaseViewModel<STATE : State> : ViewModel(), DefaultLifecycleObser
 		loop.attachEventSource(eventObservable)
 	}
 
-	fun waitForSideEffect(sideEffect: SideEffect, handler: SideEffectHandler, doOnComplete: (error: Throwable?) -> Unit) {
-		loop.waitForSideEffect(sideEffect, handler, doOnComplete)
-	}
-
 	fun currentState() = loop.currentState()
 	fun subStates() = loop.getSubStates()
 	fun subState(subStateClass: KClass<out State>) = loop.getSubState(subStateClass)
