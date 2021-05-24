@@ -127,11 +127,15 @@ class QuickLoop<STATE : State>(private val loopName: String,
 		sideEffects.forEach { sideEffect ->
 			var handled = false
 			for (handler in sideEffectHandlers) {
-				val flowable = handler.createFlowable(sideEffect)
+				val result = handler.createFlowable(sideEffect)
+				val effectIsHandled = result.first
+				val flowable = result.second
 				if (flowable != null) {
 					val disposable = flowable.subscribe(eventRelay)
 					handler.setDisposable(disposable)
 					attachEventSource(disposable)
+				}
+				if (effectIsHandled) {
 					handled = true
 					break
 				}
