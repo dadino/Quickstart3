@@ -95,19 +95,6 @@ class QuickLoop<STATE : State>(private val loopName: String,
 		eventSourcesCompositeDisposable.add(eventDisposable)
 	}
 
-	fun waitForSideEffect(sideEffect: SideEffect, handler: SideEffectHandler, doOnCompleted: (error: Throwable?) -> Unit) {
-		val em = PublishRelay.create<Event>()
-		val wait = em.subscribeBy(
-			onNext = {
-				when (it) {
-					is OnCompleteEvent -> doOnCompleted(null)
-				}
-			},
-			onError = { doOnCompleted(it) },
-			onComplete = { doOnCompleted(null) })
-		handler.createObservable(em, sideEffect)
-	}
-
 	private fun onNext(next: InternalNext) {
 		if (next.states.isNotEmpty()) {
 			propagateStates(next.states)
@@ -140,8 +127,10 @@ class QuickLoop<STATE : State>(private val loopName: String,
 		sideEffects.forEach { sideEffect ->
 			var handled = false
 			for (handler in sideEffectHandlers) {
-				val disposable = handler.createObservable(eventRelay, sideEffect)
-				if (disposable != null) {
+				val flowable = handler.createFlowable(sideEffect)
+				if (flowable != null) {
+					val disposable = flowable.subscribe(eventRelay)
+					handler.setDisposable(disposable)
 					attachEventSource(disposable)
 					handled = true
 					break
