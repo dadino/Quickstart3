@@ -10,7 +10,7 @@ import io.reactivex.schedulers.Schedulers
 
 interface SideEffectHandler {
 
-	fun createFlowable(effect: SideEffect): Flowable<Event>?
+	fun createFlowable(effect: SideEffect): Pair<Boolean, Flowable<Event>?>
 	fun setDisposable(disposable: Disposable)
 	fun onClear()
 }
@@ -23,7 +23,7 @@ abstract class RxSingleSideEffectHandler<E : SideEffect>(
 	: SideEffectHandler {
 
 	private var compositeDisposable: CompositeDisposable = CompositeDisposable()
-	override fun createFlowable(effect: SideEffect): Flowable<Event>? {
+	override fun createFlowable(effect: SideEffect): Pair<Boolean, Flowable<Event>?> {
 		val disposable = if (checkClass(effect)) {
 			effectToFlowable(effect as E)
 				.subscribeOn(subscribeOn)
@@ -37,7 +37,7 @@ abstract class RxSingleSideEffectHandler<E : SideEffect>(
 				compositeDisposable.clear()
 			}
 		}
-		return disposable
+		return Pair(overrideEffectHandled(effect) || disposable != null, disposable)
 	}
 
 	override fun setDisposable(disposable: Disposable) {
@@ -47,6 +47,10 @@ abstract class RxSingleSideEffectHandler<E : SideEffect>(
 	abstract fun checkClass(effect: SideEffect): Boolean
 
 	protected abstract fun effectToFlowable(effect: E): Flowable<Event>
+
+	open fun overrideEffectHandled(effect: SideEffect): Boolean {
+		return false
+	}
 
 	override fun onClear() {
 		if (disposeOnClear) compositeDisposable.clear()
@@ -60,7 +64,7 @@ abstract class SingleSideEffectHandler<E : SideEffect>(
 
 	private var compositeDisposable: CompositeDisposable = CompositeDisposable()
 
-	override fun createFlowable(effect: SideEffect): Flowable<Event>? {
+	override fun createFlowable(effect: SideEffect): Pair<Boolean, Flowable<Event>?> {
 		val disposable = if (checkClass(effect)) {
 			Single.fromCallable {
 				effectToEvent(effect as E)
@@ -75,7 +79,7 @@ abstract class SingleSideEffectHandler<E : SideEffect>(
 				compositeDisposable.clear()
 			}
 		}
-		return disposable
+		return Pair(overrideEffectHandled(effect) || disposable != null, disposable)
 	}
 
 	override fun setDisposable(disposable: Disposable) {
@@ -85,6 +89,11 @@ abstract class SingleSideEffectHandler<E : SideEffect>(
 	abstract fun checkClass(effect: SideEffect): Boolean
 
 	protected abstract fun effectToEvent(effect: E): Event
+
+	open fun overrideEffectHandled(effect: SideEffect): Boolean {
+		return false
+	}
+
 	override fun onClear() {
 		if (disposeOnClear) compositeDisposable.clear()
 	}
