@@ -8,7 +8,6 @@ import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.*
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.subscribeBy
 import kotlin.reflect.KClass
 
 class QuickLoop<STATE : State>(private val loopName: String,
@@ -57,12 +56,26 @@ class QuickLoop<STATE : State>(private val loopName: String,
 			val newState = next.state ?: previousState
 			val isInitialization = next is Start<STATE>
 			val updatedSubStates = updater.getStatesToPropagate(previousState, newState, isInitialization)
-			InternalNext(states = updatedSubStates, signals = next.signals, effects = next.effects, isStartingState = isInitialization)
+
+			if (updatedSubStates.isNotEmpty()) {
+				propagateStates(updatedSubStates)
+			}
+			if (next.signals.isNotEmpty()) {
+				propagateSignals(next.signals)
+			}
+			if (next.effects.isNotEmpty()) {
+				handleSideEffects(next.effects)
+			}
+
+			if (isInitialization) {
+				canReceiveEvents = true
+				onConnectCallback.onConnect()
+			}
+
+			true
 		}
 		.toAsync()
-		.subscribeBy(onNext = { next ->
-			onNext(next)
-		})
+		.subscribe()
 
 	fun disconnect() {
 		internalDisposable.dispose()
@@ -93,23 +106,6 @@ class QuickLoop<STATE : State>(private val loopName: String,
 
 	fun attachEventSource(eventDisposable: Disposable) {
 		eventSourcesCompositeDisposable.add(eventDisposable)
-	}
-
-	private fun onNext(next: InternalNext) {
-		if (next.states.isNotEmpty()) {
-			propagateStates(next.states)
-		}
-		if (next.signals.isNotEmpty()) {
-			propagateSignals(next.signals)
-		}
-		if (next.effects.isNotEmpty()) {
-			handleSideEffects(next.effects)
-		}
-
-		if (next.isStartingState) {
-			canReceiveEvents = true
-			onConnectCallback.onConnect()
-		}
 	}
 
 	private fun propagateStates(states: List<State>) {
