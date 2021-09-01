@@ -6,11 +6,9 @@ import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import com.dadino.quickstart3.core.BaseActivity
-import com.dadino.quickstart3.core.components.AttachedComponent
 import com.dadino.quickstart3.core.components.EventTransformer
 import com.dadino.quickstart3.core.entities.*
 import com.dadino.quickstart3.sample.entities.OnGoToSecondPageClicked
-import com.dadino.quickstart3.sample.viewmodels.counter.CounterEvent
 import com.dadino.quickstart3.sample.viewmodels.spinner.*
 import com.dadino.quickstart3.sample.widgets.ExampleSpinner
 import com.dadino.quickstart3.ui.widgets.LoadingSpinnerEvent
@@ -27,12 +25,8 @@ class SpinnerActivity : BaseActivity() {
 	private val done: Button by lazy { findViewById<Button>(R.id.example_data_done) }
 	private val secondPage: Button by lazy { findViewById<Button>(R.id.example_data_go_to_second_page) }
 	private val saveSession: Button by lazy { findViewById<Button>(R.id.example_data_save_session) }
-	private val counterButton: Button by lazy { findViewById<Button>(R.id.example_data_counter) }
-	private val counterDelayedButton: Button by lazy { findViewById<Button>(R.id.example_data_counter_delayed) }
-	private val counterStateButton: Button by lazy { findViewById<Button>(R.id.example_data_counter_state) }
 
 	private val spinnerViewModel: SpinnerViewModel by viewModel()
-	private val counterComponent: CounterComponent by lazy { CounterComponent(this, this) }
 
 	private val spinnerVMStarter: VMStarter by lazy { VMStarter { spinnerViewModel } }
 
@@ -40,7 +34,6 @@ class SpinnerActivity : BaseActivity() {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_spinner)
 		Log.d("Spinner", "onCreate")
-		counterComponent.counterButton = counterButton
 
 		eventManager.attachEventSource(
 			Observable.merge(
@@ -51,17 +44,12 @@ class SpinnerActivity : BaseActivity() {
 					done.clicks().map { SpinnerEvent.OnSpinnerDoneClicked() },
 					secondPage.clicks().map { OnGoToSecondPageClicked() },
 					saveSession.clicks().map { SpinnerEvent.OnSaveSessionRequested("First") },
-					counterButton.clicks().map { CounterEvent.OnAdvanceCounterClicked },
-					counterDelayedButton.clicks().map { CounterEvent.OnDelayedAdvanceCounterClicked },
-					counterStateButton.clicks().map { CounterEvent.OnShowCounterStateClicked },
 					spinner.interactionEvents()
 				)
 			)
 		)
 		eventManager.eventTransformer = SpinnerTransformer()
 		eventManager.tag = "SpinnerEventManager"
-
-		//eventManager.receiveEvent(CounterEvent.SetCounter(100))
 	}
 
 	override fun onStart() {
@@ -74,12 +62,6 @@ class SpinnerActivity : BaseActivity() {
 		super.onResume()
 		Log.d("Spinner", "onResume")
 		spinnerVMStarter.queueEvent(SpinnerEvent.OnSpinnerLoadingClicked())
-	}
-
-	override fun components(): List<AttachedComponent> {
-		return listOf(
-			counterComponent
-		)
 	}
 
 	override fun viewModels(): List<VMStarter> {
@@ -100,7 +82,7 @@ class SpinnerActivity : BaseActivity() {
 			is SpinnerSignal.ShowDoneToast            -> Toast.makeText(this, "Done", Toast.LENGTH_SHORT).show()
 			is SpinnerSignal.ShowSaveSessionCompleted -> Toast.makeText(this, "Session saved", Toast.LENGTH_SHORT).show()
 			is SpinnerSignal.ShowLoadSessionCompleted -> Toast.makeText(this, "Session loaded: ${signal.session}", Toast.LENGTH_SHORT).show()
-			is SpinnerSignal.OpenSecondActivity -> startActivity(Intent(this, SecondActivity::class.java))
+			is SpinnerSignal.OpenSecondActivity       -> startActivity(Intent(this, SecondActivity::class.java))
 		}
 	}
 

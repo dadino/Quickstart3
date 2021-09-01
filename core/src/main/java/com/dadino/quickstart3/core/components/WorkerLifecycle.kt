@@ -13,6 +13,14 @@ object WorkerLifecycle {
 		})
 	}
 
+	fun doAtPause(lifecycleOwner: LifecycleOwner, work: () -> Unit) {
+		lifecycleOwner.lifecycle.addObserver(object : DefaultLifecycleObserver {
+			override fun onPause(owner: LifecycleOwner) {
+				work()
+			}
+		})
+	}
+
 	fun doAtStart(lifecycleOwner: LifecycleOwner, work: () -> Unit) {
 		lifecycleOwner.lifecycle.addObserver(object : DefaultLifecycleObserver {
 			override fun onStart(owner: LifecycleOwner) {
@@ -21,9 +29,25 @@ object WorkerLifecycle {
 		})
 	}
 
+	fun doAtStop(lifecycleOwner: LifecycleOwner, work: () -> Unit) {
+		lifecycleOwner.lifecycle.addObserver(object : DefaultLifecycleObserver {
+			override fun onStop(owner: LifecycleOwner) {
+				work()
+			}
+		})
+	}
+
 	fun doAtCreate(lifecycleOwner: LifecycleOwner, work: () -> Unit) {
 		lifecycleOwner.lifecycle.addObserver(object : DefaultLifecycleObserver {
 			override fun onCreate(owner: LifecycleOwner) {
+				work()
+			}
+		})
+	}
+
+	fun doAtDestroy(lifecycleOwner: LifecycleOwner, work: () -> Unit) {
+		lifecycleOwner.lifecycle.addObserver(object : DefaultLifecycleObserver {
+			override fun onDestroy(owner: LifecycleOwner) {
 				work()
 			}
 		})
