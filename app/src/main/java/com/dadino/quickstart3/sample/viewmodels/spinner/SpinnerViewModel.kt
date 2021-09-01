@@ -52,7 +52,7 @@ data class SpinnerSaveState(
 		val canSave: Boolean
 ) : State()
 
-class SpinnerUpdater : Updater<SpinnerState>(true) {
+class SpinnerUpdater : Updater<SpinnerState>(false) {
 
 	override fun start(): Start<SpinnerState> {
 		return Start.start(state = getInitialMainState(), effects = listOf(SpinnerEffect.LoadSession))

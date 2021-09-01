@@ -6,8 +6,10 @@ import com.dadino.quickstart3.core.utils.*
 import com.jakewharton.rxrelay2.BehaviorRelay
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.*
+import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import java.util.*
 import kotlin.reflect.KClass
 
 class QuickLoop<STATE : State>(private val loopName: String,
@@ -22,6 +24,7 @@ class QuickLoop<STATE : State>(private val loopName: String,
 	var canReceiveEvents = false
 
 	private val eventSourcesCompositeDisposable = CompositeDisposable()
+	private val eventSourcesMap: HashMap<String, Disposable> = hashMapOf()
 
 	private val mainStateRelay: BehaviorRelay<STATE> by lazy { BehaviorRelay.createDefault(updater.getInitialMainState()) }
 	private val stateRelayMap: Map<KClass<out State>, BehaviorRelay<State>> by lazy {
@@ -80,6 +83,7 @@ class QuickLoop<STATE : State>(private val loopName: String,
 	fun disconnect() {
 		internalDisposable.dispose()
 		eventSourcesCompositeDisposable.clear()
+		eventSourcesMap.clear()
 		sideEffectHandlers.forEach { it.onClear() }
 	}
 
@@ -100,12 +104,21 @@ class QuickLoop<STATE : State>(private val loopName: String,
 		eventRelay.accept(event)
 	}
 
-	fun attachEventSource(eventObservable: Observable<Event>) {
-		eventSourcesCompositeDisposable.add(eventObservable.subscribe(eventRelay))
+	fun attachEventSource(tag: String, eventObservable: Observable<Event>) {
+		if (eventSourcesMap.containsKey(tag).not()) {
+			val newDisposable = eventObservable.subscribe(eventRelay)
+
+			eventSourcesMap[tag] = newDisposable
+			eventSourcesCompositeDisposable.add(newDisposable)
+		}
 	}
 
-	fun attachEventSource(eventDisposable: Disposable) {
-		eventSourcesCompositeDisposable.add(eventDisposable)
+	fun attachEventSource(tag: String, newDisposable: Disposable) {
+		if (eventSourcesMap.containsKey(tag).not()) {
+
+			eventSourcesMap[tag] = newDisposable
+			eventSourcesCompositeDisposable.add(newDisposable)
+		}
 	}
 
 	private fun propagateStates(states: List<State>) {
@@ -129,7 +142,8 @@ class QuickLoop<STATE : State>(private val loopName: String,
 				if (flowable != null) {
 					val disposable = flowable.subscribe(eventRelay)
 					handler.setDisposable(disposable)
-					attachEventSource(disposable)
+					val tag = "SideEffect:${sideEffect.javaClass.canonicalName}:${UUID.randomUUID()}"
+					attachEventSource(tag, disposable)
 				}
 				if (effectIsHandled) {
 					handled = true

@@ -5,6 +5,7 @@ import com.dadino.quickstart3.core.entities.*
 import com.dadino.quickstart3.core.utils.DisposableLifecycle
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
+import java.util.*
 
 class AttachedComponentController(private val lifecycleOwner: LifecycleOwner,
 								  private val eventManager: EventManager,
@@ -73,18 +74,20 @@ class AttachedComponentController(private val lifecycleOwner: LifecycleOwner,
 	}
 
 	private fun doAtLifecycle(vmStarter: VMStarter) {
+		val tag = "Attached:${this.javaClass.canonicalName}:${UUID.randomUUID()}"
+
 		when (vmStarter.minimumState) {
 			Lifecycle.State.RESUMED -> WorkerLifecycle.doAtResume(lifecycleOwner, {
 				lifecycleOwner.lifecycle.addObserver(vmStarter.viewModel)
-				vmStarter.viewModel.attachEventSource(eventManager.interactionEvents())
+				vmStarter.viewModel.attachEventSource(tag, eventManager.interactionEvents())
 			})
 			Lifecycle.State.STARTED -> WorkerLifecycle.doAtStart(lifecycleOwner, {
 				lifecycleOwner.lifecycle.addObserver(vmStarter.viewModel)
-				vmStarter.viewModel.attachEventSource(eventManager.interactionEvents())
+				vmStarter.viewModel.attachEventSource(tag, eventManager.interactionEvents())
 			})
 			Lifecycle.State.CREATED -> WorkerLifecycle.doAtCreate(lifecycleOwner, {
 				lifecycleOwner.lifecycle.addObserver(vmStarter.viewModel)
-				vmStarter.viewModel.attachEventSource(eventManager.interactionEvents())
+				vmStarter.viewModel.attachEventSource(tag, eventManager.interactionEvents())
 			})
 			else                    -> throw RuntimeException("minimumState ${vmStarter.minimumState} not supported")
 		}

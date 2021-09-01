@@ -1,13 +1,11 @@
-
 buildscript {
-    ext.kotlin_version = '1.4.32'
+    ext.kotlin_version = '1.5.30'
     repositories {
         google()
         mavenCentral()
-        //jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.1'
+        classpath 'com.android.tools.build:gradle:7.0.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -25,12 +23,12 @@ task clean(type: Delete) {
 
 
 ext {
-    compileSdk = 29
+    compileSdk = 30
     minSdk = 16
-    targetSdk = 29
+    targetSdk = 30
 
-    versionCode = 41
-    versionName = "0.11.4"
+    versionCode = 42
+    versionName = "0.11.5"
 
     groupId = "io.github.dadino.quickstart3"
     artifactIdCore = "core"
