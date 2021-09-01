@@ -77,36 +77,18 @@ class AttachedComponentController(private val lifecycleOwner: LifecycleOwner,
 		val tag = "Attached:${this.javaClass.canonicalName}:${UUID.randomUUID()}"
 
 		when (vmStarter.minimumState) {
-			Lifecycle.State.RESUMED -> {
-				WorkerLifecycle.doAtResume(lifecycleOwner, {
-					lifecycleOwner.lifecycle.addObserver(vmStarter.viewModel)
-					vmStarter.viewModel.attachEventSource(tag, eventManager.interactionEvents())
-				})
-				WorkerLifecycle.doAtPause(lifecycleOwner, {
-					lifecycleOwner.lifecycle.removeObserver(vmStarter.viewModel)
-					vmStarter.viewModel.detachEventSource(tag)
-				})
-			}
-			Lifecycle.State.STARTED -> {
-				WorkerLifecycle.doAtStart(lifecycleOwner, {
-					lifecycleOwner.lifecycle.addObserver(vmStarter.viewModel)
-					vmStarter.viewModel.attachEventSource(tag, eventManager.interactionEvents())
-				})
-				WorkerLifecycle.doAtStop(lifecycleOwner, {
-					lifecycleOwner.lifecycle.removeObserver(vmStarter.viewModel)
-					vmStarter.viewModel.detachEventSource(tag)
-				})
-			}
-			Lifecycle.State.CREATED -> {
-				WorkerLifecycle.doAtCreate(lifecycleOwner, {
-					lifecycleOwner.lifecycle.addObserver(vmStarter.viewModel)
-					vmStarter.viewModel.attachEventSource(tag, eventManager.interactionEvents())
-				})
-				WorkerLifecycle.doAtDestroy(lifecycleOwner, {
-					lifecycleOwner.lifecycle.removeObserver(vmStarter.viewModel)
-					vmStarter.viewModel.detachEventSource(tag)
-				})
-			}
+			Lifecycle.State.RESUMED -> WorkerLifecycle.doAtResume(lifecycleOwner, {
+				lifecycleOwner.lifecycle.addObserver(vmStarter.viewModel)
+				vmStarter.viewModel.attachEventSource(tag, eventManager.interactionEvents())
+			})
+			Lifecycle.State.STARTED -> WorkerLifecycle.doAtStart(lifecycleOwner, {
+				lifecycleOwner.lifecycle.addObserver(vmStarter.viewModel)
+				vmStarter.viewModel.attachEventSource(tag, eventManager.interactionEvents())
+			})
+			Lifecycle.State.CREATED -> WorkerLifecycle.doAtCreate(lifecycleOwner, {
+				lifecycleOwner.lifecycle.addObserver(vmStarter.viewModel)
+				vmStarter.viewModel.attachEventSource(tag, eventManager.interactionEvents())
+			})
 			else                    -> throw RuntimeException("minimumState ${vmStarter.minimumState} not supported")
 		}
 	}

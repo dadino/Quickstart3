@@ -105,27 +105,20 @@ class QuickLoop<STATE : State>(private val loopName: String,
 	}
 
 	fun attachEventSource(tag: String, eventObservable: Observable<Event>) {
-		val newDisposable = eventObservable.subscribe(eventRelay)
-		attachEventSource(tag, newDisposable)
-	}
+		if (eventSourcesMap.containsKey(tag).not()) {
+			val newDisposable = eventObservable.subscribe(eventRelay)
 
-	fun detachEventSource(tag: String) {
-		val disposable = eventSourcesMap[tag]
-		if (disposable != null) {
-			eventSourcesCompositeDisposable.remove(disposable)
-			eventSourcesMap.remove(tag)
+			eventSourcesMap[tag] = newDisposable
+			eventSourcesCompositeDisposable.add(newDisposable)
 		}
 	}
 
 	fun attachEventSource(tag: String, newDisposable: Disposable) {
-		val oldDisposable = eventSourcesMap[tag]
-		if (oldDisposable != null) {
-			eventSourcesCompositeDisposable.remove(oldDisposable)
-			eventSourcesMap.remove(tag)
-		}
+		if (eventSourcesMap.containsKey(tag).not()) {
 
-		eventSourcesMap[tag] = newDisposable
-		eventSourcesCompositeDisposable.add(newDisposable)
+			eventSourcesMap[tag] = newDisposable
+			eventSourcesCompositeDisposable.add(newDisposable)
+		}
 	}
 
 	private fun propagateStates(states: List<State>) {
