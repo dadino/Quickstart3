@@ -59,8 +59,12 @@ abstract class BaseViewModel<STATE : State> : ViewModel(), DefaultLifecycleObser
 		loop.receiveEvent(event)
 	}
 
-	fun attachEventSource(eventObservable: Observable<Event>) {
-		loop.attachEventSource(eventObservable)
+	fun attachEventSource(tag: String, eventObservable: Observable<Event>) {
+		loop.attachEventSource(tag, eventObservable)
+	}
+
+	fun detachEventSource(tag: String) {
+		loop.detachEventSource(tag)
 	}
 
 	fun currentState() = loop.currentState()

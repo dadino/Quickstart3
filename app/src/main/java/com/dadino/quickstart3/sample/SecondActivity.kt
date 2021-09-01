@@ -5,7 +5,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import com.dadino.quickstart3.core.BaseActivity
-import com.dadino.quickstart3.core.components.AttachedComponent
 import com.dadino.quickstart3.core.entities.*
 import com.dadino.quickstart3.sample.viewmodels.spinner.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -18,7 +17,6 @@ class SecondActivity : BaseActivity() {
 	private val fab: FloatingActionButton by lazy { findViewById<FloatingActionButton>(R.id.fab) }
 
 	private val spinnerViewModel: SpinnerViewModel by viewModel()
-	private val counterComponent: CounterComponent by lazy { CounterComponent(this, this) }
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -42,12 +40,6 @@ class SecondActivity : BaseActivity() {
 	override fun onResume() {
 		super.onResume()
 		Log.d("Spinner", "onResume")
-	}
-
-	override fun components(): List<AttachedComponent> {
-		return listOf(
-			counterComponent
-		)
 	}
 
 	override fun viewModels(): List<VMStarter> {
