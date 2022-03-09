@@ -34,7 +34,9 @@ android {
 }
 
 dependencies {
+    implementation project(':base')
     implementation project(':core')
+    implementation project(':contextformattable')
     implementation project(':action')
 
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
