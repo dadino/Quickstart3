@@ -5,7 +5,7 @@ apply plugin: 'kotlin-kapt'
 ext {
     PUBLISH_GROUP_ID = rootProject.groupId
     PUBLISH_VERSION = rootProject.versionName
-    PUBLISH_ARTIFACT_ID = rootProject.artifactIdCore
+    PUBLISH_ARTIFACT_ID = "core"
 }
 
 apply from: "${rootProject.projectDir}/scripts/publish-mavencentral.gradle"
@@ -36,6 +36,7 @@ android {
 
 dependencies {
     api project(":base")
+    api project(":contextformattable")
 
     //Test
     testImplementation 'junit:junit:4.13.2'
@@ -72,6 +73,9 @@ dependencies {
     //Relay
     api 'com.jakewharton.rxrelay2:rxrelay:2.1.0'
     api 'com.jakewharton.rx2:replaying-share-kotlin:2.1.0'
+
+    //Timber
+    api 'com.jakewharton.timber:timber:4.7.1'
 }
 
 tasks.withType(Javadoc).all {

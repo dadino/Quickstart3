@@ -4,16 +4,14 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.DefaultLifecycleObserver
 import com.dadino.quickstart3.base.Event
 import com.dadino.quickstart3.base.NoOpEvent
-import com.dadino.quickstart3.core.utils.ILogger
-import com.dadino.quickstart3.core.utils.LogcatLogger
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
+import timber.log.Timber
 
 class EventManager : InteractionEventSource, DefaultLifecycleObserver {
 
 	var eventListener: EventListener? = null
-	var logger: ILogger = LogcatLogger()
 	var tag: String? = null
 		set(value) {
 			field = value
@@ -29,7 +27,7 @@ class EventManager : InteractionEventSource, DefaultLifecycleObserver {
 		eventRelay
 			.filter { it !is NoOpEvent }
 			.doOnNext { eventListener?.onEvent(it) }
-			.doOnNext { log { ">>> ${it.javaClass.simpleName} >>>" } }
+			.doOnNext { if (enableLogging) Timber.d(">>> ${it.javaClass.simpleName} >>>") }
 			.map { eventTransformer?.performTransform(it) ?: it }
 			.filter { it !is NoOpEvent }
 			.doOnDispose { compositeDisposable.clear() }
@@ -53,10 +51,6 @@ class EventManager : InteractionEventSource, DefaultLifecycleObserver {
 
 	override fun interactionEvents(): Observable<Event> {
 		return eventObservable
-	}
-
-	private fun log(createMessage: () -> String) {
-		if (enableLogging) logger.log(tag ?: "EventManager", createMessage())
 	}
 
 	@VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)

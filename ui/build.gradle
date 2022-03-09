@@ -5,7 +5,7 @@ apply plugin: 'kotlin-kapt'
 ext {
     PUBLISH_GROUP_ID = rootProject.groupId
     PUBLISH_VERSION = rootProject.versionName
-    PUBLISH_ARTIFACT_ID = rootProject.artifactIdUi
+    PUBLISH_ARTIFACT_ID = "ui"
 }
 
 apply from: "${rootProject.projectDir}/scripts/publish-mavencentral.gradle"
@@ -35,12 +35,13 @@ android {
 
 dependencies {
     implementation project(':core')
+    implementation project(':action')
 
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     //Support
-    api 'androidx.constraintlayout:constraintlayout:2.1.0'
-    api 'com.google.android.material:material:1.4.0'
+    api 'androidx.constraintlayout:constraintlayout:2.1.3'
+    api 'com.google.android.material:material:1.5.0'
     api 'androidx.recyclerview:recyclerview:1.2.1'
 
     //RxBindings

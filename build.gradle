@@ -31,9 +31,6 @@ ext {
     versionName = "0.11.6"
 
     groupId = "io.github.dadino.quickstart3"
-    artifactIdCore = "core"
-    artifactIdUi = "ui"
-    artifactIdBase = "base"
 
     ossrhUsername = System.properties['ossrhUsername']
     ossrhPassword = System.properties['ossrhPassword']

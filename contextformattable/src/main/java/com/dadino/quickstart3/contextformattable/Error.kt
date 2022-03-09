@@ -1,4 +1,4 @@
-package com.dadino.quickstart3.base
+package com.dadino.quickstart3.contextformattable
 
 import android.content.Context
 
