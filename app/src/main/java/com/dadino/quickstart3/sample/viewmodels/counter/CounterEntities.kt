@@ -1,6 +1,6 @@
 package com.dadino.quickstart3.sample.viewmodels.counter
 
-import com.dadino.quickstart3.core.entities.Event
+import com.dadino.quickstart3.base.Event
 import com.dadino.quickstart3.core.entities.SideEffect
 import com.dadino.quickstart3.core.entities.Signal
 

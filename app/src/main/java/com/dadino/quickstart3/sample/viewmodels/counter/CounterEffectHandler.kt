@@ -1,8 +1,8 @@
 package com.dadino.quickstart3.sample.viewmodels.counter
 
+import com.dadino.quickstart3.base.Event
 import com.dadino.quickstart3.core.components.RxSingleSideEffectHandler
 import com.dadino.quickstart3.core.components.SingleSideEffectHandler
-import com.dadino.quickstart3.core.entities.Event
 import com.dadino.quickstart3.core.entities.SideEffect
 import io.reactivex.Flowable
 import java.util.concurrent.TimeUnit

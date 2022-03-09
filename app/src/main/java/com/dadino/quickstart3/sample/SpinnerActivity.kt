@@ -5,9 +5,12 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.Toast
+import com.dadino.quickstart3.base.Event
 import com.dadino.quickstart3.core.BaseActivity
 import com.dadino.quickstart3.core.components.EventTransformer
-import com.dadino.quickstart3.core.entities.*
+import com.dadino.quickstart3.core.entities.Signal
+import com.dadino.quickstart3.core.entities.State
+import com.dadino.quickstart3.core.entities.VMStarter
 import com.dadino.quickstart3.sample.entities.OnGoToSecondPageClicked
 import com.dadino.quickstart3.sample.viewmodels.spinner.*
 import com.dadino.quickstart3.sample.widgets.ExampleSpinner

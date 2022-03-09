@@ -1,8 +1,8 @@
 package com.dadino.quickstart3.core.repositories
 
 import android.content.SharedPreferences
+import com.dadino.quickstart3.base.Optional
 import com.dadino.quickstart3.core.components.IRepository
-import com.dadino.quickstart3.core.entities.Optional
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable

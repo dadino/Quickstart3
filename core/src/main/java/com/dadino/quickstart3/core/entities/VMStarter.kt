@@ -1,13 +1,14 @@
 package com.dadino.quickstart3.core.entities
 
 import androidx.lifecycle.Lifecycle
+import com.dadino.quickstart3.base.Event
 import com.dadino.quickstart3.core.components.BaseViewModel
 import com.dadino.quickstart3.core.components.OnConnectCallback
 import java.util.*
 
 data class VMStarter(
-		val minimumState: Lifecycle.State = Lifecycle.State.RESUMED,
-		private val viewModelFactory: () -> BaseViewModel<*>
+	val minimumState: Lifecycle.State = Lifecycle.State.RESUMED,
+	private val viewModelFactory: () -> BaseViewModel<*>
 ) {
 
 	private val eventQueue: Queue<Event> = LinkedList<Event>()

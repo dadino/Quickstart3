@@ -1,6 +1,6 @@
 package com.dadino.quickstart3.core.tests
 
-import com.dadino.quickstart3.core.entities.Optional
+import com.dadino.quickstart3.base.Optional
 import org.junit.Assert.*
 import org.junit.Test
 

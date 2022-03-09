@@ -13,6 +13,7 @@
 		android:theme="@style/AppTheme">
 		<activity
 			android:name="com.dadino.quickstart3.sample.SpinnerActivity"
+			android:exported="true"
 			android:label="@string/title_activity_spinner"
 			android:theme="@style/AppTheme.NoActionBar">
 			<intent-filter>
@@ -23,6 +24,7 @@
 		</activity>
 		<activity
 			android:name="com.dadino.quickstart3.sample.SecondActivity"
+			android:exported="false"
 			android:label="@string/title_activity_second"
 			android:parentActivityName="com.dadino.quickstart3.sample.SpinnerActivity"
 			android:theme="@style/AppTheme.NoActionBar">

@@ -2,8 +2,8 @@ package com.dadino.quickstart3.core.components
 
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.DefaultLifecycleObserver
-import com.dadino.quickstart3.core.entities.Event
-import com.dadino.quickstart3.core.entities.NoOpEvent
+import com.dadino.quickstart3.base.Event
+import com.dadino.quickstart3.base.NoOpEvent
 import com.dadino.quickstart3.core.utils.ILogger
 import com.dadino.quickstart3.core.utils.LogcatLogger
 import com.jakewharton.rxrelay2.PublishRelay

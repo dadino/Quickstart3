@@ -5,16 +5,19 @@ import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.annotation.StringRes
 import com.dadino.quickstart3.ui.R
 import com.dadino.quickstart3.ui.utils.goneIf
-import kotlinx.android.synthetic.main.view_labeled_textview.view.*
 
 class LabeledTextView @kotlin.jvm.JvmOverloads constructor(
-		context: Context,
-		attrs: AttributeSet? = null,
-		defStyle: Int = 0
+	context: Context,
+	attrs: AttributeSet? = null,
+	defStyle: Int = 0
 ) : LinearLayout(context, attrs, defStyle) {
+	private val label: TextView by lazy { findViewById<TextView>(R.id.labeled_textview_label) }
+	private val value: TextView by lazy { findViewById<TextView>(R.id.labeled_textview_value) }
+
 	init {
 		orientation = VERTICAL
 		View.inflate(context, R.layout.view_labeled_textview, this)
@@ -28,15 +31,15 @@ class LabeledTextView @kotlin.jvm.JvmOverloads constructor(
 
 
 	fun setLabel(@StringRes labelRes: Int) {
-		labeled_textview_label.setText(labelRes)
+		label.setText(labelRes)
 	}
 
 	fun setLabel(label: String?) {
-		labeled_textview_label.text = label
+		this.label.text = label
 	}
 
 	fun setValue(value: String?) {
 		goneIf(TextUtils.isEmpty(value))
-		labeled_textview_value.text = value
+		this.value.text = value
 	}
 }

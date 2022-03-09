@@ -1,16 +1,18 @@
 package com.dadino.quickstart3.core.tests
 
+import com.dadino.quickstart3.base.NoOpEvent
 import com.dadino.quickstart3.core.*
 import com.dadino.quickstart3.core.TestUtils.MAX_WAIT_TIME_FOR_OBSERVABLES
 import com.dadino.quickstart3.core.TestUtils.testUpdater
 import com.dadino.quickstart3.core.components.OnConnectCallback
 import com.dadino.quickstart3.core.components.QuickLoop
-import com.dadino.quickstart3.core.entities.NoOpEvent
 import com.dadino.quickstart3.core.entities.State
 import com.dadino.quickstart3.core.utils.ConsoleLogger
 import io.reactivex.observers.BaseTestConsumer.TestWaitStrategy
 import io.reactivex.observers.TestObserver
-import org.junit.*
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.junit.MockitoJUnitRunner
 

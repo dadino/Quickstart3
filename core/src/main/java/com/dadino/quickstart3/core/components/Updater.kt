@@ -1,6 +1,10 @@
 package com.dadino.quickstart3.core.components
 
-import com.dadino.quickstart3.core.entities.*
+import com.dadino.quickstart3.base.Event
+import com.dadino.quickstart3.base.InitializeState
+import com.dadino.quickstart3.core.entities.Next
+import com.dadino.quickstart3.core.entities.Start
+import com.dadino.quickstart3.core.entities.State
 import com.dadino.quickstart3.core.utils.ILogger
 import com.dadino.quickstart3.core.utils.LogcatLogger
 

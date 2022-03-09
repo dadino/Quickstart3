@@ -1,7 +1,11 @@
 package com.dadino.quickstart3.core.components
 
-import androidx.lifecycle.*
-import com.dadino.quickstart3.core.entities.*
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ViewModel
+import com.dadino.quickstart3.base.Event
+import com.dadino.quickstart3.base.LifecycleEvent
+import com.dadino.quickstart3.core.entities.State
 import io.reactivex.Observable
 import kotlin.reflect.KClass
 
