@@ -1,6 +1,6 @@
 package com.dadino.quickstart3.core.utils
 
-import com.dadino.quickstart3.core.entities.Optional
+import com.dadino.quickstart3.base.Optional
 
 
 fun <T : Collection<*>> T?.isNullOrEmpty(): Boolean {

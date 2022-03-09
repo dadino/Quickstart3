@@ -1,13 +1,16 @@
 package com.dadino.quickstart3.sample.viewmodels.counter
 
+import com.dadino.quickstart3.base.Event
 import com.dadino.quickstart3.core.components.BaseViewModel
 import com.dadino.quickstart3.core.components.Updater
-import com.dadino.quickstart3.core.entities.*
+import com.dadino.quickstart3.core.entities.Next
 import com.dadino.quickstart3.core.entities.Next.Companion.justEffect
 import com.dadino.quickstart3.core.entities.Next.Companion.justSignal
 import com.dadino.quickstart3.core.entities.Next.Companion.justState
 import com.dadino.quickstart3.core.entities.Next.Companion.noChanges
+import com.dadino.quickstart3.core.entities.Start
 import com.dadino.quickstart3.core.entities.Start.Companion.start
+import com.dadino.quickstart3.core.entities.State
 import com.dadino.quickstart3.sample.entities.OnGoToSecondPageClicked
 import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerSignal
 
@@ -31,7 +34,8 @@ class CounterViewModel : BaseViewModel<CounterState>() {
 }
 
 data class CounterState(
-		val counter: Int = 0) : State() {
+	val counter: Int = 0
+) : State() {
 
 	override fun getStatesToPropagate(isInitialization: Boolean, previousState: State): List<State> {
 		check(previousState is CounterState)

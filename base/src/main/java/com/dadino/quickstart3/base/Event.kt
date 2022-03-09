@@ -1,4 +1,4 @@
-package com.dadino.quickstart3.core.entities
+package com.dadino.quickstart3.base
 
 open class Event
 

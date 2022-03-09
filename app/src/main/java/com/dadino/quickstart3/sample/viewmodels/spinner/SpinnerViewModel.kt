@@ -1,12 +1,17 @@
 package com.dadino.quickstart3.sample.viewmodels.spinner
 
-import com.dadino.quickstart3.core.components.*
-import com.dadino.quickstart3.core.entities.*
+import com.dadino.quickstart3.base.Event
+import com.dadino.quickstart3.core.components.BaseViewModel
+import com.dadino.quickstart3.core.components.SideEffectHandler
+import com.dadino.quickstart3.core.components.Updater
+import com.dadino.quickstart3.core.entities.Next
 import com.dadino.quickstart3.core.entities.Next.Companion.justEffect
 import com.dadino.quickstart3.core.entities.Next.Companion.justSignal
 import com.dadino.quickstart3.core.entities.Next.Companion.justState
 import com.dadino.quickstart3.core.entities.Next.Companion.noChanges
 import com.dadino.quickstart3.core.entities.Next.Companion.stateAndSignal
+import com.dadino.quickstart3.core.entities.Start
+import com.dadino.quickstart3.core.entities.State
 import com.dadino.quickstart3.sample.entities.ExampleData
 import com.dadino.quickstart3.sample.entities.Session
 import com.dadino.quickstart3.sample.repositories.ISessionRepository

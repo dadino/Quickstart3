@@ -1,25 +1,29 @@
 package com.dadino.quickstart3.core.components
 
 import androidx.annotation.VisibleForTesting
+import com.dadino.quickstart3.base.Event
+import com.dadino.quickstart3.base.InitializeState
+import com.dadino.quickstart3.base.NoOpEvent
 import com.dadino.quickstart3.core.entities.*
-import com.dadino.quickstart3.core.utils.*
+import com.dadino.quickstart3.core.utils.toAsync
 import com.jakewharton.rxrelay2.BehaviorRelay
 import com.jakewharton.rxrelay2.PublishRelay
-import io.reactivex.*
+import io.reactivex.BackpressureStrategy
+import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import java.util.*
 import kotlin.reflect.KClass
 
-class QuickLoop<STATE : State>(private val loopName: String,
-							   private val updater: Updater<STATE>,
-							   private val sideEffectHandlers: List<SideEffectHandler> = listOf(),
-							   private val onConnectCallback: OnConnectCallback
+class QuickLoop<STATE : State>(
+	private val loopName: String,
+	private val updater: Updater<STATE>,
+	private val sideEffectHandlers: List<SideEffectHandler> = listOf(),
+	private val onConnectCallback: OnConnectCallback
 
 ) {
 
-	var logger: ILogger = LogcatLogger()
 	var enableLogging = false
 	var canReceiveEvents = false
 
@@ -153,10 +157,6 @@ class QuickLoop<STATE : State>(private val loopName: String,
 
 			if (handled.not()) throw SideEffectNotHandledException(sideEffect)
 		}
-	}
-
-	private fun log(createMessage: () -> String) {
-		if (enableLogging) logger.log(loopName, createMessage())
 	}
 
 	@VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)

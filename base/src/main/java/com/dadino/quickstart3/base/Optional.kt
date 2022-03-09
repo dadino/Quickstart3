@@ -1,4 +1,4 @@
-package com.dadino.quickstart3.core.entities
+package com.dadino.quickstart3.base
 
 sealed class Optional<out T> {
 	class Some<out T>(val element: T) : Optional<T>()

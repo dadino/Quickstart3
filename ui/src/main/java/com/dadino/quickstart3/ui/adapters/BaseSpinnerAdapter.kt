@@ -6,8 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SpinnerAdapter
 import androidx.annotation.LayoutRes
+import com.dadino.quickstart3.base.Event
 import com.dadino.quickstart3.core.components.InteractionEventSource
-import com.dadino.quickstart3.core.entities.Event
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
@@ -68,7 +68,7 @@ abstract class BaseSpinnerAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : android.wid
 	fun getPosition(id: Long): Int {
 		if (getCount() == 0) return ID_NOT_FOUND
 		return (0 until getCount()).firstOrNull { id == getItemId(it) }
-				?: ID_NOT_FOUND
+			?: ID_NOT_FOUND
 	}
 
 	override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View? {
@@ -91,10 +91,10 @@ abstract class BaseSpinnerAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : android.wid
 
 	fun attachListenerToHolder(holder: HOLDER) {
 		holderListeners.add(
-				holder.interactionEvents()
-						.subscribeBy(onNext = { interactionEventsOnItemsRelay.onNext(it) },
-								onError = { interactionEventsOnItemsRelay.onError(it) }
-						)
+			holder.interactionEvents()
+				.subscribeBy(onNext = { interactionEventsOnItemsRelay.onNext(it) },
+					onError = { interactionEventsOnItemsRelay.onError(it) }
+				)
 		)
 	}
 

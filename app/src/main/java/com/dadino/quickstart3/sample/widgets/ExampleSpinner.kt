@@ -7,8 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.dadino.quickstart3.base.Event
 import com.dadino.quickstart3.core.components.InteractionEventSource
-import com.dadino.quickstart3.core.entities.Event
 import com.dadino.quickstart3.sample.R
 import com.dadino.quickstart3.sample.entities.ExampleData
 import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerEvent

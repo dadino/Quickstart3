@@ -1,12 +1,14 @@
 package com.dadino.quickstart3.core.components
 
-import com.dadino.quickstart3.core.entities.*
-import com.dadino.quickstart3.core.utils.ILogger
-import com.dadino.quickstart3.core.utils.LogcatLogger
+import com.dadino.quickstart3.base.Event
+import com.dadino.quickstart3.base.InitializeState
+import com.dadino.quickstart3.core.entities.Next
+import com.dadino.quickstart3.core.entities.Start
+import com.dadino.quickstart3.core.entities.State
+import timber.log.Timber
 
 abstract class Updater<STATE : State>(var enableLogging: Boolean = false) {
 
-	var logger: ILogger = LogcatLogger()
 
 	abstract fun start(): Start<STATE>
 	abstract fun update(previous: STATE, event: Event): Next<STATE>
@@ -15,20 +17,16 @@ abstract class Updater<STATE : State>(var enableLogging: Boolean = false) {
 	}
 
 	fun internalUpdate(previous: STATE, event: Event): Next<STATE> {
-		log { "______________________________________________" }
-		log { "IN: ${event.javaClass.simpleName}" }
+		if (enableLogging) Timber.d("______________________________________________")
+		if (enableLogging) Timber.d("IN: ${event.javaClass.simpleName}")
 		val next = if (event is InitializeState) {
 			start()
 		} else {
 			update(previous, event)
 		}
-		log { "OUT: $next" }
-		log { "¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯" }
+		if (enableLogging) Timber.d("OUT: $next")
+		if (enableLogging) Timber.d("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯")
 		return next
-	}
-
-	private fun log(createMessage: () -> String) {
-		if (enableLogging) logger.log(javaClass.simpleName, createMessage())
 	}
 
 	abstract fun getInitialMainState(): STATE

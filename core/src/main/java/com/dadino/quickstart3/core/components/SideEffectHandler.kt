@@ -1,8 +1,10 @@
 package com.dadino.quickstart3.core.components
 
-import com.dadino.quickstart3.core.entities.Event
+import com.dadino.quickstart3.base.Event
 import com.dadino.quickstart3.core.entities.SideEffect
-import io.reactivex.*
+import io.reactivex.Flowable
+import io.reactivex.Scheduler
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -16,11 +18,11 @@ interface SideEffectHandler {
 }
 
 abstract class RxSingleSideEffectHandler<E : SideEffect>(
-		private val disposeOnNewEffect: Boolean = false,
-		private val disposeOnClear: Boolean = true,
-		private val subscribeOn: Scheduler = Schedulers.io(),
-		private val observeOn: Scheduler = AndroidSchedulers.mainThread())
-	: SideEffectHandler {
+	private val disposeOnNewEffect: Boolean = false,
+	private val disposeOnClear: Boolean = true,
+	private val subscribeOn: Scheduler = Schedulers.io(),
+	private val observeOn: Scheduler = AndroidSchedulers.mainThread()
+) : SideEffectHandler {
 
 	private var compositeDisposable: CompositeDisposable = CompositeDisposable()
 	override fun createFlowable(effect: SideEffect): Pair<Boolean, Flowable<Event>?> {
@@ -58,8 +60,8 @@ abstract class RxSingleSideEffectHandler<E : SideEffect>(
 }
 
 abstract class SingleSideEffectHandler<E : SideEffect>(
-		private val disposeOnNewEffect: Boolean = true,
-		private val disposeOnClear: Boolean = true
+	private val disposeOnNewEffect: Boolean = true,
+	private val disposeOnClear: Boolean = true
 ) : SideEffectHandler {
 
 	private var compositeDisposable: CompositeDisposable = CompositeDisposable()
