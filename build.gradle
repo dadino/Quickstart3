@@ -28,7 +28,7 @@ ext {
     targetSdk = 31
 
     versionCode = 44
-    versionName = "0.12.0"
+    versionName = "0.12.1"
 
     groupId = "io.github.dadino.quickstart3"
 

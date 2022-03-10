@@ -14,7 +14,7 @@ import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Observable
 
-object ExtendedSnackbar : InteractionEventSource {
+class ExtendedSnackbar : InteractionEventSource {
 
 	private val eventManager: EventManager = EventManager()
 

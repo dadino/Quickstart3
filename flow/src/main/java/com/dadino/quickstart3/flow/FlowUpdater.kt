@@ -7,7 +7,7 @@ import com.dadino.quickstart3.core.entities.NextBuilder
 import com.dadino.quickstart3.core.entities.SideEffect
 import com.dadino.quickstart3.core.entities.Signal
 
-abstract class FlowUpdater<STATE : MoveFlowState<STATE>>(enableLogging: Boolean) : Updater<STATE>(enableLogging) {
+abstract class FlowUpdater<STATE : FlowState<STATE, STEP>, STEP : FlowStep<STATE>>(enableLogging: Boolean) : Updater<STATE>(enableLogging) {
 
 	override fun update(previous: STATE, event: Event): Next<STATE> {
 		previous.getEventsToSkip().forEach { kclass ->
@@ -46,7 +46,7 @@ abstract class FlowUpdater<STATE : MoveFlowState<STATE>>(enableLogging: Boolean)
 
 	protected abstract fun updateForFlow(previous: STATE, event: Event): Next<STATE>
 
-	protected open fun getStateAfterAdvancement(state: STATE, startingStep: FlowStep<STATE>?, advancement: FlowAdvancement<STATE>): STATE? = null
-	protected open fun getEffectsForAdvancement(state: STATE, startingStep: FlowStep<STATE>?, advancement: FlowAdvancement<STATE>): List<SideEffect> = listOf()
-	protected open fun getSignalsForAdvancement(state: STATE, startingStep: FlowStep<STATE>?, advancement: FlowAdvancement<STATE>): List<Signal> = listOf()
+	protected open fun getStateAfterAdvancement(state: STATE, startingStep: STEP?, advancement: FlowAdvancement<STATE>): STATE? = null
+	protected open fun getEffectsForAdvancement(state: STATE, startingStep: STEP?, advancement: FlowAdvancement<STATE>): List<SideEffect> = listOf()
+	protected open fun getSignalsForAdvancement(state: STATE, startingStep: STEP?, advancement: FlowAdvancement<STATE>): List<Signal> = listOf()
 }
