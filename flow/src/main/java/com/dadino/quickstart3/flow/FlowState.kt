@@ -3,7 +3,7 @@ package com.dadino.quickstart3.flow
 import com.dadino.quickstart3.core.entities.State
 import kotlin.reflect.KClass
 
-abstract class FlowState<FLOW : Flow<STATE, STEP>, STATE, STEP : FlowStep<STATE>>(
+abstract class FlowState<FLOW : Flow<FLOW, STATE, STEP>, STATE, STEP : FlowStep<STATE>>(
 	open val flow: FLOW
 ) : State() {
 

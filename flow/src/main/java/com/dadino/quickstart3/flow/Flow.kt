@@ -3,7 +3,7 @@ package com.dadino.quickstart3.flow
 import com.dadino.quickstart3.base.Event
 import timber.log.Timber
 
-open class Flow<STATE, STEP : FlowStep<STATE>>(private val root: FlowStep<STATE>, private val steps: List<STEP>) {
+abstract class Flow<FLOW : Flow<FLOW, STATE, STEP>, STATE, STEP : FlowStep<STATE>>(protected val root: FlowStep<STATE>, protected val steps: List<STEP>) {
 	constructor(root: STEP) : this(root = root, steps = listOf(root))
 
 	fun hasRemainingSteps() = steps.isNotEmpty()
@@ -16,11 +16,11 @@ open class Flow<STATE, STEP : FlowStep<STATE>>(private val root: FlowStep<STATE>
 		return currentStep.onEvent(state, onEvent)
 	}
 
-	fun applyAdvancement(advancement: FlowAdvancement<STATE>?): Flow<STATE, STEP> {
-		return if (advancement != null) fromAdvancement(advancement) else this
+	fun applyAdvancement(advancement: FlowAdvancement<STATE>?): FLOW {
+		return if (advancement != null) fromAdvancement(advancement) else getFlow()
 	}
 
-	private fun fromAdvancement(advancement: FlowAdvancement<STATE>): Flow<STATE, STEP> {
+	private fun fromAdvancement(advancement: FlowAdvancement<STATE>): FLOW {
 		val steps: List<STEP> = when (advancement) {
 			is FlowAdvancement.ExitFlow               -> {
 				Timber.d("----ExitFlow----")
@@ -55,7 +55,10 @@ open class Flow<STATE, STEP : FlowStep<STATE>>(private val root: FlowStep<STATE>
 			}
 		}
 
-		return Flow(root = this.root, steps = steps)
+		return updateFlowWithSteps(steps)
 	}
+
+	abstract fun getFlow(): FLOW
+	abstract fun updateFlowWithSteps(steps: List<STEP>): FLOW
 }
 

@@ -7,7 +7,7 @@ import com.dadino.quickstart3.core.entities.NextBuilder
 import com.dadino.quickstart3.core.entities.SideEffect
 import com.dadino.quickstart3.core.entities.Signal
 
-abstract class FlowUpdater<STATE : FlowState<STATE, STEP>, STEP : FlowStep<STATE>>(enableLogging: Boolean) : Updater<STATE>(enableLogging) {
+abstract class FlowUpdater<FLOW : Flow<FLOW, STATE, STEP>, STATE : FlowState<FLOW, STATE, STEP>, STEP : FlowStep<STATE>>(enableLogging: Boolean) : Updater<STATE>(enableLogging) {
 
 	override fun update(previous: STATE, event: Event): Next<STATE> {
 		previous.getEventsToSkip().forEach { kclass ->
