@@ -1,6 +1,8 @@
 package com.dadino.quickstart3.sample.viewmodels.spinner
 
 import com.dadino.quickstart3.base.Event
+import com.dadino.quickstart3.contextformattable.ContextFormattable
+import com.dadino.quickstart3.contextformattable.StringFormattable
 import com.dadino.quickstart3.core.components.BaseViewModel
 import com.dadino.quickstart3.core.components.SideEffectHandler
 import com.dadino.quickstart3.core.components.Updater
@@ -12,9 +14,14 @@ import com.dadino.quickstart3.core.entities.Next.Companion.noChanges
 import com.dadino.quickstart3.core.entities.Next.Companion.stateAndSignal
 import com.dadino.quickstart3.core.entities.Start
 import com.dadino.quickstart3.core.entities.State
+import com.dadino.quickstart3.flow.FlowAdvancement
 import com.dadino.quickstart3.sample.entities.ExampleData
 import com.dadino.quickstart3.sample.entities.Session
 import com.dadino.quickstart3.sample.repositories.ISessionRepository
+import com.dadino.quickstart3.sample.viewmodels.MoveFlow
+import com.dadino.quickstart3.sample.viewmodels.MoveFlowState
+import com.dadino.quickstart3.sample.viewmodels.MoveFlowStep
+import com.dadino.quickstart3.ui.adapters.ListItem
 
 class SpinnerViewModel constructor(private val sessionRepo: ISessionRepository) : BaseViewModel<SpinnerState>() {
 	init {
@@ -35,12 +42,14 @@ class SpinnerViewModel constructor(private val sessionRepo: ISessionRepository) 
 }
 
 data class SpinnerState(
-		val selectedId: Long? = 0,
-		val session: Session? = null,
-		val loading: Boolean = false,
-		val error: Boolean = false,
-		val list: List<ExampleData> = listOf()
-) : State() {
+	override val flow: MoveFlow<SpinnerState> = MoveFlow(SpinnerStep()),
+
+	val selectedId: Long? = 0,
+	val session: Session? = null,
+	val loading: Boolean = false,
+	val error: Boolean = false,
+	val list: List<ExampleData> = listOf()
+) : MoveFlowState<SpinnerState>(flow) {
 
 	private val canSave: Boolean = selectedId != null && session != null
 
@@ -51,10 +60,34 @@ data class SpinnerState(
 		list.addAll(super.getStatesToPropagate(isInitialization, previousState))
 		return list
 	}
+
+	override fun getState(): SpinnerState {
+		return this
+	}
+
+	override fun updateWithFlow(flow: MoveFlow<SpinnerState>): SpinnerState {
+		return this.copy(flow = flow)
+	}
+}
+
+class SpinnerStep : MoveFlowStep<SpinnerState>("LotDetailStep") {
+
+
+	override fun onEvent(state: SpinnerState, event: Event): FlowAdvancement<SpinnerState>? {
+		return null
+	}
+
+	override fun getTitle(state: SpinnerState): ContextFormattable {
+		return StringFormattable("")
+	}
+
+	override fun getListItems(state: SpinnerState): List<ListItem> {
+		return listOf()
+	}
 }
 
 data class SpinnerSaveState(
-		val canSave: Boolean
+	val canSave: Boolean
 ) : State()
 
 class SpinnerUpdater : Updater<SpinnerState>(false) {

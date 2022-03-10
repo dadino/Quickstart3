@@ -3,7 +3,7 @@ package com.dadino.quickstart3.flow
 import com.dadino.quickstart3.base.Event
 import timber.log.Timber
 
-data class Flow<STATE, STEP : FlowStep<STATE>>(private val root: FlowStep<STATE>, private val steps: List<STEP>) {
+open class Flow<STATE, STEP : FlowStep<STATE>>(private val root: FlowStep<STATE>, private val steps: List<STEP>) {
 	constructor(root: STEP) : this(root = root, steps = listOf(root))
 
 	fun hasRemainingSteps() = steps.isNotEmpty()
@@ -55,7 +55,7 @@ data class Flow<STATE, STEP : FlowStep<STATE>>(private val root: FlowStep<STATE>
 			}
 		}
 
-		return this.copy(steps = steps)
+		return Flow(root = this.root, steps = steps)
 	}
 }
 
