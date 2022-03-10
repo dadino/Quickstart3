@@ -21,6 +21,7 @@ import com.dadino.quickstart3.sample.repositories.ISessionRepository
 import com.dadino.quickstart3.sample.viewmodels.MoveFlow
 import com.dadino.quickstart3.sample.viewmodels.MoveFlowState
 import com.dadino.quickstart3.sample.viewmodels.MoveFlowStep
+import com.dadino.quickstart3.sample.viewmodels.MoveFlowUpdater
 import com.dadino.quickstart3.ui.adapters.ListItem
 
 class SpinnerViewModel constructor(private val sessionRepo: ISessionRepository) : BaseViewModel<SpinnerState>() {
@@ -90,7 +91,7 @@ data class SpinnerSaveState(
 	val canSave: Boolean
 ) : State()
 
-class SpinnerUpdater : Updater<SpinnerState>(false) {
+class SpinnerUpdater : MoveFlowUpdater<SpinnerState>(false) {
 
 	override fun start(): Start<SpinnerState> {
 		return Start.start(state = getInitialMainState(), effects = listOf(SpinnerEffect.LoadSession))
@@ -119,5 +120,20 @@ class SpinnerUpdater : Updater<SpinnerState>(false) {
 		return listOf(
 			SpinnerSaveState(false)
 		)
+	}
+
+	override fun updateForFlow(previous: SpinnerState, event: Event): Next<SpinnerState> {
+		return when (event) {
+			is SpinnerEvent.OnSpinnerRetryClicked   -> justEffect(SpinnerEffect.LoadSpinnerEntries)
+			is SpinnerEvent.OnSpinnerDoneClicked    -> stateAndSignal(newState = previous.copy(list = event.list, loading = false, error = false), signal = SpinnerSignal.ShowDoneToast)
+			is SpinnerEvent.OnSpinnerLoadingClicked -> justState(previous.copy(list = listOf(), loading = true, error = false))
+			is SpinnerEvent.OnSpinnerErrorClicked   -> justState(previous.copy(list = listOf(), loading = false, error = true))
+			is SpinnerEvent.OnSpinnerIdleClicked    -> justState(previous.copy(list = listOf(), loading = false, error = false))
+			is SpinnerEvent.OnExampleDataSelected   -> justState(previous.copy(selectedId = event.item?.id))
+			is SpinnerEvent.OnSaveSessionRequested  -> justEffect(SpinnerEffect.SaveSession(event.id))
+			is SpinnerEvent.SetSaveSessionCompleted -> justSignal(SpinnerSignal.ShowSaveSessionCompleted)
+			is SpinnerEvent.SetLoadSessionCompleted -> stateAndSignal(newState = previous.copy(session = event.session), signal = SpinnerSignal.ShowLoadSessionCompleted(event.session))
+			else                                    -> noChanges()
+		}
 	}
 }
