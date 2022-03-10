@@ -1,13 +1,13 @@
-package com.dadino.quickstart3.sample.viewmodels
+package com.dadino.quickstart3.sample.viewmodels.flow
 
 import com.dadino.quickstart3.action.Action
 import com.dadino.quickstart3.contextformattable.ContextFormattable
 import com.dadino.quickstart3.flow.FlowState
 import com.dadino.quickstart3.ui.adapters.ListItem
 
-abstract class MoveFlowState<STATE>(
-	override val flow: MoveFlow<STATE>
-) : FlowState<MoveFlow<STATE>, STATE, MoveFlowStep<STATE>>(flow), StateWithFlow {
+abstract class SampleFlowState<STATE>(
+	override val flow: SampleFlow<STATE>
+) : FlowState<SampleFlow<STATE>, STATE, SampleFlowStep<STATE>>(flow), StateWithFlow {
 
 	override fun getListItemsForState(): List<ListItem> {
 		return flow.getCurrentStep()?.getListItems(getState()) ?: listOf()

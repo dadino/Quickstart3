@@ -18,10 +18,10 @@ import com.dadino.quickstart3.flow.FlowAdvancement
 import com.dadino.quickstart3.sample.entities.ExampleData
 import com.dadino.quickstart3.sample.entities.Session
 import com.dadino.quickstart3.sample.repositories.ISessionRepository
-import com.dadino.quickstart3.sample.viewmodels.MoveFlow
-import com.dadino.quickstart3.sample.viewmodels.MoveFlowState
-import com.dadino.quickstart3.sample.viewmodels.MoveFlowStep
-import com.dadino.quickstart3.sample.viewmodels.MoveFlowUpdater
+import com.dadino.quickstart3.sample.viewmodels.flow.SampleFlow
+import com.dadino.quickstart3.sample.viewmodels.flow.SampleFlowState
+import com.dadino.quickstart3.sample.viewmodels.flow.SampleFlowStep
+import com.dadino.quickstart3.sample.viewmodels.flow.SampleFlowUpdater
 import com.dadino.quickstart3.ui.adapters.ListItem
 
 class SpinnerViewModel constructor(private val sessionRepo: ISessionRepository) : BaseViewModel<SpinnerState>() {
@@ -43,14 +43,14 @@ class SpinnerViewModel constructor(private val sessionRepo: ISessionRepository) 
 }
 
 data class SpinnerState(
-	override val flow: MoveFlow<SpinnerState> = MoveFlow(SpinnerStep()),
+	override val flow: SampleFlow<SpinnerState> = SampleFlow(SpinnerStep()),
 
 	val selectedId: Long? = 0,
 	val session: Session? = null,
 	val loading: Boolean = false,
 	val error: Boolean = false,
 	val list: List<ExampleData> = listOf()
-) : MoveFlowState<SpinnerState>(flow) {
+) : SampleFlowState<SpinnerState>(flow) {
 
 	private val canSave: Boolean = selectedId != null && session != null
 
@@ -66,12 +66,12 @@ data class SpinnerState(
 		return this
 	}
 
-	override fun updateWithFlow(flow: MoveFlow<SpinnerState>): SpinnerState {
+	override fun updateWithFlow(flow: SampleFlow<SpinnerState>): SpinnerState {
 		return this.copy(flow = flow)
 	}
 }
 
-class SpinnerStep : MoveFlowStep<SpinnerState>("LotDetailStep") {
+class SpinnerStep : SampleFlowStep<SpinnerState>("LotDetailStep") {
 
 
 	override fun onEvent(state: SpinnerState, event: Event): FlowAdvancement<SpinnerState>? {
@@ -91,7 +91,7 @@ data class SpinnerSaveState(
 	val canSave: Boolean
 ) : State()
 
-class SpinnerUpdater : MoveFlowUpdater<SpinnerState>(false) {
+class SpinnerUpdater : SampleFlowUpdater<SpinnerState>(false) {
 
 	override fun start(): Start<SpinnerState> {
 		return Start.start(state = getInitialMainState(), effects = listOf(SpinnerEffect.LoadSession))
