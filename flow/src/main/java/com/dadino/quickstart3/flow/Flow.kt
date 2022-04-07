@@ -36,7 +36,9 @@ abstract class Flow<FLOW : Flow<FLOW, STATE, STEP>, STATE, STEP : FlowStep<STATE
 			is FlowAdvancement.GoToStep<STATE, *>     -> {
 				val temp = arrayListOf<STEP>()
 				temp.addAll(steps)
-				temp.add(advancement.step as STEP)
+				advancement.steps.forEach {
+					temp.add(it as STEP)
+				}
 				Timber.d("----GoForward--->\n${temp.joinToString("\n") { it.key }}")
 				temp
 			}
