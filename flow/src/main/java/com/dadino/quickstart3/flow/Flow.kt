@@ -36,16 +36,31 @@ abstract class Flow<FLOW : Flow<FLOW, STATE, STEP>, STATE, STEP : FlowStep<STATE
 			is FlowAdvancement.GoToStep<STATE, *>     -> {
 				val temp = arrayListOf<STEP>()
 				temp.addAll(steps)
-				temp.add(advancement.step as STEP)
+				advancement.steps.forEach {
+					temp.add(it as STEP)
+				}
 				Timber.d("----GoForward--->\n${temp.joinToString("\n") { it.key }}")
 				temp
 			}
 			is FlowAdvancement.GoBackToStep<STATE, *> -> {
-				val index = steps.indexOfLast { advancement.step.key == it.key }
-				val temp = arrayListOf<STEP>()
-				temp.addAll(steps.subList(0, index + 1))
-				Timber.d("<---GoBack----\n${temp.joinToString("\n") { it.key }}")
-				temp
+				val index = when {
+					advancement.steps.isEmpty() -> null
+					advancement.steps.size == 1 -> {
+						val i = steps.indexOfLast { advancement.steps[0].key == it.key }
+						if (i >= 0) i else null
+					}
+					else                        -> advancement.steps.firstOrNull { targetStep -> steps.indexOfLast { stepInFlow -> targetStep.key == stepInFlow.key } >= 0 }?.let { targetStep -> steps.indexOfLast { targetStep.key == it.key } }
+				}
+
+				if (index != null) {
+					val temp = arrayListOf<STEP>()
+					temp.addAll(steps.subList(0, index + 1))
+					Timber.d("<---GoBack----\n${temp.joinToString("\n") { it.key }}")
+					temp
+				} else {
+					Timber.d("<---GoBack----\nCan't go back, because none of the GoBackToStep steps are in the current steps\n${steps.joinToString("\n") { it.key }}")
+					steps
+				}
 			}
 			is FlowAdvancement.GoBackOneStep          -> {
 				val temp = arrayListOf<STEP>()
