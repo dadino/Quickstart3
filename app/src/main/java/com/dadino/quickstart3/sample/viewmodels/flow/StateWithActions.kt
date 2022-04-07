@@ -1,4 +1,4 @@
-package com.dadino.quickstart3.sample.viewmodels
+package com.dadino.quickstart3.sample.viewmodels.flow
 
 import com.dadino.quickstart3.action.Action
 
