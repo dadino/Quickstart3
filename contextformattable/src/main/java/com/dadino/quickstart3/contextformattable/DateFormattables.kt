@@ -21,3 +21,4 @@ class DateRangeFormattable(private val fromDate: Date, private val toDate: Date,
 }
 
 fun Date.asFormattable() = DateFormattable(this)
+fun Date.asFormattable(dateFormat: String) = DateFormattable(this, dateFormat = dateFormat)

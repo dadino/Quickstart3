@@ -44,13 +44,13 @@ dependencies {
     testImplementation 'org.mockito:mockito-inline:3.7.7'
 
     //Support
-    api "com.google.android.material:material:1.5.0"
-    api 'androidx.appcompat:appcompat:1.4.1'
-    api 'androidx.appcompat:appcompat-resources:1.4.1'
-    api 'androidx.core:core-ktx:1.7.0'
-    api "androidx.activity:activity-ktx:1.4.0"
-    api "androidx.fragment:fragment-ktx:1.4.1"
-    api 'androidx.preference:preference-ktx:1.2.0'
+    implementation "com.google.android.material:material:1.5.0"
+    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'androidx.appcompat:appcompat-resources:1.4.1'
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation "androidx.activity:activity-ktx:1.4.0"
+    implementation "androidx.fragment:fragment-ktx:1.4.1"
+    implementation 'androidx.preference:preference-ktx:1.2.0'
 
     //Arch Components
     api 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.1'
@@ -69,7 +69,7 @@ dependencies {
     api 'com.jakewharton.rx2:replaying-share-kotlin:2.1.0'
 
     //Timber
-    api 'com.jakewharton.timber:timber:4.7.1'
+    implementation 'com.jakewharton.timber:timber:4.7.1'
 }
 
 tasks.withType(Javadoc).all {
