@@ -75,5 +75,9 @@ abstract class Flow<FLOW : Flow<FLOW, STATE, STEP>, STATE, STEP : FlowStep<STATE
 
 	abstract fun getFlow(): FLOW
 	abstract fun updateFlowWithSteps(steps: List<STEP>): FLOW
+
+	override fun toString(): String {
+		return "Flow(root= ${root.key}, steps= ${steps.joinToString(", ") { it.key }})"
+	}
 }
 
