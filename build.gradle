@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.6.10'
+    ext.kotlin_version = '1.6.21'
     repositories {
         google()
         mavenCentral()
@@ -27,8 +27,8 @@ ext {
     minSdk = 16
     targetSdk = 31
 
-    versionCode = 48
-    versionName = "0.12.6"
+    versionCode = 49
+    versionName = "0.12.7"
 
     groupId = "io.github.dadino.quickstart3"
 
