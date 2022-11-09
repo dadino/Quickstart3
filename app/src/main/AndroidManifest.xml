@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.dadino.quickstart3.sample">
+	xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<application
-		android:name="com.dadino.quickstart3.sample.SampleApp"
+		android:name=".SampleApp"
 		android:allowBackup="true"
 		android:icon="@mipmap/ic_launcher"
 		android:label="@string/app_name"
@@ -12,7 +11,14 @@
 		android:supportsRtl="true"
 		android:theme="@style/AppTheme">
 		<activity
-			android:name="com.dadino.quickstart3.sample.SpinnerActivity"
+			android:name=".GridActivity"
+			android:exported="false">
+			<meta-data
+				android:name="android.app.lib_name"
+				android:value="" />
+		</activity>
+		<activity
+			android:name=".SpinnerActivity"
 			android:exported="true"
 			android:label="@string/title_activity_spinner"
 			android:theme="@style/AppTheme.NoActionBar">
@@ -23,10 +29,10 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name="com.dadino.quickstart3.sample.SecondActivity"
+			android:name=".SecondActivity"
 			android:exported="false"
 			android:label="@string/title_activity_second"
-			android:parentActivityName="com.dadino.quickstart3.sample.SpinnerActivity"
+			android:parentActivityName=".SpinnerActivity"
 			android:theme="@style/AppTheme.NoActionBar">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
@@ -42,7 +48,6 @@
 				android:name="android.support.FILE_PROVIDER_PATHS"
 				android:resource="@xml/provider_paths" />
 		</provider>
-
 	</application>
 
 </manifest>
