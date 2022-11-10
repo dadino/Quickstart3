@@ -46,12 +46,19 @@ abstract class ListItem {
 		if (this.selectionType != oldItem.selectionType) {
 			diff.putInt(PAYLOAD_SELECTABLE, this.selectionType.id)
 		}
+		if (this.showInCard != oldItem.showInCard) {
+			diff.putString(PAYLOAD_CARD, PAYLOAD_CARD)
+		}
+		if (this.spanSizeRes != oldItem.spanSizeRes) {
+			diff.putString(PAYLOAD_SPAN_SIZE, PAYLOAD_SPAN_SIZE)
+		}
 	}
 
 	fun isContentTheSame(oldItem: ListItem): Boolean {
 		return this.selected == oldItem.selected
 				&& this.selectionType == oldItem.selectionType
 				&& this.showInCard == oldItem.showInCard
+				&& this.spanSizeRes == oldItem.spanSizeRes
 				&& this == oldItem
 	}
 
@@ -59,6 +66,8 @@ abstract class ListItem {
 
 		const val PAYLOAD_SELECTED = "PAYLOAD_SELECTED"
 		const val PAYLOAD_SELECTABLE = "PAYLOAD_SELECTABLE"
+		const val PAYLOAD_CARD = "PAYLOAD_CARD"
+		const val PAYLOAD_SPAN_SIZE = "PAYLOAD_SPAN_SIZE"
 	}
 }
 

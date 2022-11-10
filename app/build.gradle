@@ -44,6 +44,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    namespace 'com.dadino.quickstart3.sample'
 }
 
 dependencies {
@@ -56,5 +57,8 @@ dependencies {
     implementation "io.insert-koin:koin-android-viewmodel:2.2.2"
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation project(path: ':flow')
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
 }

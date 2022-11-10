@@ -6,12 +6,12 @@ import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import com.dadino.quickstart3.base.Event
+import com.dadino.quickstart3.base.NoOpEvent
 import com.dadino.quickstart3.core.BaseActivity
 import com.dadino.quickstart3.core.components.EventTransformer
 import com.dadino.quickstart3.core.entities.Signal
 import com.dadino.quickstart3.core.entities.State
 import com.dadino.quickstart3.core.entities.VMStarter
-import com.dadino.quickstart3.sample.entities.OnGoToSecondPageClicked
 import com.dadino.quickstart3.sample.viewmodels.spinner.*
 import com.dadino.quickstart3.sample.widgets.ExampleSpinner
 import com.dadino.quickstart3.ui.widgets.LoadingSpinnerEvent
@@ -45,7 +45,10 @@ class SpinnerActivity : BaseActivity() {
 					loading.clicks().map { SpinnerEvent.OnSpinnerLoadingClicked() },
 					error.clicks().map { SpinnerEvent.OnSpinnerErrorClicked() },
 					done.clicks().map { SpinnerEvent.OnSpinnerDoneClicked() },
-					secondPage.clicks().map { OnGoToSecondPageClicked() },
+					secondPage.clicks().map {
+						openGridActivity()
+						NoOpEvent
+					},
 					saveSession.clicks().map { SpinnerEvent.OnSaveSessionRequested("First") },
 					spinner.interactionEvents()
 				)
@@ -85,8 +88,12 @@ class SpinnerActivity : BaseActivity() {
 			is SpinnerSignal.ShowDoneToast            -> Toast.makeText(this, "Done", Toast.LENGTH_SHORT).show()
 			is SpinnerSignal.ShowSaveSessionCompleted -> Toast.makeText(this, "Session saved", Toast.LENGTH_SHORT).show()
 			is SpinnerSignal.ShowLoadSessionCompleted -> Toast.makeText(this, "Session loaded: ${signal.session}", Toast.LENGTH_SHORT).show()
-			is SpinnerSignal.OpenSecondActivity       -> startActivity(Intent(this, SecondActivity::class.java))
+			is SpinnerSignal.OpenSecondActivity       -> openGridActivity()
 		}
+	}
+
+	private fun openGridActivity() {
+		startActivity(Intent(this, GridActivity::class.java))
 	}
 
 	private fun render(state: SpinnerState) {

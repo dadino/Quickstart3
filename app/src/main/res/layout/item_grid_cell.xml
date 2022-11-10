@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/item_root"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	app:cardCornerRadius="4dp"
+	app:cardElevation="4dp"
+	app:contentPadding="16dp">
+
+	<androidx.constraintlayout.widget.ConstraintLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
+
+		<ImageView
+			android:id="@+id/gridcell_minus"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:background="?selectableItemBackground"
+			app:layout_constraintEnd_toStartOf="@+id/gridcell_message"
+			app:layout_constraintHorizontal_bias="0.5"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent"
+			app:srcCompat="@drawable/ic_remove" />
+
+		<TextView
+			android:id="@+id/gridcell_message"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toStartOf="@+id/gridcell_plus"
+			app:layout_constraintHorizontal_bias="0.5"
+			app:layout_constraintStart_toEndOf="@+id/gridcell_minus"
+			app:layout_constraintTop_toTopOf="parent"
+			tools:text="TextView" />
+
+		<ImageView
+			android:id="@+id/gridcell_plus"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:background="?selectableItemBackground"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintHorizontal_bias="0.5"
+			app:layout_constraintStart_toEndOf="@+id/gridcell_message"
+			app:layout_constraintTop_toTopOf="parent"
+			app:srcCompat="@drawable/ic_add" />
+	</androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>
