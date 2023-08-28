@@ -23,7 +23,7 @@ abstract class PrefRepository(private val prefs: SharedPreferences) : IRepositor
 		return prefs.edit()
 	}
 
-	override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, s: String) {
+	override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, s: String?) {
 		if (listenOn() == s) onPrefChanged()
 	}
 

@@ -11,11 +11,11 @@ abstract class PrefLongRepository(prefs: SharedPreferences) : PrefRepository(pre
 
 	private var subject: BehaviorRelay<Long> = BehaviorRelay.create()
 
-	override protected fun listenOn(): String {
+	override fun listenOn(): String {
 		return key
 	}
 
-	override protected fun onPrefChanged() {
+	override fun onPrefChanged() {
 		subject.accept(pref)
 	}
 
