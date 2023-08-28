@@ -11,11 +11,11 @@ abstract class PrefBooleanRepository(prefs: SharedPreferences) : PrefRepository(
 
 	private var subject: BehaviorRelay<Boolean> = BehaviorRelay.create()
 
-	override protected fun listenOn(): String {
+	override fun listenOn(): String {
 		return key
 	}
 
-	override protected fun onPrefChanged() {
+	override fun onPrefChanged() {
 		subject.accept(pref)
 	}
 

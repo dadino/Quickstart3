@@ -12,11 +12,11 @@ abstract class PrefStringRepository(prefs: SharedPreferences) : PrefRepository(p
 
 	private var subject: BehaviorRelay<Optional<String>> = BehaviorRelay.create()
 
-	override protected fun listenOn(): String {
+	override fun listenOn(): String {
 		return key
 	}
 
-	override protected fun onPrefChanged() {
+	protected override fun onPrefChanged() {
 		subject.accept(Optional.create(pref))
 	}
 

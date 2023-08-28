@@ -2,12 +2,16 @@ package com.dadino.quickstart3.core.fragments
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
-import com.dadino.quickstart3.core.components.*
-import com.dadino.quickstart3.core.entities.*
+import com.dadino.quickstart3.core.components.AttachedComponent
+import com.dadino.quickstart3.core.components.AttachedComponentController
+import com.dadino.quickstart3.core.components.EventManager
+import com.dadino.quickstart3.core.entities.Signal
+import com.dadino.quickstart3.core.entities.State
+import com.dadino.quickstart3.core.entities.VMStarter
+import timber.log.Timber
 
 abstract class BaseFragment : Fragment() {
 
@@ -19,21 +23,21 @@ abstract class BaseFragment : Fragment() {
 	protected val eventManager: EventManager = EventManager()
 	protected val components: AttachedComponentController by lazy {
 		AttachedComponentController(lifecycleOwner = this,
-									eventManager = eventManager,
-									renderFun = { state -> renderState(state) },
-									respondFun = { signal -> respondTo(signal) })
+			eventManager = eventManager,
+			renderFun = { state -> renderState(state) },
+			respondFun = { signal -> respondTo(signal) })
 	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		components.addComponents(components())
 		components.attachViewModels(viewModels())
-		Log.d("BaseFragment", "onCreate")
+		Timber.d("onCreate")
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		Log.d("BaseFragment", "onViewCreated")
+		Timber.d("onViewCreated")
 	}
 
 	override fun onAttach(context: Context) {
