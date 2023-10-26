@@ -6,7 +6,7 @@ plugins {
 ext {
     PUBLISH_GROUP_ID = rootProject.groupId
     PUBLISH_VERSION = rootProject.versionName
-    PUBLISH_ARTIFACT_ID = "action"
+    PUBLISH_ARTIFACT_ID = "selectable"
 }
 
 apply from: "${rootProject.projectDir}/scripts/publish-mavencentral.gradle"
@@ -35,12 +35,11 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-    namespace 'com.dadino.quickstart3.action'
+    namespace 'com.dadino.quickstart3.selectable'
 }
 
 dependencies {
     implementation project(":icon")
-    implementation project(":selectable")
     implementation project(":contextformattable")
     implementation project(":base")
 

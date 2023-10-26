@@ -1,10 +1,17 @@
 package com.dadino.quickstart3.ui.utils
 
+import android.content.res.ColorStateList
+import android.os.Build
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.ViewTreeObserver
+import android.view.animation.AnimationUtils
 import android.widget.EditText
+import android.widget.ImageView
+import androidx.annotation.ColorInt
+import androidx.core.content.ContextCompat
+import com.dadino.quickstart3.icon.Icon
 
 
 fun <T : View> T.visibleIf(visible: Boolean) {
@@ -72,4 +79,23 @@ fun <T : EditText> T.setTextWithoutTriggering(string: String, textWatcher: TextW
 
 fun <T : EditText> T.setTextIfNew(string: String?) {
 	if (text.toString() != string ?: "") setTextKeepState(string ?: "")
+}
+
+fun ImageView.setIcon(icon: Icon?, @ColorInt defaultTint: Int?) {
+	this.goneIf(icon == null)
+	if (icon == null) return
+
+	this.setImageResource(icon.icon)
+
+	val tint = icon.tint
+	if (tint != null || defaultTint != null) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			this.imageTintList =
+				if (tint != null) ColorStateList.valueOf(ContextCompat.getColor(context, tint))
+				else if (defaultTint != null) ColorStateList.valueOf(defaultTint) else null
+		}
+	}
+
+	val animation = icon.animation
+	if (animation != null) this.startAnimation(AnimationUtils.loadAnimation(context, animation)) else clearAnimation()
 }

@@ -1,5 +1,7 @@
 include ':app', ':core', ':ui'
 include ':base'
 include ':contextformattable'
+include ':selectable'
+include ':icon'
 include ':action'
 include ':flow'
