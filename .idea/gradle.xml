@@ -17,6 +17,8 @@
             <option value="$PROJECT_DIR$/contextformattable" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/flow" />
+            <option value="$PROJECT_DIR$/icon" />
+            <option value="$PROJECT_DIR$/selectable" />
             <option value="$PROJECT_DIR$/ui" />
           </set>
         </option>

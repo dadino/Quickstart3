@@ -12,11 +12,11 @@ ext {
 apply from: "${rootProject.projectDir}/scripts/publish-mavencentral.gradle"
 
 android {
-    compileSdkVersion rootProject.compileSdk
+    compileSdk rootProject.compileSdk
 
     defaultConfig {
-        minSdkVersion rootProject.minSdk
-        targetSdkVersion rootProject.targetSdk
+        minSdk rootProject.minSdk
+        targetSdk rootProject.targetSdk
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -28,19 +28,24 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    kotlin {
+        jvmToolchain(17)
+    }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = "17"
     }
     namespace 'com.dadino.quickstart3.action'
 }
 
 dependencies {
+    implementation project(":icon")
+    implementation project(":selectable")
     implementation project(":contextformattable")
     implementation project(":base")
 
-    implementation 'androidx.annotation:annotation:1.6.0'
+    implementation 'androidx.annotation:annotation:1.7.0'
 }
