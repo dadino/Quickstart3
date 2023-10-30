@@ -3,11 +3,11 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion rootProject.compileSdk
+    compileSdk rootProject.compileSdk
 
     defaultConfig {
-        minSdkVersion rootProject.minSdk
-        targetSdkVersion rootProject.targetSdk
+        minSdk rootProject.minSdk
+        targetSdk rootProject.targetSdk
         applicationId "com.dadino.quickstart3.sample"
 
         versionCode rootProject.versionCode
@@ -40,9 +40,15 @@ android {
         }
     }
 
+    kotlin {
+        jvmToolchain(17)
+    }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = "17"
     }
     namespace 'com.dadino.quickstart3.sample'
 }

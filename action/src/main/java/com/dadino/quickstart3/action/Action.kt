@@ -24,14 +24,14 @@ open class Action(
 	constructor(
 		id: Int,
 		text: ContextFormattable? = null,
-		@DrawableRes icon: Int? = null,
+		@DrawableRes icon: Int,
 		enabled: Boolean = true,
 		showAsAction: Int = MenuItem.SHOW_AS_ACTION_IF_ROOM,
 		eventOnClick: Event
 	) : this(
 		id = id,
 		text = text,
-		icon = icon?.asIcon(),
+		icon = icon.asIcon(),
 		enabled = enabled,
 		showAsAction = showAsAction,
 		eventOnClick = eventOnClick
