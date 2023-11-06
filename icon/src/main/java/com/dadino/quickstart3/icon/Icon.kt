@@ -6,15 +6,26 @@ import androidx.annotation.AnimRes
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
+
 
 data class Icon(
 	@DrawableRes val icon: Int,
 	@ColorRes val tint: Int? = null,
 	@AnimRes val animation: Int? = null
 ) {
+	private var drawable: Drawable? = null
 
 	fun asDrawable(context: Context): Drawable? {
-		return ContextCompat.getDrawable(context, icon) //TODO tint
+		if (drawable == null) {
+			drawable = ContextCompat.getDrawable(context, icon)?.let {
+				val temp = DrawableCompat.wrap(it.mutate())
+				if (tint != null) DrawableCompat.setTint(temp, ContextCompat.getColor(context, tint))
+				temp
+			}
+
+		}
+		return drawable
 	}
 }
 

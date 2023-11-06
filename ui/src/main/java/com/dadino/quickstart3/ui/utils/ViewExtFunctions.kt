@@ -1,6 +1,5 @@
 package com.dadino.quickstart3.ui.utils
 
-import android.content.res.ColorStateList
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -8,8 +7,6 @@ import android.view.ViewTreeObserver
 import android.view.animation.AnimationUtils
 import android.widget.EditText
 import android.widget.ImageView
-import androidx.annotation.ColorInt
-import androidx.core.content.ContextCompat
 import com.dadino.quickstart3.icon.Icon
 import com.google.android.material.button.MaterialButton
 
@@ -81,35 +78,22 @@ fun <T : EditText> T.setTextIfNew(string: String?) {
 	if (text.toString() != (string ?: "")) setTextKeepState(string ?: "")
 }
 
-fun ImageView.setIcon(icon: Icon?, @ColorInt defaultTint: Int? = null) {
+fun ImageView.setIcon(icon: Icon?) {
 	this.goneIf(icon == null)
-	if (icon == null) return
+	if (icon == null) this.setImageDrawable(null)
+	else {
+		this.setImageDrawable(icon.asDrawable(this.context))
 
-	this.setImageResource(icon.icon)
-
-	val tint = icon.tint
-	if (tint != null || defaultTint != null) {
-		this.imageTintList =
-			if (tint != null) ColorStateList.valueOf(ContextCompat.getColor(context, tint))
-			else if (defaultTint != null) ColorStateList.valueOf(defaultTint) else null
+		val animation = icon.animation
+		if (animation != null) this.startAnimation(AnimationUtils.loadAnimation(context, animation)) else clearAnimation()
 	}
-
-	val animation = icon.animation
-	if (animation != null) this.startAnimation(AnimationUtils.loadAnimation(context, animation)) else clearAnimation()
 }
 
-fun MaterialButton.setIcon(icon: Icon?, @ColorInt defaultTint: Int? = null) {
+fun MaterialButton.setIcon(icon: Icon?) {
 	if (icon == null) {
 		this.icon = null
 	} else {
-		this.setIconResource(icon.icon)
-
-		val tint = icon.tint
-		if (tint != null || defaultTint != null) {
-			this.iconTint =
-				if (tint != null) ColorStateList.valueOf(ContextCompat.getColor(context, tint))
-				else if (defaultTint != null) ColorStateList.valueOf(defaultTint) else null
-		}
+		this.icon = icon.asDrawable(this.context)
 	}
 }
 
