@@ -39,7 +39,7 @@ data class GridState(
 		9 to 1,
 		10 to 1,
 	)
-) : State() {
+) : State {
 
 
 	fun getListItems(): List<ListItem> {

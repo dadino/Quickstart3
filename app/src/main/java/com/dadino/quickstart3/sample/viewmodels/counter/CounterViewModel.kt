@@ -35,7 +35,7 @@ class CounterViewModel : BaseViewModel<CounterState>() {
 
 data class CounterState(
 	val counter: Int = 0
-) : State() {
+) : State {
 
 	override fun getStatesToPropagate(isInitialization: Boolean, previousState: State): List<State> {
 		check(previousState is CounterState)
@@ -46,7 +46,7 @@ data class CounterState(
 	}
 }
 
-data class CounterSubState(val isGreatEnough: Boolean) : State()
+data class CounterSubState(val isGreatEnough: Boolean) : State
 
 class CounterUpdater : Updater<CounterState>(true) {
 

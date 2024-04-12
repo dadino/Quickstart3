@@ -82,7 +82,7 @@ fun ImageView.setIcon(icon: Icon?) {
 	this.goneIf(icon == null)
 	if (icon == null) this.setImageDrawable(null)
 	else {
-		this.setImageDrawable(icon.asDrawable(this.context))
+	  this.setImageDrawable(icon.asDrawable(this.context)?.mutate())
 
 		val animation = icon.animation
 		if (animation != null) this.startAnimation(AnimationUtils.loadAnimation(context, animation)) else clearAnimation()
@@ -93,7 +93,7 @@ fun MaterialButton.setIcon(icon: Icon?) {
 	if (icon == null) {
 		this.icon = null
 	} else {
-		this.icon = icon.asDrawable(this.context)
+	  this.icon = icon.asDrawable(this.context)?.mutate()
 	}
 }
 
