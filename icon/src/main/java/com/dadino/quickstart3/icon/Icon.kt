@@ -15,19 +15,20 @@ data class Icon(
 	@ColorRes val tint: Int? = null,
 	@AnimRes val animation: Int? = null,
 	@DimenRes val maxSize: Int? = R.dimen.default_icon_size,
+	private val shownOn: ShownOn = ShownOn.SURFACE,
 ) : ContextDrawable {
 
-  private var drawable: Drawable? = null
-
-  override fun getDrawable(context: Context): Drawable? {
-	if (drawable == null) {
-	  drawable = ContextCompat.getDrawable(context, icon)?.let {
-		val temp = DrawableCompat.wrap(it.mutate())
-		if (tint != null) DrawableCompat.setTint(temp, ContextCompat.getColor(context, tint))
-		temp
-	  }
+  override fun createDrawable(context: Context): Drawable? {
+	return ContextCompat.getDrawable(context, icon)?.let {
+	  val temp = DrawableCompat.wrap(it.mutate())
+	  if (tint != null) DrawableCompat.setTint(temp, ContextCompat.getColor(context, tint))
+	  else DrawableCompat.setTintList(temp, when (shownOn) {
+		ShownOn.PRIMARY   -> IconHandler.defaultIconTintOnPrimary
+		ShownOn.SECONDARY -> IconHandler.defaultIconTintOnSecondary
+		ShownOn.SURFACE   -> IconHandler.defaultIconTintOnSurface
+	  })
+	  temp
 	}
-	return drawable
   }
 
   override fun getAnimationRes(): Int? = animation
@@ -37,7 +38,16 @@ data class Icon(
 	imageView.scaleType = ImageView.ScaleType.CENTER
 	imageView.setImageDrawable(getDrawable(imageView.context))
   }
+
+  override fun getShownOn(): ShownOn {
+	return shownOn
+  }
+
+  override fun getVaultId(): String = "$icon:$tint:$animation:$shownOn"
+  override fun withShownOn(shownOn: ShownOn): ContextDrawable {
+	return this.copy(shownOn = shownOn)
+  }
 }
 
-fun @receiver:androidx.annotation.DrawableRes Int.asIcon(@ColorRes tint: Int? = null, @AnimRes animation: Int? = null): Icon = IconVault.getIcon(this, tint, animation)
-fun @receiver:androidx.annotation.DrawableRes Int.asCompletableIcon(completed: Boolean, @AnimRes animation: Int? = null): Icon = IconVault.getIcon(this, tint = if (completed) R.color.complete else null, animation)
+fun @receiver:androidx.annotation.DrawableRes Int.asIcon(@ColorRes tint: Int? = null, @AnimRes animation: Int? = null, shownOn: ShownOn = ShownOn.SURFACE): Icon = Icon(this, tint, animation, shownOn = shownOn)
+fun @receiver:androidx.annotation.DrawableRes Int.asCompletableIcon(completed: Boolean, @AnimRes animation: Int? = null, shownOn: ShownOn = ShownOn.SURFACE): Icon = Icon(this, tint = if (completed) R.color.complete else null, animation, shownOn = shownOn)
