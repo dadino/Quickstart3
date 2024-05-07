@@ -1,14 +1,14 @@
 package com.dadino.quickstart3.selectable
 
 import com.dadino.quickstart3.contextformattable.ContextFormattable
-import com.dadino.quickstart3.icon.Icon
+import com.dadino.quickstart3.icon.ContextDrawable
 
 interface Selectable {
 
     fun getSelectionId(): Id
     fun getMainText(): ContextFormattable
     fun getSecondaryText(): ContextFormattable? = null
-    fun getSelectionIcon(): Icon? = null
+    fun getSelectionIcon(): ContextDrawable? = null
 
     fun getSelectionEnabled(): Boolean = true
 }
@@ -17,7 +17,7 @@ data class SimpleSelectable(
     private val id: Id,
     private val mainText: ContextFormattable,
     private val secondaryText: ContextFormattable? = null,
-    private val icon: Icon? = null,
+    private val icon: ContextDrawable? = null,
     private val enabled: Boolean = true
 ) : Selectable {
 
@@ -33,7 +33,7 @@ data class SimpleSelectable(
         return secondaryText
     }
 
-    override fun getSelectionIcon(): Icon? {
+    override fun getSelectionIcon(): ContextDrawable? {
         return icon
     }
 

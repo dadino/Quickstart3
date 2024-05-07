@@ -1,13 +1,18 @@
 package com.dadino.quickstart3.core
 
+import com.dadino.quickstart3.base.Event
 import com.dadino.quickstart3.core.components.SingleSideEffectHandler
 import com.dadino.quickstart3.core.components.Updater
-import com.dadino.quickstart3.core.entities.*
+import com.dadino.quickstart3.core.entities.Next
+import com.dadino.quickstart3.core.entities.SideEffect
+import com.dadino.quickstart3.core.entities.Signal
+import com.dadino.quickstart3.core.entities.Start
+import com.dadino.quickstart3.core.entities.State
 
 data class TestState(
 		val counter: Int = 0,
 		val number: Int = 0
-) : State() {
+) : State {
 
 	private val isGreaterThan3 = counter > 3
 
@@ -23,7 +28,7 @@ data class TestState(
 
 data class TestSubState(
 		val isCounterGreaterThan3: Boolean
-) : State()
+) : State
 
 open class TestStateUpdater(useLogging: Boolean = true) : Updater<TestState>(useLogging) {
 
