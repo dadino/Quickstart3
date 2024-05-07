@@ -9,44 +9,44 @@ import com.dadino.quickstart3.core.entities.Signal
 
 abstract class FlowUpdater<FLOW : Flow<FLOW, STATE, STEP>, STATE : FlowState<FLOW, STATE, STEP>, STEP : FlowStep<STATE>>(enableLogging: Boolean) : Updater<STATE>(enableLogging) {
 
-	override fun update(previous: STATE, event: Event): Next<STATE> {
-		previous.getEventsToSkip().forEach { kclass ->
-			if (kclass.isInstance(event)) return Next.noChanges()
-		}
-		val next = updateForFlow(previous, event)
-		val state = next.state ?: previous
-		val advancement = state.flow.onEvent(state, event)
-		val newFlow = state.flow.applyAdvancement(advancement)
-		val builder = NextBuilder<STATE>()
+  override fun update(previous: STATE, event: Event): Next<STATE> {
+	previous.getEventsToSkip().forEach { kclass ->
+	  if (kclass.isInstance(event)) return Next.noChanges()
+	}
+	val next = updateForFlow(previous, event)
+	val state = next.state ?: previous
+	val advancement = state.flow.onEvent(state, event)
+	val newFlow = state.flow.applyAdvancement(advancement)
+	val builder = NextBuilder<STATE>()
 
-		if (next.state != null || previous.flow != newFlow) {
-			val stateWithFlow = state.updateWithFlow(newFlow)
-			builder.state(stateWithFlow)
-			if (newFlow.hasRemainingSteps().not()) builder.addSignal(CloseFlow)
+	if (next.state != null || previous.flow != newFlow) {
+	  val stateWithFlow = state.updateWithFlow(newFlow)
+	  builder.state(stateWithFlow)
+	  if (newFlow.hasRemainingSteps().not()) builder.addSignal(CloseFlow(previous.resultOnCloseMap))
 
-			if (advancement != null) {
-				val stateAfterAdvancement = getStateAfterAdvancement(stateWithFlow, previous.flow.getCurrentStep(), advancement) ?: stateWithFlow
+	  if (advancement != null) {
+		val stateAfterAdvancement = getStateAfterAdvancement(stateWithFlow, previous.flow.getCurrentStep(), advancement) ?: stateWithFlow
 
-				builder.state(stateAfterAdvancement)
-				builder.addEffects(getEffectsForAdvancement(stateAfterAdvancement, previous.flow.getCurrentStep(), advancement))
-				builder.addSignals(getSignalsForAdvancement(stateAfterAdvancement, previous.flow.getCurrentStep(), advancement))
-			}
-		} else if (advancement != null) {
-			val stateAfterAdvancement = getStateAfterAdvancement(state, previous.flow.getCurrentStep(), advancement) ?: state
+		builder.state(stateAfterAdvancement)
+		builder.addEffects(getEffectsForAdvancement(stateAfterAdvancement, previous.flow.getCurrentStep(), advancement))
+		builder.addSignals(getSignalsForAdvancement(stateAfterAdvancement, previous.flow.getCurrentStep(), advancement))
+	  }
+	} else if (advancement != null) {
+	  val stateAfterAdvancement = getStateAfterAdvancement(state, previous.flow.getCurrentStep(), advancement) ?: state
 
-			builder.state(stateAfterAdvancement)
-			builder.addEffects(getEffectsForAdvancement(stateAfterAdvancement, previous.flow.getCurrentStep(), advancement))
-			builder.addSignals(getSignalsForAdvancement(stateAfterAdvancement, previous.flow.getCurrentStep(), advancement))
-		}
-
-		builder.addSignals(next.signals)
-		builder.addEffects(next.effects)
-		return builder.build()
+	  builder.state(stateAfterAdvancement)
+	  builder.addEffects(getEffectsForAdvancement(stateAfterAdvancement, previous.flow.getCurrentStep(), advancement))
+	  builder.addSignals(getSignalsForAdvancement(stateAfterAdvancement, previous.flow.getCurrentStep(), advancement))
 	}
 
-	protected abstract fun updateForFlow(previous: STATE, event: Event): Next<STATE>
+	builder.addSignals(next.signals)
+	builder.addEffects(next.effects)
+	return builder.build()
+  }
 
-	protected open fun getStateAfterAdvancement(state: STATE, startingStep: STEP?, advancement: FlowAdvancement<STATE>): STATE? = null
-	protected open fun getEffectsForAdvancement(state: STATE, startingStep: STEP?, advancement: FlowAdvancement<STATE>): List<SideEffect> = listOf()
-	protected open fun getSignalsForAdvancement(state: STATE, startingStep: STEP?, advancement: FlowAdvancement<STATE>): List<Signal> = listOf()
+  protected abstract fun updateForFlow(previous: STATE, event: Event): Next<STATE>
+
+  protected open fun getStateAfterAdvancement(state: STATE, startingStep: STEP?, advancement: FlowAdvancement<STATE>): STATE? = null
+  protected open fun getEffectsForAdvancement(state: STATE, startingStep: STEP?, advancement: FlowAdvancement<STATE>): List<SideEffect> = listOf()
+  protected open fun getSignalsForAdvancement(state: STATE, startingStep: STEP?, advancement: FlowAdvancement<STATE>): List<Signal> = listOf()
 }

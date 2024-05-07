@@ -45,6 +45,6 @@ dependencies {
     implementation project(":contextformattable")
     implementation project(":base")
 
-    implementation 'androidx.annotation:annotation:1.7.0'
-    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.annotation:annotation:1.7.1'
+    implementation 'androidx.core:core-ktx:1.13.1'
 }

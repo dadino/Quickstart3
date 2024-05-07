@@ -1,12 +1,11 @@
 package com.dadino.quickstart3.core.tests
 
+import com.dadino.quickstart3.base.Event
 import com.dadino.quickstart3.base.NoOpEvent
 import com.dadino.quickstart3.core.TestEvents
 import com.dadino.quickstart3.core.TestUtils
 import com.dadino.quickstart3.core.components.EventManager
 import com.dadino.quickstart3.core.components.EventTransformer
-import com.dadino.quickstart3.core.entities.Event
-import com.dadino.quickstart3.core.utils.ConsoleLogger
 import io.reactivex.Observable
 import io.reactivex.observers.BaseTestConsumer
 import org.junit.After
@@ -23,7 +22,6 @@ class EventManagerTests {
 	@Before
 	fun setup() {
 		eventManager = EventManager()
-		eventManager.logger = ConsoleLogger()
 		Thread.sleep(100)
 	}
 

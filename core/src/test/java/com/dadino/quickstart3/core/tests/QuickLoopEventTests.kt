@@ -1,18 +1,24 @@
 package com.dadino.quickstart3.core.tests
 
-import com.dadino.quickstart3.core.*
+import com.dadino.quickstart3.base.Event
+import com.dadino.quickstart3.core.RxJavaSchedulerConfigurator
+import com.dadino.quickstart3.core.TestEvents
+import com.dadino.quickstart3.core.TestState
+import com.dadino.quickstart3.core.TestStateUpdater
+import com.dadino.quickstart3.core.TestUtils
 import com.dadino.quickstart3.core.TestUtils.MAX_WAIT_TIME_FOR_OBSERVABLES
 import com.dadino.quickstart3.core.TestUtils.any
 import com.dadino.quickstart3.core.components.OnConnectCallback
 import com.dadino.quickstart3.core.components.QuickLoop
-import com.dadino.quickstart3.core.entities.Event
 import com.dadino.quickstart3.core.entities.State
-import com.dadino.quickstart3.core.utils.ConsoleLogger
 import io.reactivex.Observable
 import io.reactivex.observers.BaseTestConsumer.TestWaitStrategy
 import io.reactivex.observers.TestObserver
-import org.junit.*
+import org.junit.After
+import org.junit.Assert
 import org.junit.Assert.assertNotNull
+import org.junit.Before
+import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito
 import org.mockito.Mockito.verify
@@ -37,7 +43,6 @@ class QuickLoopEventTests {
 
 		quickLoop = QuickLoop("testloop", updater, listOf(), onConnectCallback)
 		quickLoop.enableLogging = true
-		quickLoop.logger = ConsoleLogger()
 		testObserver = TestObserver()
 
 		Thread.sleep(100)
@@ -70,7 +75,7 @@ class QuickLoopEventTests {
 	fun addEventSource_eventSourceAdded() {
 		Assert.assertEquals(0, quickLoop.getEventSources().size())
 
-		quickLoop.attachEventSource(Observable.empty())
+	  quickLoop.attachEventSource("test", Observable.empty())
 
 		Assert.assertEquals(1, quickLoop.getEventSources().size())
 	}

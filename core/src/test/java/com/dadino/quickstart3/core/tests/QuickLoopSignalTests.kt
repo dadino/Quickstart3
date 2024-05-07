@@ -1,12 +1,15 @@
 package com.dadino.quickstart3.core.tests
 
 import com.dadino.quickstart3.base.NoOpEvent
-import com.dadino.quickstart3.core.*
+import com.dadino.quickstart3.core.RxJavaSchedulerConfigurator
+import com.dadino.quickstart3.core.TestEvents
+import com.dadino.quickstart3.core.TestSignals
+import com.dadino.quickstart3.core.TestState
+import com.dadino.quickstart3.core.TestStateUpdater
 import com.dadino.quickstart3.core.TestUtils.MAX_WAIT_TIME_FOR_OBSERVABLES
 import com.dadino.quickstart3.core.components.OnConnectCallback
 import com.dadino.quickstart3.core.components.QuickLoop
 import com.dadino.quickstart3.core.entities.Signal
-import com.dadino.quickstart3.core.utils.ConsoleLogger
 import io.reactivex.observers.BaseTestConsumer.TestWaitStrategy
 import io.reactivex.observers.TestObserver
 import org.junit.After
@@ -29,10 +32,8 @@ class QuickLoopSignalTests {
 		RxJavaSchedulerConfigurator.prepareRxJava()
 
 		val updater = TestStateUpdater(true)
-		updater.logger = ConsoleLogger()
 		quickLoop = QuickLoop("testloop", updater, listOf(), onConnectCallback)
 		quickLoop.enableLogging = true
-		quickLoop.logger = ConsoleLogger()
 		testObserver = TestObserver()
 
 		Thread.sleep(100)
