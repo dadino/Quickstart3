@@ -17,7 +17,7 @@ abstract class Updater<STATE : State>(var enableLogging: Boolean = false) {
 	}
 
 	fun internalUpdate(previous: STATE, event: Event): Next<STATE> {
-		if (enableLogging) Timber.d("______________________________________________")
+	  if (enableLogging) Timber.d("________________${previous.javaClass.simpleName}______________________")
 		if (enableLogging) Timber.d("IN: ${event.javaClass.simpleName}")
 		val next = if (event is InitializeState) {
 			start()
@@ -25,7 +25,7 @@ abstract class Updater<STATE : State>(var enableLogging: Boolean = false) {
 			update(previous, event)
 		}
 		if (enableLogging) Timber.d("OUT: $next")
-		if (enableLogging) Timber.d("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯")
+	  if (enableLogging) Timber.d("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯${previous.javaClass.simpleName}¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯")
 		return next
 	}
 
