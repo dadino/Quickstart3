@@ -5,6 +5,8 @@ import android.content.Context
 interface ContextFormattable {
 
   fun format(context: Context): CharSequence?
+
+  override fun equals(other: Any?): Boolean
 }
 
 fun ContextFormattable?.isNullOrEmpty(context: Context): Boolean {
