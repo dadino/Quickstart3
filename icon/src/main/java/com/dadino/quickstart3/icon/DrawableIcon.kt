@@ -14,26 +14,39 @@ data class DrawableIcon(
 	@ColorRes val tint: Int? = null,
 	@AnimRes val animation: Int? = null,
 	@DimenRes val maxSize: Int? = null,
+	private val shownOn: ShownOn = ShownOn.SURFACE,
 ) : ContextDrawable {
-  private var tintedDrawable: Drawable? = null
 
   override fun getAnimationRes(): Int? = animation
   override fun getMaxSizeRes(): Int? = maxSize
   override fun getTintRes(): Int? = tint
-  override fun getDrawable(context: Context): Drawable? {
-	if (tintedDrawable == null) {
-	  tintedDrawable = drawable.let {
-		val temp = DrawableCompat.wrap(it.mutate())
-		if (tint != null) DrawableCompat.setTint(temp, ContextCompat.getColor(context, tint))
-		temp
-	  }
+
+  override fun createDrawable(context: Context): Drawable? {
+	return drawable.let {
+	  val temp = DrawableCompat.wrap(it.mutate())
+	  if (tint != null) DrawableCompat.setTint(temp, ContextCompat.getColor(context, tint))
+	  else DrawableCompat.setTintList(temp, when (shownOn) {
+		ShownOn.PRIMARY   -> IconHandler.defaultIconTintOnPrimary
+		ShownOn.SECONDARY -> IconHandler.defaultIconTintOnSecondary
+		ShownOn.SURFACE   -> IconHandler.defaultIconTintOnSurface
+	  })
+	  temp
 	}
-	return tintedDrawable
   }
+
+  override fun getShownOn(): ShownOn {
+	return shownOn
+  }
+
+  override fun getVaultId(): String = "$drawable:$tint:$animation:$shownOn"
 
   override fun drawToImageView(imageView: ImageView) {
 	imageView.scaleType = ImageView.ScaleType.FIT_CENTER
 	imageView.setImageDrawable(getDrawable(imageView.context))
+  }
+
+  override fun withShownOn(shownOn: ShownOn): ContextDrawable {
+	return this.copy(shownOn = shownOn)
   }
 }
 

@@ -11,18 +11,22 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
 
 interface ContextDrawable {
+  fun getVaultId(): String
   @DimenRes
   fun getMaxSizeRes(): Int?
-
   @AnimRes
   fun getAnimationRes(): Int?
-
   @ColorRes
   fun getTintRes(): Int?
-
   fun drawToImageView(imageView: ImageView)
+  fun getDrawable(context: Context): Drawable? {
+	return DrawableVault.getDrawable(context, this)
+  }
 
-  fun getDrawable(context: Context): Drawable?
+  fun createDrawable(context: Context): Drawable?
+  fun getShownOn(): ShownOn
+
+  fun withShownOn(shownOn: ShownOn): ContextDrawable
 }
 
 fun ImageView.drawContextDrawable(contextDrawable: ContextDrawable?) {
@@ -40,4 +44,10 @@ fun ImageView.drawContextDrawable(contextDrawable: ContextDrawable?) {
   }
 
   contextDrawable?.getAnimationRes()?.let { this.startAnimation(AnimationUtils.loadAnimation(context, it)) }?.run { clearAnimation() }
+}
+
+enum class ShownOn {
+  PRIMARY,
+  SECONDARY,
+  SURFACE
 }

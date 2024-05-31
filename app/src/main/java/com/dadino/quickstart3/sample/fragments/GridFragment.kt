@@ -18,50 +18,48 @@ import org.koin.android.viewmodel.ext.android.viewModel
 
 class GridFragment : BaseFragment() {
 
-	private lateinit var grid: RecyclerView
+  private lateinit var grid: RecyclerView
 
-	private val gridViewModel: GridViewModel by viewModel()
+  private val gridViewModel: GridViewModel by viewModel()
 
-	override fun viewModels(): List<VMStarter> {
-		return listOf(
-			VMStarter { gridViewModel }
+  override fun viewModels(): List<VMStarter> {
+	return listOf(
+		VMStarter { gridViewModel }
+	)
+  }
+
+  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+	return inflater.inflate(R.layout.fragment_grid, container, false)
+  }
+
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+	super.onViewCreated(view, savedInstanceState)
+	grid = view.findViewById<RecyclerView>(R.id.recycler_view)
+
+	grid.setupAsGrid(
+		spanCountRes = R.integer.grid_span_size_all,
+		verticalSpacing = R.dimen._8dp,
+		horizontalSpacing = R.dimen._8dp,
+	)
+
+	eventManager.attachEventSources(
+		mapOf(
+			"list" to (grid.adapter as GenericAdapter).interactionEvents()
 		)
+	)
+  }
+
+  override fun renderState(state: State) {
+	when (state) {
+	  is GridState -> {
+		render(state)
+	  }
+
 	}
+  }
 
-	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-		return inflater.inflate(R.layout.fragment_grid, container, false)
-	}
-
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
-		grid = view.findViewById<RecyclerView>(R.id.recycler_view)
-
-		grid.setupAsGrid(
-			spanCountRes = R.integer.grid_span_size_all,
-			verticalSpacing = R.dimen._8dp,
-			horizontalSpacing = R.dimen._8dp,
-		)
-
-		eventManager.attachEventSources(
-			listOf(
-				(grid.adapter as GenericAdapter).interactionEvents()
-			)
-		)
-	}
-
-
-	override fun renderState(state: State) {
-		when (state) {
-			is GridState -> {
-				render(state)
-			}
-
-		}
-	}
-
-	private fun render(state: GridState) {
-		Log.d("Grid", "State: $state")
-		(grid.adapter as GenericAdapter).setItemsAsync(state.getListItems())
-	}
-
+  private fun render(state: GridState) {
+	Log.d("Grid", "State: $state")
+	(grid.adapter as GenericAdapter).setItemsAsync(state.getListItems())
+  }
 }

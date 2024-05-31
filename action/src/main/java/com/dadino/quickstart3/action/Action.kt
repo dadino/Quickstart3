@@ -8,6 +8,7 @@ import com.dadino.quickstart3.base.Event
 import com.dadino.quickstart3.contextformattable.ContextFormattable
 import com.dadino.quickstart3.contextformattable.asFormattable
 import com.dadino.quickstart3.icon.ContextDrawable
+import com.dadino.quickstart3.icon.ShownOn
 import com.dadino.quickstart3.icon.asIcon
 import com.dadino.quickstart3.selectable.Id
 import com.dadino.quickstart3.selectable.Selectable
@@ -36,9 +37,9 @@ open class Action(
 	  eventOnClick = eventOnClick
   )
 
-  fun toMenuItem(context: Context, menu: Menu, order: Int): MenuItem {
+  fun toMenuItem(context: Context, menu: Menu, order: Int, shownOn: ShownOn): MenuItem {
 	val item = menu.add(0, id, order, text?.format(context) ?: "")
-	icon?.let { item.setIcon(icon.getDrawable(context)) }
+	icon?.let { item.setIcon((if (icon.getShownOn() != shownOn) icon.withShownOn(shownOn) else icon).getDrawable(context)) }
 	item.isEnabled = enabled
 	item.setShowAsAction(showAsAction)
 	return item

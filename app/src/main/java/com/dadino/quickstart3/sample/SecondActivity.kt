@@ -5,8 +5,13 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import com.dadino.quickstart3.core.BaseActivity
-import com.dadino.quickstart3.core.entities.*
-import com.dadino.quickstart3.sample.viewmodels.spinner.*
+import com.dadino.quickstart3.core.entities.Signal
+import com.dadino.quickstart3.core.entities.State
+import com.dadino.quickstart3.core.entities.VMStarter
+import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerEvent
+import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerSignal
+import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerState
+import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.jakewharton.rxbinding3.view.clicks
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -26,7 +31,7 @@ class SecondActivity : BaseActivity() {
 
 		supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-		eventManager.attachEventSource(fab.clicks().map {
+	  eventManager.attachEventSource("fab", fab.clicks().map {
 			SpinnerEvent.OnSaveSessionRequested("Second")
 		})
 	}

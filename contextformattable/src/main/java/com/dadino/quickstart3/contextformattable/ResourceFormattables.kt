@@ -9,9 +9,25 @@ open class ResFormattable(
 	private vararg val args: Any
 ) : ContextFormattable {
 
-	override fun format(context: Context): String? {
-		return context.getString(textRes, *args)
-	}
+  override fun format(context: Context): String? {
+	return context.getString(textRes, *args)
+  }
+
+  override fun equals(other: Any?): Boolean {
+	if (this === other) return true
+	if (other !is ResFormattable) return false
+
+	if (textRes != other.textRes) return false
+	if (!args.contentEquals(other.args)) return false
+
+	return true
+  }
+
+  override fun hashCode(): Int {
+	var result = textRes
+	result = 31 * result + args.contentHashCode()
+	return result
+  }
 }
 
 open class ExtendedResFormattable(
@@ -19,9 +35,25 @@ open class ExtendedResFormattable(
 	private vararg val args: ContextFormattable
 ) : ContextFormattable {
 
-	override fun format(context: Context): String? {
-		return context.getString(textRes, *args.mapNotNull { it.format(context) }.toTypedArray())
-	}
+  override fun format(context: Context): String? {
+	return context.getString(textRes, *args.mapNotNull { it.format(context) }.toTypedArray())
+  }
+
+  override fun equals(other: Any?): Boolean {
+	if (this === other) return true
+	if (other !is ExtendedResFormattable) return false
+
+	if (textRes != other.textRes) return false
+	if (!args.contentEquals(other.args)) return false
+
+	return true
+  }
+
+  override fun hashCode(): Int {
+	var result = textRes
+	result = 31 * result + args.contentHashCode()
+	return result
+  }
 }
 
 open class PluralFormattable(
@@ -30,9 +62,27 @@ open class PluralFormattable(
 	private vararg val args: String
 ) : ContextFormattable {
 
-	override fun format(context: Context): String? {
-		return context.resources.getQuantityString(textRes, quantity, quantity, *args)
-	}
+  override fun format(context: Context): String? {
+	return context.resources.getQuantityString(textRes, quantity, quantity, *args)
+  }
+
+  override fun equals(other: Any?): Boolean {
+	if (this === other) return true
+	if (other !is PluralFormattable) return false
+
+	if (textRes != other.textRes) return false
+	if (quantity != other.quantity) return false
+	if (!args.contentEquals(other.args)) return false
+
+	return true
+  }
+
+  override fun hashCode(): Int {
+	var result = textRes
+	result = 31 * result + quantity
+	result = 31 * result + args.contentHashCode()
+	return result
+  }
 }
 
 fun @receiver:StringRes Int.asFormattable() = ResFormattable(this)
