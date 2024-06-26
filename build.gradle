@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.4.0'
+        classpath 'com.android.tools.build:gradle:8.5.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -27,8 +27,8 @@ ext {
     minSdk = 21
     targetSdk = 34
 
-    versionCode = 56
-    versionName = "0.14.3"
+    versionCode = 57
+    versionName = "0.14.4"
 
     groupId = "io.github.dadino.quickstart3"
 
