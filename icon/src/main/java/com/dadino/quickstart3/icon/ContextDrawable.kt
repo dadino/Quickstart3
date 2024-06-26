@@ -12,10 +12,13 @@ import androidx.annotation.DimenRes
 
 interface ContextDrawable {
   fun getVaultId(): String
+
   @DimenRes
   fun getMaxSizeRes(): Int?
+
   @AnimRes
   fun getAnimationRes(): Int?
+
   @ColorRes
   fun getTintRes(): Int?
   fun drawToImageView(imageView: ImageView)
@@ -24,9 +27,9 @@ interface ContextDrawable {
   }
 
   fun createDrawable(context: Context): Drawable?
-  fun getShownOn(): ShownOn
+  fun getShownOn(): SurfaceColor
 
-  fun withShownOn(shownOn: ShownOn): ContextDrawable
+  fun withShownOn(shownOn: SurfaceColor): ContextDrawable
 }
 
 fun ImageView.drawContextDrawable(contextDrawable: ContextDrawable?) {
@@ -46,8 +49,3 @@ fun ImageView.drawContextDrawable(contextDrawable: ContextDrawable?) {
   contextDrawable?.getAnimationRes()?.let { this.startAnimation(AnimationUtils.loadAnimation(context, it)) }?.run { clearAnimation() }
 }
 
-enum class ShownOn {
-  PRIMARY,
-  SECONDARY,
-  SURFACE
-}
