@@ -32,7 +32,7 @@ ext {
 
     groupId = "io.github.dadino.quickstart3"
 
-    ossrhUsername = System.properties['ossrhUsername']
-    ossrhPassword = System.properties['ossrhPassword']
     sonatypeStagingProfileId = System.properties['sonatypeStagingProfileId']
+    ossrhToken = System.properties['ossrhToken']
+    ossrhTokenPassword = System.properties['ossrhTokenPassword']
 }
