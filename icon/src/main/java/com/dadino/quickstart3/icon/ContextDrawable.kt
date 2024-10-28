@@ -11,7 +11,7 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
 
 interface ContextDrawable {
-  fun getVaultId(): String
+  fun getVaultId(context: Context): String
 
   @DimenRes
   fun getMaxSizeRes(): Int?

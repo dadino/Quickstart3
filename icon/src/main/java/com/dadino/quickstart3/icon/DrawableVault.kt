@@ -6,10 +6,10 @@ import android.graphics.drawable.Drawable
 object DrawableVault {
   private val iconMap: HashMap<String, Drawable> = hashMapOf()
   fun getDrawable(
-	  context: Context,
-	  contextDrawable: ContextDrawable
+	context: Context,
+	contextDrawable: ContextDrawable
   ): Drawable? {
-	val id = contextDrawable.getVaultId()
+	val id = contextDrawable.getVaultId(context)
 	val oldIcon = iconMap[id]
 	return if (oldIcon != null) oldIcon
 	else {
@@ -17,5 +17,9 @@ object DrawableVault {
 	  if (newDrawable != null) iconMap[id] = newDrawable
 	  newDrawable
 	}
+  }
+
+  fun describeContent(): String {
+	return "DrawableVault contains:\n${iconMap.entries.sortedBy { it.key }.joinToString("\n") { it.key }}"
   }
 }

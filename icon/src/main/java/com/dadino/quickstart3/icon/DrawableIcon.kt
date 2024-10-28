@@ -1,6 +1,7 @@
 package com.dadino.quickstart3.icon
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.widget.ImageView
 import androidx.annotation.AnimRes
@@ -24,17 +25,7 @@ data class DrawableIcon(
   override fun createDrawable(context: Context): Drawable? {
 	return drawable.let {
 	  val temp = DrawableCompat.wrap(it.mutate())
-	  if (tint != null) DrawableCompat.setTint(temp, ContextCompat.getColor(context, tint))
-	  else DrawableCompat.setTintList(
-		temp, when (shownOn) {
-		  SurfaceColor.PRIMARY         -> IconHandler.defaultIconTintOnPrimary
-		  SurfaceColor.SECONDARY       -> IconHandler.defaultIconTintOnSecondary
-		  SurfaceColor.SURFACE         -> IconHandler.defaultIconTintOnSurface
-		  SurfaceColor.BACKGROUND      -> IconHandler.defaultIconTintOnBackground
-		  SurfaceColor.ERROR           -> IconHandler.defaultIconTintOnError
-		  SurfaceColor.PRIMARY_SURFACE -> IconHandler.defaultIconTintOnPrimarySecondary
-		}
-	  )
+	  DrawableCompat.setTintList(temp, getTintList(context))
 	  temp
 	}
   }
@@ -43,7 +34,7 @@ data class DrawableIcon(
 	return shownOn
   }
 
-  override fun getVaultId(): String = "$drawable:$tint:$animation:$shownOn"
+  override fun getVaultId(context: Context): String = "Drawable:$drawable:${tint?.let { context.resources.getResourceName(it) }}:${animation?.let { context.resources.getResourceName(it) }}:$shownOn"
 
   override fun drawToImageView(imageView: ImageView) {
 	imageView.scaleType = ImageView.ScaleType.FIT_CENTER
@@ -52,6 +43,18 @@ data class DrawableIcon(
 
   override fun withShownOn(shownOn: SurfaceColor): ContextDrawable {
 	return this.copy(shownOn = shownOn)
+  }
+
+  private fun getTintList(context: Context): ColorStateList? {
+	return if (tint != null) ContextCompat.getColorStateList(context, tint)
+	else when (shownOn) {
+	  SurfaceColor.PRIMARY         -> IconHandler.defaultIconTintOnPrimary
+	  SurfaceColor.SECONDARY       -> IconHandler.defaultIconTintOnSecondary
+	  SurfaceColor.SURFACE         -> IconHandler.defaultIconTintOnSurface
+	  SurfaceColor.BACKGROUND      -> IconHandler.defaultIconTintOnBackground
+	  SurfaceColor.ERROR           -> IconHandler.defaultIconTintOnError
+	  SurfaceColor.PRIMARY_SURFACE -> IconHandler.defaultIconTintOnPrimarySecondary
+	}
   }
 }
 
