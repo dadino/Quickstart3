@@ -9,16 +9,16 @@ import androidx.recyclerview.widget.DiffUtil
 class GenericAdapter(val log: Boolean = false) : BaseListAdapter<ListItem, ListItemHolder>() {
 
   override fun getDiffCallbacks(
-	  oldList: List<ListItem>,
-	  newList: List<ListItem>
+	oldList: List<ListItem>,
+	newList: List<ListItem>
   ): DiffUtil.Callback? {
 	return GenericDiffUtils(oldList, newList)
   }
 
   override fun onBindViewHolder(
-	  holder: ListItemHolder,
-	  position: Int,
-	  payloads: MutableList<Any>
+	holder: ListItemHolder,
+	position: Int,
+	payloads: MutableList<Any>
   ) {
 	if (payloads.isNotEmpty() && holder is UpdatableHolder && getItem(position) != null) {
 	  try {
@@ -46,6 +46,23 @@ class GenericAdapter(val log: Boolean = false) : BaseListAdapter<ListItem, ListI
 
   override fun getItemViewType(position: Int): Int {
 	return getItem(position)?.getLayoutId() ?: throw RuntimeException("ListItem not handled")
+  }
+
+  override fun touchItemListBeforeSend(itemList: List<ListItem>): List<ListItem> {
+	if (itemList.all { it.indent.indent == 0 }) return itemList
+	for (i in itemList.indices) {
+	  val hasPrecedingSibling = i > 0 && itemList[i - 1].indent.indent == itemList[i].indent.indent
+	  val hasFollowingSibling = i < itemList.size - 1 && itemList[i + 1].indent.indent == itemList[i].indent.indent
+	  val hasFollowingChild = i < itemList.size - 1 && itemList[i + 1].indent.indent > itemList[i].indent.indent
+	  val isFirstChild = i == 0 || itemList[i - 1].indent.indent < itemList[i].indent.indent
+	  itemList[i].indent = itemList[i].indent.copy(
+		hasPrecedingSibling = hasPrecedingSibling,
+		hasFollowingSibling = hasFollowingSibling,
+		hasFollowingChild = hasFollowingChild,
+		isFirstChild = isFirstChild
+	  )
+	}
+	return itemList
   }
 }
 

@@ -4,13 +4,14 @@ import android.os.Bundle
 import android.view.View
 import androidx.annotation.IntegerRes
 import androidx.annotation.LayoutRes
+import com.dadino.quickstart3.ui.utils.Indent
 
 abstract class ListItem {
 
   var selected: Boolean = false
   var selectionType: SelectionType = SelectionType.NoSelection
   var showInCard: Boolean = false
-  var indent: Int = 0
+  var indent: Indent = Indent(0)
 
   @IntegerRes
   var spanSizeRes: Int? = null
@@ -47,7 +48,9 @@ abstract class ListItem {
 	if (this.selectionType != oldItem.selectionType) {
 	  diff.putInt(PAYLOAD_SELECTABLE, this.selectionType.id)
 	}
-	if (this.showInCard != oldItem.showInCard || this.indent != oldItem.indent) {
+	if (this.showInCard != oldItem.showInCard
+	  || this.indent != oldItem.indent
+	) {
 	  diff.putString(PAYLOAD_CARD, PAYLOAD_CARD)
 	}
 	if (this.spanSizeRes != oldItem.spanSizeRes) {
@@ -60,6 +63,7 @@ abstract class ListItem {
 		&& this.selectionType == oldItem.selectionType
 		&& this.showInCard == oldItem.showInCard
 		&& this.spanSizeRes == oldItem.spanSizeRes
+		&& this.indent == oldItem.indent
 		&& this == oldItem
   }
 

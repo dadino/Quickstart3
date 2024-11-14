@@ -31,7 +31,7 @@ abstract class BaseListAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : BaseAdapter<IT
 	diffDisposable = Single.fromCallable {
 	  startTimeMillis = System.currentTimeMillis()
 	  onDiffDispatchedCallbacks?.onDiffBegin()
-	  val newItemList = itemListCreationFunction()
+	  val newItemList = touchItemListBeforeSend(itemListCreationFunction())
 	  val oldItemList = items ?: listOf()
 	  val callbacks = getDiffCallbacks(oldItemList, newItemList)
 	  if (callbacks != null) ListWithDiff(newItemList, DiffUtil.calculateDiff(callbacks))
@@ -64,7 +64,7 @@ abstract class BaseListAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : BaseAdapter<IT
   }
 
   fun setItemsSync(onDiffDispatchedCallbacks: OnDiffDispatchedCallbacks? = null, newItemList: List<ITEM>) {
-	items = newItemList
+	items = touchItemListBeforeSend(newItemList)
 	notifyDataSetChanged()
 	onDiffDispatchedCallbacks?.onDiffDispatched(itemCount = items?.size ?: 0, executionTimeInMillis = 0L)
   }
@@ -164,6 +164,10 @@ abstract class BaseListAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : BaseAdapter<IT
 
   protected fun inflate(parent: ViewGroup, @androidx.annotation.LayoutRes layoutId: Int): android.view.View {
 	return inflater(parent.context).inflate(layoutId, parent, false)
+  }
+
+  open fun touchItemListBeforeSend(itemList: List<ITEM>): List<ITEM> {
+	return itemList
   }
 
   companion object {
