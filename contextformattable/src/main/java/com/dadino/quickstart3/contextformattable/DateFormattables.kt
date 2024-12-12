@@ -7,7 +7,7 @@ import java.util.*
 class DateFormattable(private val date: Date, private val dateFormat: String = "dd/MM/yyyy") : ContextFormattable {
 
   private val formatter by lazy { SimpleDateFormat(dateFormat, Locale.ITALIAN) }
-  override fun format(context: Context): CharSequence? {
+  override fun format(context: Context, modifiers: List<CFModifier>): CharSequence? {
 	return formatter.format(date)
   }
 
@@ -31,7 +31,7 @@ class DateFormattable(private val date: Date, private val dateFormat: String = "
 class DateRangeFormattable(private val fromDate: Date, private val toDate: Date, private val dateFormat: String = "dd/MM/yyyy") : ContextFormattable {
 
   private val formatter by lazy { SimpleDateFormat(dateFormat, Locale.ITALIAN) }
-  override fun format(context: Context): CharSequence? {
+  override fun format(context: Context, modifiers: List<CFModifier>): CharSequence? {
 	return "${formatter.format(fromDate)} - ${formatter.format(toDate)}"
   }
 

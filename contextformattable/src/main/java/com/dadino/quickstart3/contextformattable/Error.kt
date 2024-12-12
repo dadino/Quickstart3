@@ -4,7 +4,7 @@ import android.content.Context
 
 open class Error(val error: Throwable?, val formattable: ContextFormattable?) : ContextFormattable {
 
-	override fun format(context: Context): CharSequence? {
+  override fun format(context: Context, modifiers: List<CFModifier>): CharSequence? {
 		return formattable?.format(context)
 	}
 

@@ -5,20 +5,30 @@ import androidx.core.text.HtmlCompat
 
 open class MapFormattable(val map: Map<ContextFormattable, ContextFormattable?>) : ContextFormattable {
 
-  override fun format(context: Context): CharSequence? {
+  override fun format(context: Context, modifiers: List<CFModifier>): CharSequence? {
 	if (map.isEmpty()) return null
 	return if (map.any { it.value.isNullOrEmpty(context).not() }) {
 	  val sb = StringBuilder()
 	  map.entries
-		  .filter { it.value != null }
-		  .forEachIndexed { index, entry ->
-			val value = entry.value
-			if (value != null) {
-			  if (index != 0) sb.append("<br>")
-			  sb.append("<b>${entry.key.format(context)}</b>: ${value.format(context)}")
-			}
+		.filter { it.value != null }
+		.forEachIndexed { index, entry ->
+		  val value = entry.value
+		  val charSequence = value?.format(context, RawHtmlModifier)
+		  if (charSequence != null) {
+			if (index != 0) sb.append("<br>")
+			sb.append("<b>${entry.key.format(context, RawHtmlModifier)}</b>: $charSequence")
 		  }
-	  HtmlCompat.fromHtml(sb.toString(), HtmlCompat.FROM_HTML_MODE_COMPACT)
+		}
+	  val text = sb.toString()
+	  if (modifiers.contains(RawHtmlModifier))
+		text else
+		HtmlCompat.fromHtml(
+		  text,
+		  HtmlCompat.FROM_HTML_MODE_COMPACT
+			  or HtmlCompat.FROM_HTML_SEPARATOR_LINE_BREAK_LIST
+			  or HtmlCompat.FROM_HTML_SEPARATOR_LINE_BREAK_LIST_ITEM
+			  or HtmlCompat.FROM_HTML_SEPARATOR_LINE_BREAK_PARAGRAPH
+		)
 	} else null
   }
 
@@ -38,7 +48,7 @@ open class MapFormattable(val map: Map<ContextFormattable, ContextFormattable?>)
 
 open class ListFormattable(private val separator: ContextFormattable?, private vararg val items: ContextFormattable?) : ContextFormattable {
 
-  override fun format(context: Context): CharSequence? {
+  override fun format(context: Context, modifiers: List<CFModifier>): CharSequence? {
 	val mapNotNull = items.toList().mapNotNull { it }
 	return if (mapNotNull.isEmpty()) null else mapNotNull.joinToString(separator = separator?.format(context) ?: "") { it.format(context) ?: "" }
   }
