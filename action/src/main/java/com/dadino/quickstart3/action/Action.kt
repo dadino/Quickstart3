@@ -14,31 +14,32 @@ import com.dadino.quickstart3.selectable.Id
 import com.dadino.quickstart3.selectable.Selectable
 
 open class Action(
-	val id: Int,
-	val text: ContextFormattable? = null,
-	val icon: ContextDrawable? = null,
-	val enabled: Boolean = true,
-	val showAsAction: Int = MenuItem.SHOW_AS_ACTION_IF_ROOM,
-	val eventOnClick: Event
+  val id: Int,
+  val text: ContextFormattable? = null,
+  val shortText: ContextFormattable? = text,
+  val icon: ContextDrawable? = null,
+  val enabled: Boolean = true,
+  val showAsAction: Int = MenuItem.SHOW_AS_ACTION_IF_ROOM,
+  val eventOnClick: Event
 ) : Selectable {
   constructor(
-	  id: Int,
-	  text: ContextFormattable? = null,
-	  @DrawableRes icon: Int?,
-	  enabled: Boolean = true,
-	  showAsAction: Int = MenuItem.SHOW_AS_ACTION_IF_ROOM,
-	  eventOnClick: Event
+	id: Int,
+	text: ContextFormattable? = null,
+	@DrawableRes icon: Int?,
+	enabled: Boolean = true,
+	showAsAction: Int = MenuItem.SHOW_AS_ACTION_IF_ROOM,
+	eventOnClick: Event
   ) : this(
-	  id = id,
-	  text = text,
-	  icon = icon?.asIcon(),
-	  enabled = enabled,
-	  showAsAction = showAsAction,
-	  eventOnClick = eventOnClick
+	id = id,
+	text = text,
+	icon = icon?.asIcon(),
+	enabled = enabled,
+	showAsAction = showAsAction,
+	eventOnClick = eventOnClick
   )
 
   fun toMenuItem(context: Context, menu: Menu, order: Int, shownOn: SurfaceColor): MenuItem {
-	val item = menu.add(0, id, order, text?.format(context) ?: "")
+	val item = menu.add(0, id, order, (shortText ?: text)?.format(context) ?: "")
 	icon?.let { item.setIcon((if (icon.getShownOn() != shownOn) icon.withShownOn(shownOn) else icon).getDrawable(context)) }
 	item.isEnabled = enabled
 	item.setShowAsAction(showAsAction)

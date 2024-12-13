@@ -1,15 +1,14 @@
 package com.dadino.quickstart3.contextformattable
 
 import android.content.Context
-import android.text.Spanned
 import androidx.core.text.HtmlCompat
 
 open class StringFormattable(
-	private val text: String,
-	private vararg val args: Any
+  private val text: String,
+  private vararg val args: Any
 ) : ContextFormattable {
 
-  override fun format(context: Context): String? {
+  override fun format(context: Context, modifiers: List<CFModifier>): CharSequence? {
 	return if (args.isNotEmpty()) String.format(text, *args) else text
   }
 
@@ -31,12 +30,14 @@ open class StringFormattable(
 }
 
 open class HtmlFormattable(
-	private val htmlText: String,
-	private val flags: Int = HtmlCompat.FROM_HTML_MODE_COMPACT
+  private val htmlText: String,
+  private val flags: Int = HtmlCompat.FROM_HTML_MODE_COMPACT
 ) : ContextFormattable {
 
-  override fun format(context: Context): Spanned? {
-	return HtmlCompat.fromHtml(htmlText, flags)
+  override fun format(context: Context, modifiers: List<CFModifier>): CharSequence? {
+	return if (modifiers.contains(RawHtmlModifier)) htmlText
+	else
+	  HtmlCompat.fromHtml(htmlText, flags)
   }
 
   override fun equals(other: Any?): Boolean {
