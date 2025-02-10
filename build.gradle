@@ -1,11 +1,11 @@
 buildscript {
-    ext.kotlin_version = '1.9.20'
+    ext.kotlin_version = '2.0.0'
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.7.3'
+        classpath 'com.android.tools.build:gradle:8.8.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -17,18 +17,17 @@ allprojects {
     }
 }
 
-task clean(type: Delete) {
+tasks.register('clean', Delete) {
     delete rootProject.buildDir
 }
 
-
 ext {
-    compileSdk = 34
+    compileSdk = 35
     minSdk = 21
-    targetSdk = 34
+    targetSdk = 35
 
-    versionCode = 62
-    versionName = "0.14.10"
+    versionCode = 63
+    versionName = "0.15.0"
 
     groupId = "io.github.dadino.quickstart3"
 

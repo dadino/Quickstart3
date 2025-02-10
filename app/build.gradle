@@ -5,6 +5,7 @@ apply plugin: 'kotlin-kapt'
 android {
     compileSdk rootProject.compileSdk
 
+    buildFeatures.buildConfig = true
     defaultConfig {
         minSdk rootProject.minSdk
         targetSdk rootProject.targetSdk
