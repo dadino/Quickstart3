@@ -15,6 +15,7 @@ apply from: "${rootProject.projectDir}/scripts/publish-mavencentral.gradle"
 android {
     compileSdk rootProject.compileSdk
 
+    buildFeatures.buildConfig = true
     defaultConfig {
         minSdk rootProject.minSdk
         targetSdk rootProject.targetSdk
@@ -43,5 +44,6 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.annotation:annotation:1.7.1'
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version")
+    implementation 'androidx.annotation:annotation:1.9.1'
 }
