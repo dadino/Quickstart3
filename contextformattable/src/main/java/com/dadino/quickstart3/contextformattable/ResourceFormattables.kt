@@ -3,10 +3,13 @@ package com.dadino.quickstart3.contextformattable
 import android.content.Context
 import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
+import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
 
+@Parcelize
 open class ResFormattable(
   @StringRes private val textRes: Int,
-  private vararg val args: Any
+  private vararg val args: @RawValue Any
 ) : ContextFormattable {
 
   override fun format(context: Context, modifiers: List<CFModifier>): CharSequence? {
@@ -30,6 +33,7 @@ open class ResFormattable(
   }
 }
 
+@Parcelize
 open class ExtendedResFormattable(
   @StringRes private val textRes: Int,
   private vararg val args: ContextFormattable
@@ -56,6 +60,7 @@ open class ExtendedResFormattable(
   }
 }
 
+@Parcelize
 open class PluralFormattable(
   @PluralsRes private val textRes: Int,
   private val quantity: Int,

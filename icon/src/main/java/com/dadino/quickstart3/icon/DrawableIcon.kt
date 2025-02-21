@@ -9,9 +9,12 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
 
+@Parcelize
 data class DrawableIcon(
-  private val drawable: Drawable,
+  private val drawable: @RawValue Drawable,
   @ColorRes val tint: Int? = null,
   @AnimRes val animation: Int? = null,
   @DimenRes val maxSize: Int? = null,

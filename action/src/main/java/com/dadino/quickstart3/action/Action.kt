@@ -91,4 +91,8 @@ open class Action(
   override fun getSelectionEnabled(): Boolean {
 	return enabled
   }
+
+  override fun toString(): String {
+	return "Action(id=$id, text=$text, shortText=$shortText, icon=$icon)"
+  }
 }

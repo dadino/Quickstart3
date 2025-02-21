@@ -2,10 +2,13 @@ package com.dadino.quickstart3.contextformattable
 
 import android.content.Context
 import androidx.core.text.HtmlCompat
+import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
 
+@Parcelize
 open class StringFormattable(
   private val text: String,
-  private vararg val args: Any
+  private vararg val args: @RawValue Any
 ) : ContextFormattable {
 
   override fun format(context: Context, modifiers: List<CFModifier>): CharSequence? {
@@ -29,6 +32,7 @@ open class StringFormattable(
   }
 }
 
+@Parcelize
 open class HtmlFormattable(
   private val htmlText: String,
   private val flags: Int = HtmlCompat.FROM_HTML_MODE_COMPACT

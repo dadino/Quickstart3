@@ -2,6 +2,7 @@ package com.dadino.quickstart3.icon
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.os.Parcelable
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.animation.AnimationUtils
@@ -10,7 +11,7 @@ import androidx.annotation.AnimRes
 import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
 
-interface ContextDrawable {
+interface ContextDrawable : Parcelable {
   fun getVaultId(context: Context): String
 
   @DimenRes

@@ -10,7 +10,9 @@ import androidx.annotation.DimenRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class Icon(
   @DrawableRes val icon: Int,
   @ColorRes val tint: Int? = null,
