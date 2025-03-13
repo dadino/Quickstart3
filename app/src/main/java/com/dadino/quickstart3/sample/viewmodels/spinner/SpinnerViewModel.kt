@@ -35,21 +35,21 @@ class SpinnerViewModel constructor(private val sessionRepo: ISessionRepository) 
 
   override fun getSideEffectHandlers(): List<SideEffectHandler> {
 	return listOf(
-		LoadSessionSideEffectHandler(sessionRepo),
-		SaveSessionSideEffectHandler(sessionRepo),
-		LoadSpinnerEntriesSideEffectHandler()
+	  LoadSessionSideEffectHandler(sessionRepo),
+	  SaveSessionSideEffectHandler(sessionRepo),
+	  LoadSpinnerEntriesSideEffectHandler()
 	)
   }
 }
 
 data class SpinnerState(
-	override val flow: SampleFlow<SpinnerState> = SampleFlow(SpinnerStep()),
-	override val resultOnCloseMap: Map<String, Any> = mapOf(),
-	val selectedId: Long? = 0,
-	val session: Session? = null,
-	val loading: Boolean = false,
-	val error: Boolean = false,
-	val list: List<ExampleData> = listOf()
+  override val flow: SampleFlow<SpinnerState> = SampleFlow(SpinnerStep()),
+  override val resultOnCloseMap: Map<String, Any> = mapOf(),
+  val selectedId: Long? = 0,
+  val session: Session? = null,
+  val loading: Boolean = false,
+  val error: Boolean = false,
+  val list: List<ExampleData> = listOf()
 ) : SampleFlowState<SpinnerState>(flow) {
 
   private val canSave: Boolean = selectedId != null && session != null
@@ -87,10 +87,10 @@ class SpinnerStep : SampleFlowStep<SpinnerState>("LotDetailStep") {
 }
 
 data class SpinnerSaveState(
-	val canSave: Boolean
+  val canSave: Boolean
 ) : State
 
-class SpinnerUpdater : SampleFlowUpdater<SpinnerState>(false) {
+class SpinnerUpdater : SampleFlowUpdater<SpinnerState>() {
 
   override fun start(): Start<SpinnerState> {
 	return Start.start(state = getInitialMainState(), effects = listOf(SpinnerEffect.LoadSession))
@@ -117,14 +117,18 @@ class SpinnerUpdater : SampleFlowUpdater<SpinnerState>(false) {
 
   override fun getInitialSubStates(): List<State> {
 	return listOf(
-		SpinnerSaveState(false)
+	  SpinnerSaveState(false)
 	)
   }
 
   override fun updateForFlow(previous: SpinnerState, event: Event): Next<SpinnerState> {
 	return when (event) {
 	  is SpinnerEvent.OnSpinnerRetryClicked   -> justEffect(SpinnerEffect.LoadSpinnerEntries)
-	  is SpinnerEvent.OnSpinnerDoneClicked    -> stateAndSignal(newState = previous.copy(list = event.list, loading = false, error = false, resultOnCloseMap = mapOf("KEY" to true)), signal = SpinnerSignal.ShowDoneToast)
+	  is SpinnerEvent.OnSpinnerDoneClicked -> stateAndSignal(
+		newState = previous.copy(list = event.list, loading = false, error = false, resultOnCloseMap = mapOf("KEY" to true)),
+		signal = SpinnerSignal.ShowDoneToast
+	  )
+
 	  is SpinnerEvent.OnSpinnerLoadingClicked -> justState(previous.copy(list = listOf(), loading = true, error = false))
 	  is SpinnerEvent.OnSpinnerErrorClicked   -> justState(previous.copy(list = listOf(), loading = false, error = true))
 	  is SpinnerEvent.OnSpinnerIdleClicked    -> justState(previous.copy(list = listOf(), loading = false, error = false))

@@ -8,7 +8,6 @@ import android.view.View.VISIBLE
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import androidx.annotation.AnimRes
-import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
 
 interface ContextDrawable : Parcelable {
@@ -20,8 +19,8 @@ interface ContextDrawable : Parcelable {
   @AnimRes
   fun getAnimationRes(): Int?
 
-  @ColorRes
-  fun getTintRes(): Int?
+  fun getTint(): ContextColor?
+
   fun drawToImageView(imageView: ImageView)
   fun getDrawable(context: Context): Drawable? {
 	return DrawableVault.getDrawable(context, this)
@@ -31,6 +30,7 @@ interface ContextDrawable : Parcelable {
   fun getShownOn(): SurfaceColor
 
   fun withShownOn(shownOn: SurfaceColor): ContextDrawable
+  fun withTint(tint: ContextColor?): ContextDrawable
 }
 
 fun ImageView.drawContextDrawable(contextDrawable: ContextDrawable?) {
