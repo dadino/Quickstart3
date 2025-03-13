@@ -66,7 +66,7 @@ data class GridState(
 	}
 }
 
-class GridUpdater : Updater<GridState>(true) {
+class GridUpdater : Updater<GridState> {
 
 	override fun start(): Start<GridState> {
 		return start(getInitialMainState())

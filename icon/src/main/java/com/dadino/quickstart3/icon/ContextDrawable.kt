@@ -2,15 +2,15 @@ package com.dadino.quickstart3.icon
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.os.Parcelable
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import androidx.annotation.AnimRes
-import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
 
-interface ContextDrawable {
+interface ContextDrawable : Parcelable {
   fun getVaultId(context: Context): String
 
   @DimenRes
@@ -19,8 +19,8 @@ interface ContextDrawable {
   @AnimRes
   fun getAnimationRes(): Int?
 
-  @ColorRes
-  fun getTintRes(): Int?
+  fun getTint(): ContextColor?
+
   fun drawToImageView(imageView: ImageView)
   fun getDrawable(context: Context): Drawable? {
 	return DrawableVault.getDrawable(context, this)
@@ -30,6 +30,7 @@ interface ContextDrawable {
   fun getShownOn(): SurfaceColor
 
   fun withShownOn(shownOn: SurfaceColor): ContextDrawable
+  fun withTint(tint: ContextColor?): ContextDrawable
 }
 
 fun ImageView.drawContextDrawable(contextDrawable: ContextDrawable?) {

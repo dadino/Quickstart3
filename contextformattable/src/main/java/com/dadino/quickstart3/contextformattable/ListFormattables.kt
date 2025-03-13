@@ -2,7 +2,9 @@ package com.dadino.quickstart3.contextformattable
 
 import android.content.Context
 import androidx.core.text.HtmlCompat
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 open class MapFormattable(val map: Map<ContextFormattable, ContextFormattable?>) : ContextFormattable {
 
   override fun format(context: Context, modifiers: List<CFModifier>): CharSequence? {
@@ -46,6 +48,7 @@ open class MapFormattable(val map: Map<ContextFormattable, ContextFormattable?>)
   }
 }
 
+@Parcelize
 open class ListFormattable(private val separator: ContextFormattable?, private vararg val items: ContextFormattable?) : ContextFormattable {
 
   override fun format(context: Context, modifiers: List<CFModifier>): CharSequence? {
@@ -70,4 +73,5 @@ open class ListFormattable(private val separator: ContextFormattable?, private v
   }
 }
 
-class DotListFormattable(vararg items: ContextFormattable?) : ListFormattable(separator = " • ".asFormattable(), *items)
+@Parcelize
+class DotListFormattable(private vararg val items: ContextFormattable?) : ListFormattable(separator = " • ".asFormattable(), *items)

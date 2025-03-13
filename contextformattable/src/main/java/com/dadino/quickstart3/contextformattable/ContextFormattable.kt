@@ -1,8 +1,9 @@
 package com.dadino.quickstart3.contextformattable
 
 import android.content.Context
+import android.os.Parcelable
 
-interface ContextFormattable {
+interface ContextFormattable : Parcelable {
 
   fun format(context: Context, modifiers: List<CFModifier>): CharSequence?
   fun format(context: Context): CharSequence? = format(context, listOf())

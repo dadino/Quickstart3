@@ -30,7 +30,7 @@ data class TestSubState(
 		val isCounterGreaterThan3: Boolean
 ) : State
 
-open class TestStateUpdater(useLogging: Boolean = true) : Updater<TestState>(useLogging) {
+open class TestStateUpdater(useLogging: Boolean = true) : Updater<TestState> {
 
 	override fun start(): Start<TestState> {
 		return Start.start(getInitialMainState())

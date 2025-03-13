@@ -48,7 +48,7 @@ data class CounterState(
 
 data class CounterSubState(val isGreatEnough: Boolean) : State
 
-class CounterUpdater : Updater<CounterState>(true) {
+class CounterUpdater : Updater<CounterState> {
 
 	override fun start(): Start<CounterState> {
 		return start(getInitialMainState())
