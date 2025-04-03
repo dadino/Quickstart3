@@ -10,6 +10,9 @@ import androidx.annotation.DimenRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import com.dadino.quickstart3.color.ColorOnSurfaceProvider
+import com.dadino.quickstart3.color.ContextColor
+import com.dadino.quickstart3.color.SurfaceColor
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -18,7 +21,7 @@ data class Icon(
   private val tint: ContextColor? = null,
   @AnimRes val animation: Int? = null,
   @DimenRes val maxSize: Int? = R.dimen.default_icon_size,
-  private val shownOn: SurfaceColor = SurfaceColor.SURFACE,
+  private val shownOn: SurfaceColor = SurfaceColor.SURFACE(),
 ) : ContextDrawable {
 
   override fun createDrawable(context: Context): Drawable? {
@@ -42,7 +45,7 @@ data class Icon(
   }
 
   override fun getVaultId(context: Context): String =
-	"Icon:${context.resources.getResourceName(icon)}:${tint?.id}:${animation?.let { context.resources.getResourceName(it) }}:$shownOn"
+	"Icon:${context.resources.getResourceName(icon)}:${tint?.getId(context)}:${animation?.let { context.resources.getResourceName(it) }}:$shownOn"
 
   override fun withShownOn(shownOn: SurfaceColor): ContextDrawable {
 	return this.copy(shownOn = shownOn)
@@ -54,22 +57,15 @@ data class Icon(
 
   private fun getTintList(context: Context): ColorStateList? {
 	return if (tint != null) ColorStateList.valueOf(tint.getColor(context))
-	else when (shownOn) {
-	  SurfaceColor.PRIMARY         -> IconHandler.defaultIconTintOnPrimary
-	  SurfaceColor.SECONDARY       -> IconHandler.defaultIconTintOnSecondary
-	  SurfaceColor.SURFACE         -> IconHandler.defaultIconTintOnSurface
-	  SurfaceColor.BACKGROUND      -> IconHandler.defaultIconTintOnBackground
-	  SurfaceColor.ERROR           -> IconHandler.defaultIconTintOnError
-	  SurfaceColor.PRIMARY_SURFACE -> IconHandler.defaultIconTintOnPrimarySecondary
-	}
+	else ColorOnSurfaceProvider.getColorStateListOn(shownOn, context)
   }
 }
 
-fun @receiver:androidx.annotation.DrawableRes Int.asIcon(tint: ContextColor? = null, @AnimRes animation: Int? = null, shownOn: SurfaceColor = SurfaceColor.SURFACE): Icon =
+fun @receiver:androidx.annotation.DrawableRes Int.asIcon(tint: ContextColor? = null, @AnimRes animation: Int? = null, shownOn: SurfaceColor = SurfaceColor.SURFACE()): Icon =
   Icon(this, tint, animation, shownOn = shownOn)
 
-fun @receiver:androidx.annotation.DrawableRes Int.asIcon(@ColorRes tint: Int?, @AnimRes animation: Int? = null, shownOn: SurfaceColor = SurfaceColor.SURFACE): Icon =
+fun @receiver:androidx.annotation.DrawableRes Int.asIcon(@ColorRes tint: Int?, @AnimRes animation: Int? = null, shownOn: SurfaceColor = SurfaceColor.SURFACE()): Icon =
   Icon(this, tint?.let { ContextColor.Res(it) }, animation, shownOn = shownOn)
 
-fun @receiver:androidx.annotation.DrawableRes Int.asCompletableIcon(completed: Boolean, @AnimRes animation: Int? = null, shownOn: SurfaceColor = SurfaceColor.SURFACE): Icon =
+fun @receiver:androidx.annotation.DrawableRes Int.asCompletableIcon(completed: Boolean, @AnimRes animation: Int? = null, shownOn: SurfaceColor = SurfaceColor.SURFACE()): Icon =
   Icon(this, tint = if (completed) ContextColor.Res(R.color.complete) else null, animation, shownOn = shownOn)
