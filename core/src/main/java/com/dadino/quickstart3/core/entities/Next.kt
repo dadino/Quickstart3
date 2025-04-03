@@ -1,5 +1,16 @@
 package com.dadino.quickstart3.core.entities
 
+/**
+ * Represents the result of processing an [Event] in a [Updater].
+ *
+ * A [Next] instance encapsulates the potential changes to the [Updater]'s state,
+ * as well as any signals or side effects that should be triggered.
+ *
+ * @param S The type of the state managed by the [Updater].
+ * @property state The new state of the [Updater] after processing the event. If `null`, the state remains unchanged.
+ * @property signals A list of [Signal]s to be emitted as a result of processing the event.  Signals represent notifications or events within the state machine.
+ * @property effects A list of [SideEffect]s to be executed as a result of processing the event. Side effects represent actions outside the state machine, like network calls or UI updates.
+ */
 open class Next<S : State>(
   val state: S?,
   val signals: List<Signal>,
@@ -73,34 +84,82 @@ class Start<S : State>(
   }
 }
 
+/**
+ * Builder for [Next] object that represents the next state of a state machine.
+ * Provides methods to set the next state, add side effects, and add signals.
+ *
+ * @param T The type of the state.
+ */
 class NextBuilder<T : State> {
 
   private var state: T? = null
   private val effects: MutableList<SideEffect> = arrayListOf()
   private val signals: MutableList<Signal> = arrayListOf()
 
+  /**
+   * Builds a new [Next] instance with the current state, signals, and effects.
+   *
+   * @return A new [Next] instance.
+   */
   fun build(): Next<T> = Next(state, signals, effects)
 
+  /**
+   * Sets the next state.
+   *
+   * This function allows you to define the state that the state
+   * should transition to upon completing the current state's action.  A `null` state
+   * typically indicates that the state should halt or enter a terminal state.
+   *
+   * @param state The next state to transition to.  Can be `null` to indicate the end of the state's execution.
+   * @return The current [NextBuilder] instance, allowing for method chaining.
+   */
   fun state(state: T?): NextBuilder<T> {
 	this.state = state
 	return this
   }
 
+  /**
+   * Adds a side effect to the builder.
+   *
+   * Side effects represent actions that need to be performed outside the scope of the current operation,
+   * such as UI updates, network requests, or data persistence.  If the provided effect is null, it is ignored.
+   *
+   * @param effect The [SideEffect] to add to the builder.  May be null, in which case no effect is added.
+   * @return The updated [NextBuilder] instance, allowing for chained calls.
+   */
   fun addEffect(effect: SideEffect?): NextBuilder<T> {
 	if (effect != null) this.effects.add(effect)
 	return this
   }
 
+  /**
+   * Adds a list of side effects to the builder.  Null values within the list are ignored.
+   *
+   * @param effects A list of [SideEffect]s to add.  Null values will be filtered out.
+   * @return The current [NextBuilder] instance with the added side effects.
+   */
   fun addEffects(effects: List<SideEffect?>): NextBuilder<T> {
 	this.effects.addAll(effects.filterIsInstance(SideEffect::class.java))
 	return this
   }
 
+  /**
+   * Adds a [Signal] to the list of signals.
+   *
+   * @param signal The signal to add.  If `null`, the signal is ignored.
+   * @return The current [NextBuilder] instance for chaining.
+   */
   fun addSignal(signal: Signal?): NextBuilder<T> {
 	if (signal != null) this.signals.add(signal)
 	return this
   }
 
+  /**
+   * Adds a list of signals to the builder.  Filters out any null values and only adds instances of [Signal].
+   *
+   * @param signals A list of [Signal] objects (or nulls) to be added.
+   * @return The current [NextBuilder] instance with the added signals.
+   */
   fun addSignals(signals: List<Signal?>): NextBuilder<T> {
 	this.signals.addAll(signals.filterIsInstance(Signal::class.java))
 	return this

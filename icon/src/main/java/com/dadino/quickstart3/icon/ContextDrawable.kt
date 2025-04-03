@@ -9,6 +9,8 @@ import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import androidx.annotation.AnimRes
 import androidx.annotation.DimenRes
+import com.dadino.quickstart3.color.ContextColor
+import com.dadino.quickstart3.color.SurfaceColor
 
 interface ContextDrawable : Parcelable {
   fun getVaultId(context: Context): String
