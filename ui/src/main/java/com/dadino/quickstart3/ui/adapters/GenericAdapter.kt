@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 
 class GenericAdapter(val log: Boolean = false) : BaseListAdapter<ListItem, ListItemHolder>() {
+  private var itemsToReportWhenNotVisible: Map<Int, ListItem> = emptyMap()
 
   override fun getDiffCallbacks(
 	oldList: List<ListItem>,
@@ -49,6 +50,13 @@ class GenericAdapter(val log: Boolean = false) : BaseListAdapter<ListItem, ListI
   }
 
   override fun touchItemListBeforeSend(itemList: List<ListItem>): List<ListItem> {
+	itemsToReportWhenNotVisible = itemList.mapIndexedNotNull { index, listItem ->
+	  if (listItem.reportWhenNotVisible())
+		index to listItem
+	  else null
+	}.toMap()
+	Log.d("GenericAdapter", "itemsToReportWhenNotVisible: ${itemsToReportWhenNotVisible.entries.joinToString(", ") { "(${it.key} - ${it.value::class.java.simpleName})" }}")
+
 	if (itemList.all { it.indent.indent == 0 }) return itemList
 	for (i in itemList.indices) {
 	  val hasPrecedingSibling = i > 0 && itemList[i - 1].indent.indent == itemList[i].indent.indent
@@ -62,7 +70,25 @@ class GenericAdapter(val log: Boolean = false) : BaseListAdapter<ListItem, ListI
 		isFirstChild = isFirstChild
 	  )
 	}
+
 	return itemList
+  }
+
+  fun getItemsNotVisible(
+	firstVisibleItemPosition: Int,
+	lastVisibleItemPosition: Int
+  ): Pair<Map<Int, ListItem>, Map<Int, ListItem>> {
+	if (itemsToReportWhenNotVisible.isEmpty()) return emptyMap<Int, ListItem>() to emptyMap<Int, ListItem>()
+	return if (firstVisibleItemPosition > 0) {
+	  itemsToReportWhenNotVisible.filter { (index, _) -> index in 0 until firstVisibleItemPosition }
+	} else {
+	  emptyMap()
+	} to
+		if (isLastItem(lastVisibleItemPosition).not()) {
+		  itemsToReportWhenNotVisible.filter { (index, _) -> index > lastVisibleItemPosition }
+		} else {
+		  emptyMap()
+		}
   }
 }
 

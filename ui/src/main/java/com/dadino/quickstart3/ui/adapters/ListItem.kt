@@ -20,6 +20,7 @@ abstract class ListItem {
 
   @LayoutRes
   abstract fun getLayoutId(): Int
+  open fun reportWhenNotVisible(): Boolean = false
 
   fun createUpdateBundle(oldItem: ListItem): Bundle? {
 	val diff = Bundle()
