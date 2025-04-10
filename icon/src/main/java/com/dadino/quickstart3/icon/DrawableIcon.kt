@@ -13,6 +13,19 @@ import com.dadino.quickstart3.color.SurfaceColor
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
 
+/**
+ * Represents an icon defined by a drawable resource.  Implements [ContextDrawable] for
+ * easy handling of drawables that require context for creation, theming, or identification.
+ *
+ * @property drawable The actual [Drawable] object.  Marked as `@RawValue` for Parcelization due
+ *  to potential limitations with standard Drawable parcelization.
+ * @property tint Optional [ContextColor] to apply as a tint to the drawable. If null, the
+ *  drawable will be tinted based on the [shownOn] surface color.
+ * @property animation Optional resource ID of an animation to apply to the drawable.
+ * @property maxSize Optional dimension resource ID defining the maximum size of the drawable.
+ * @property shownOn The [SurfaceColor] indicating the background surface on which this icon will
+ *  be displayed.  This influences the default tint if no explicit tint is provided.  Defaults to SURFACE().
+ */
 @Parcelize
 data class DrawableIcon(
   private val drawable: @RawValue Drawable,
@@ -40,6 +53,16 @@ data class DrawableIcon(
 
   override fun getVaultId(context: Context): String = "Drawable:$drawable:${tint?.getId(context)}:${animation?.let { context.resources.getResourceName(it) }}:$shownOn"
 
+  /**
+   * Draws the drawable associated with this component to the given ImageView.
+   *
+   * This function sets the ImageView's scale type to FIT_CENTER to ensure the drawable
+   * is centered and scaled proportionally within the ImageView's bounds. It then retrieves
+   * the drawable using `getDrawable()` (which should be implemented by the specific
+   * component subclass) and sets it as the ImageView's drawable.
+   *
+   * @param imageView The ImageView to draw the drawable to.  Must not be null.
+   */
   override fun drawToImageView(imageView: ImageView) {
 	imageView.scaleType = ImageView.ScaleType.FIT_CENTER
 	imageView.setImageDrawable(getDrawable(imageView.context))

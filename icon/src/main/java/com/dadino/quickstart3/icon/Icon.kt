@@ -15,6 +15,17 @@ import com.dadino.quickstart3.color.ContextColor
 import com.dadino.quickstart3.color.SurfaceColor
 import kotlinx.parcelize.Parcelize
 
+/**
+ * Represents an icon drawable with associated properties like tint, animation, size, and surface color.
+ *
+ * Implements [ContextDrawable] to provide drawable creation, animation, and tinting based on the context.
+ *
+ * @property icon The drawable resource ID of the icon.
+ * @property tint Optional tint color for the icon, represented by a [ContextColor]. If null, the tint will be automatically determined based on the [shownOn] surface color.
+ * @property animation Optional animation resource ID for the icon.
+ * @property maxSize Optional maximum size dimension resource ID for the icon. Defaults to `R.dimen.default_icon_size`.
+ * @property shownOn The surface color on which the icon will be displayed. This affects the default tint when no explicit tint is provided.
+ */
 @Parcelize
 data class Icon(
   @DrawableRes val icon: Int,
@@ -35,6 +46,16 @@ data class Icon(
   override fun getAnimationRes(): Int? = animation
   override fun getMaxSizeRes(): Int? = maxSize
   override fun getTint(): ContextColor? = tint
+
+  /**
+   * Draws the drawable representation of this icon to the provided ImageView.
+   *
+   * This function sets the ImageView's scale type to CENTER and then sets the drawable
+   * as the image for the ImageView.  The drawable is obtained from the context of the
+   * ImageView.
+   *
+   * @param imageView The ImageView to draw the icon onto.
+   */
   override fun drawToImageView(imageView: ImageView) {
 	imageView.scaleType = ImageView.ScaleType.CENTER
 	imageView.setImageDrawable(getDrawable(imageView.context))
