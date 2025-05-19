@@ -2,7 +2,6 @@ package com.dadino.quickstart3.sample
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import com.dadino.quickstart3.base.Event
@@ -12,6 +11,7 @@ import com.dadino.quickstart3.core.components.EventTransformer
 import com.dadino.quickstart3.core.entities.Signal
 import com.dadino.quickstart3.core.entities.State
 import com.dadino.quickstart3.core.entities.VMStarter
+import com.dadino.quickstart3.core.utils.QuickLogger
 import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerEvent
 import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerSaveState
 import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerSignal
@@ -40,23 +40,24 @@ class SpinnerActivity : BaseActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
 	super.onCreate(savedInstanceState)
 	setContentView(R.layout.activity_spinner)
-	Log.d("Spinner", "onCreate")
+	QuickLogger.plant(QuickLogger.DebugTree())
+	QuickLogger.tag("Spinner").d { "onCreate" }
 
 	eventManager.attachEventSource(
-		"ui", Observable.merge(
+	  "ui", Observable.merge(
 		listOf(
-			idle.clicks().map { SpinnerEvent.OnSpinnerIdleClicked() },
-			loading.clicks().map { SpinnerEvent.OnSpinnerLoadingClicked() },
-			error.clicks().map { SpinnerEvent.OnSpinnerErrorClicked() },
-			done.clicks().map { SpinnerEvent.OnSpinnerDoneClicked() },
-			secondPage.clicks().map {
-			  openGridActivity()
-			  NoOpEvent
-			},
-			saveSession.clicks().map { SpinnerEvent.OnSaveSessionRequested("First") },
-			spinner.interactionEvents()
+		  idle.clicks().map { SpinnerEvent.OnSpinnerIdleClicked() },
+		  loading.clicks().map { SpinnerEvent.OnSpinnerLoadingClicked() },
+		  error.clicks().map { SpinnerEvent.OnSpinnerErrorClicked() },
+		  done.clicks().map { SpinnerEvent.OnSpinnerDoneClicked() },
+		  secondPage.clicks().map {
+			openGridActivity()
+			NoOpEvent
+		  },
+		  saveSession.clicks().map { SpinnerEvent.OnSaveSessionRequested("First") },
+		  spinner.interactionEvents()
 		)
-	)
+	  )
 	)
 	eventManager.eventTransformer = SpinnerTransformer()
 	eventManager.tag = "SpinnerEventManager"
@@ -65,18 +66,18 @@ class SpinnerActivity : BaseActivity() {
   override fun onStart() {
 	super.onStart()
 
-	Log.d("Spinner", "onStart")
+	QuickLogger.tag("Spinner").d { "onStart" }
   }
 
   override fun onResume() {
 	super.onResume()
-	Log.d("Spinner", "onResume")
+	QuickLogger.tag("Spinner").d { "onResume" }
 	spinnerVMStarter.queueEvent(SpinnerEvent.OnSpinnerLoadingClicked())
   }
 
   override fun viewModels(): List<VMStarter> {
 	return listOf(
-		spinnerVMStarter
+	  spinnerVMStarter
 	)
   }
 
@@ -101,13 +102,13 @@ class SpinnerActivity : BaseActivity() {
   }
 
   private fun render(state: SpinnerState) {
-	Log.d("Spinner", "State: $state")
+	QuickLogger.tag("Spinner").d { "State: $state" }
 	spinner.setState(state.list, state.loading, state.error)
 	spinner.selectedId = state.selectedId ?: -1
   }
 
   private fun render(state: SpinnerSaveState) {
-	Log.d("SpinnerSave", "State: $state")
+	QuickLogger.tag("SpinnerSave").d { "State: $state" }
   }
 }
 

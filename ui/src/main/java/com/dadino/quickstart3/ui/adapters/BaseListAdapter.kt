@@ -4,13 +4,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import com.dadino.quickstart3.contextformattable.ContextFormattable
+import com.dadino.quickstart3.core.utils.QuickLogger
 import com.dadino.quickstart3.ui.utils.OnDiffDispatchedCallbacks
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import timber.log.Timber
 
 abstract class BaseListAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : BaseAdapter<ITEM, HOLDER>() {
 
@@ -54,12 +54,12 @@ abstract class BaseListAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : BaseAdapter<IT
 			if (writeItemsToLogWhenDispatched) {
 			  val context = layoutInflater?.context
 			  if (context != null) {
-				Timber.tag("ItemsDispatched").d("Items dispatched: ${list.size}")
+				QuickLogger.tag("ItemsDispatched").d { "Items dispatched: ${list.size}" }
 				list.forEachIndexed { index, item ->
 				  if (item is ContextFormattable) {
-					Timber.tag("ItemsDispatched").d("$index -> ${item.format(context)?.toString()?.replace(Regex("\\R+"), " ")}")
+					QuickLogger.tag("ItemsDispatched").d { "$index -> ${item.format(context)?.toString()?.replace(Regex("\\R+"), " ")}" }
 				  } else {
-					Timber.tag("ItemsDispatched").d("$index -> ${item.toString().replace(Regex("\\R+"), " ")}")
+					QuickLogger.tag("ItemsDispatched").d { "$index -> ${item.toString().replace(Regex("\\R+"), " ")}" }
 				  }
 				}
 			  }

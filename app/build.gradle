@@ -52,6 +52,10 @@ android {
         jvmTarget = "21"
     }
     namespace 'com.dadino.quickstart3.sample'
+
+    buildFeatures {
+        buildConfig true
+    }
 }
 
 dependencies {
