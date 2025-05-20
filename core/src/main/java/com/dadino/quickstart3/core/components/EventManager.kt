@@ -4,11 +4,11 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.DefaultLifecycleObserver
 import com.dadino.quickstart3.base.Event
 import com.dadino.quickstart3.base.NoOpEvent
+import com.dadino.quickstart3.core.utils.QuickLogger
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import timber.log.Timber
 
 /**
  * Manages and dispatches events within the application.  It acts as a central hub for
@@ -55,14 +55,14 @@ class EventManager : InteractionEventSource, DefaultLifecycleObserver {
 
   private val eventObservable: Observable<Event> by lazy {
 	eventRelay
-		.filter { it !is NoOpEvent }
-		.doOnNext { eventListener?.onEvent(it) }
-		.doOnNext { if (enableLogging) Timber.d(">>> ${it.javaClass.simpleName} >>>") }
-		.map { eventTransformer?.performTransform(it) ?: it }
-		.filter { it !is NoOpEvent }
-		.doOnDispose { compositeDisposable.clear() }
-		.publish()
-		.refCount()
+	  .filter { it !is NoOpEvent }
+	  .doOnNext { eventListener?.onEvent(it) }
+	  .doOnNext { if (enableLogging) QuickLogger.tag(tag).d { ">>> ${it.javaClass.simpleName} >>>" } }
+	  .map { eventTransformer?.performTransform(it) ?: it }
+	  .filter { it !is NoOpEvent }
+	  .doOnDispose { compositeDisposable.clear() }
+	  .publish()
+	  .refCount()
   }
 
   /**

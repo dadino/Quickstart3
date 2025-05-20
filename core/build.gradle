@@ -78,7 +78,7 @@ dependencies {
     api 'com.jakewharton.rx2:replaying-share-kotlin:2.2.0'
 
     //Timber
-    implementation 'com.jakewharton.timber:timber:5.0.1'
+    api 'com.jakewharton.timber:timber:5.0.1'
 }
 
 tasks.withType(Javadoc).configureEach {

@@ -1,7 +1,7 @@
 package com.dadino.quickstart3.flow
 
 import com.dadino.quickstart3.base.Event
-import timber.log.Timber
+import com.dadino.quickstart3.core.utils.QuickLogger
 
 abstract class Flow<FLOW : Flow<FLOW, STATE, STEP>, STATE, STEP : FlowStep<STATE>>(protected val root: FlowStep<STATE>, protected val steps: List<STEP>) {
   constructor(root: STEP) : this(root = root, steps = listOf(root))
@@ -23,7 +23,7 @@ abstract class Flow<FLOW : Flow<FLOW, STATE, STEP>, STATE, STEP : FlowStep<STATE
   private fun fromAdvancement(advancement: FlowAdvancement<STATE>): FLOW {
 	val steps: List<STEP> = when (advancement) {
 	  is FlowAdvancement.ExitFlow               -> {
-		Timber.d("----ExitFlow----")
+		QuickLogger.tag(tag()).d { "----ExitFlow----" }
 		listOf()
 	  }
 
@@ -31,7 +31,7 @@ abstract class Flow<FLOW : Flow<FLOW, STATE, STEP>, STATE, STEP : FlowStep<STATE
 		val index = steps.indexOfFirst { root.key == it.key }
 		val temp = arrayListOf<STEP>()
 		temp.addAll(steps.subList(0, index + 1))
-		Timber.d("<---GoToRoot----\n${temp.joinToString("\n") { it.key }}")
+		QuickLogger.tag(tag()).d { "<---GoToRoot----\n${temp.joinToString("\n") { it.key }}" }
 		temp
 	  }
 
@@ -41,7 +41,7 @@ abstract class Flow<FLOW : Flow<FLOW, STATE, STEP>, STATE, STEP : FlowStep<STATE
 		advancement.steps.forEach {
 		  temp.add(it as STEP)
 		}
-		Timber.d("----GoForward--->\n${temp.joinToString("\n") { it.key }}")
+		QuickLogger.tag(tag()).d { "----GoForward--->\n${temp.joinToString("\n") { it.key }}" }
 		temp
 	  }
 
@@ -60,10 +60,10 @@ abstract class Flow<FLOW : Flow<FLOW, STATE, STEP>, STATE, STEP : FlowStep<STATE
 		if (index != null) {
 		  val temp = arrayListOf<STEP>()
 		  temp.addAll(steps.subList(0, index + 1))
-		  Timber.d("<---GoBack----\n${temp.joinToString("\n") { it.key }}")
+		  QuickLogger.tag(tag()).d { "<---GoBack----\n${temp.joinToString("\n") { it.key }}" }
 		  temp
 		} else {
-		  Timber.d("<---GoBack----\nCan't go back, because none of the GoBackToStep steps are in the current steps\n${steps.joinToString("\n") { it.key }}")
+		  QuickLogger.tag(tag()).d { "<---GoBack----\nCan't go back, because none of the GoBackToStep steps are in the current steps\n${steps.joinToString("\n") { it.key }}" }
 		  steps
 		}
 	  }
@@ -71,7 +71,7 @@ abstract class Flow<FLOW : Flow<FLOW, STATE, STEP>, STATE, STEP : FlowStep<STATE
 	  is FlowAdvancement.GoBackOneStep          -> {
 		val temp = arrayListOf<STEP>()
 		temp.addAll(steps.subList(0, steps.lastIndex))
-		Timber.d("<---GoBack----\n${temp.joinToString("\n") { it.key }}")
+		QuickLogger.tag(tag()).d { "<---GoBack----\n${temp.joinToString("\n") { it.key }}" }
 		temp
 	  }
 	}
@@ -81,6 +81,8 @@ abstract class Flow<FLOW : Flow<FLOW, STATE, STEP>, STATE, STEP : FlowStep<STATE
 
   abstract fun getFlow(): FLOW
   abstract fun updateFlowWithSteps(steps: List<STEP>): FLOW
+
+  private fun tag() = this::class.simpleName
 
   override fun toString(): String {
 	return "Flow(root= ${root.key}, steps= ${steps.joinToString(", ") { it.key }})"

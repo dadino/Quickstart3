@@ -8,7 +8,7 @@ import com.dadino.quickstart3.core.entities.SideEffect
 import com.dadino.quickstart3.core.entities.Signal
 import com.dadino.quickstart3.core.entities.Start
 import com.dadino.quickstart3.core.entities.State
-import timber.log.Timber
+import com.dadino.quickstart3.core.utils.QuickLogger
 
 /**
  * An [Updater] is responsible for managing the state of a specific feature or component.  It defines
@@ -51,8 +51,8 @@ interface Updater<STATE : State> {
    * @return A `Next` object representing the next state, associated effects, and signals.
    */
   fun internalUpdate(previous: STATE, event: Event): Next<STATE> {
-	if (canLog()) Timber.d("________________${previous.javaClass.simpleName}______________________")
-	if (canLog()) Timber.d("IN: ${event.javaClass.simpleName}: $event")
+	if (canLog()) QuickLogger.tag(tag(previous)).d { "________________${previous.javaClass.simpleName}______________________" }
+	if (canLog()) QuickLogger.tag(tag(previous)).d { "IN: ${event.javaClass.simpleName}: $event" }
 	val next = if (event is InitializeState) {
 	  var start = start()
 	  if (this is StartEffectsProvider) {
@@ -74,8 +74,8 @@ interface Updater<STATE : State> {
 
 	  nextAfterUpdate ?: noChanges()
 	}
-	if (canLog()) Timber.d("OUT: $next")
-	if (canLog()) Timber.d("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯${previous.javaClass.simpleName}¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯")
+	if (canLog()) QuickLogger.tag(tag(previous)).d { "OUT: $next" }
+	if (canLog()) QuickLogger.tag(tag(previous)).d { "¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯${previous.javaClass.simpleName}¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯" }
 	return next
   }
 
@@ -89,6 +89,7 @@ interface Updater<STATE : State> {
   fun getInitialMainState(): STATE
   fun getInitialSubStates(): List<State> = listOf()
   fun canLog() = true
+  private fun tag(state: STATE) = "${state::class.simpleName}Updater"
 }
 
 /**

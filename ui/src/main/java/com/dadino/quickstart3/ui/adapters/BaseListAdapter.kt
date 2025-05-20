@@ -3,6 +3,8 @@ package com.dadino.quickstart3.ui.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
+import com.dadino.quickstart3.contextformattable.ContextFormattable
+import com.dadino.quickstart3.core.utils.QuickLogger
 import com.dadino.quickstart3.ui.utils.OnDiffDispatchedCallbacks
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -25,6 +27,12 @@ abstract class BaseListAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : BaseAdapter<IT
 	setItemsAsyncWith(null, itemListCreationFunction)
   }
 
+  private var writeItemsToLogWhenDispatched: Boolean = false
+
+  fun setWriteItemsToLogWhenDispatched(writeItemsToLogWhenDispatched: Boolean) {
+	this.writeItemsToLogWhenDispatched = writeItemsToLogWhenDispatched
+  }
+
   fun setItemsAsyncWith(onDiffDispatchedCallbacks: OnDiffDispatchedCallbacks?, itemListCreationFunction: () -> List<ITEM>) {
 	diffDisposable?.dispose()
 	var startTimeMillis = 0L
@@ -42,8 +50,25 @@ abstract class BaseListAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : BaseAdapter<IT
 	  .subscribeBy(
 		onSuccess = {
 		  items = it.list
+		  items?.let { list ->
+			if (writeItemsToLogWhenDispatched) {
+			  val context = layoutInflater?.context
+			  if (context != null) {
+				QuickLogger.tag("ItemsDispatched").d { "Items dispatched: ${list.size}" }
+				list.forEachIndexed { index, item ->
+				  if (item is ContextFormattable) {
+					QuickLogger.tag("ItemsDispatched").d { "$index -> ${item.format(context)?.toString()?.replace(Regex("\\R+"), " ")}" }
+				  } else {
+					QuickLogger.tag("ItemsDispatched").d { "$index -> ${item.toString().replace(Regex("\\R+"), " ")}" }
+				  }
+				}
+			  }
+			}
+		  }
 		  it.diffs.dispatchUpdatesTo(this)
-		  onDiffDispatchedCallbacks?.onDiffDispatched(itemCount = items?.size ?: 0, executionTimeInMillis = System.currentTimeMillis() - startTimeMillis)
+		  onDiffDispatchedCallbacks?.onDiffDispatched(
+			itemCount = items?.size ?: 0, executionTimeInMillis = System.currentTimeMillis() - startTimeMillis
+		  )
 		},
 		onError = {
 		  it.printStackTrace()

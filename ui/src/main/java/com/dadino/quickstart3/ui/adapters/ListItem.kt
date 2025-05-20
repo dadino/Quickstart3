@@ -8,6 +8,7 @@ import com.dadino.quickstart3.ui.utils.Indent
 
 abstract class ListItem {
 
+  var focused: Boolean = false
   var selected: Boolean = false
   var selectionType: SelectionType = SelectionType.NoSelection
   var showInCard: Boolean = false
@@ -43,15 +44,13 @@ abstract class ListItem {
 
   protected abstract fun createUpdateBundleForItem(diff: Bundle, oldItem: ListItem)
   private fun createBaseUpdateBundle(diff: Bundle, oldItem: ListItem) {
-	if (this.selected != oldItem.selected) {
-	  diff.putBoolean(PAYLOAD_SELECTED, this.selected)
+	if (this.selected != oldItem.selected || this.selectionType != oldItem.selectionType) {
+	  diff.putString(PAYLOAD_SELECTED, PAYLOAD_SELECTED)
 	}
-	if (this.selectionType != oldItem.selectionType) {
-	  diff.putInt(PAYLOAD_SELECTABLE, this.selectionType.id)
+	if (this.focused != oldItem.focused) {
+	  diff.putString(PAYLOAD_FOCUSED, PAYLOAD_FOCUSED)
 	}
-	if (this.showInCard != oldItem.showInCard
-	  || this.indent != oldItem.indent
-	) {
+	if (this.showInCard != oldItem.showInCard || this.indent != oldItem.indent) {
 	  diff.putString(PAYLOAD_CARD, PAYLOAD_CARD)
 	}
 	if (this.spanSizeRes != oldItem.spanSizeRes) {
@@ -71,7 +70,7 @@ abstract class ListItem {
   companion object {
 
 	const val PAYLOAD_SELECTED = "PAYLOAD_SELECTED"
-	const val PAYLOAD_SELECTABLE = "PAYLOAD_SELECTABLE"
+	const val PAYLOAD_FOCUSED = "PAYLOAD_FOCUSED"
 	const val PAYLOAD_CARD = "PAYLOAD_CARD"
 	const val PAYLOAD_SPAN_SIZE = "PAYLOAD_SPAN_SIZE"
   }
