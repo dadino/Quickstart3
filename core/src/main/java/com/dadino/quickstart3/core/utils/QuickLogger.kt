@@ -3,23 +3,24 @@ package com.dadino.quickstart3.core.utils
 import android.util.Log
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.newSingleThreadContext
 import timber.log.Timber
-import java.util.concurrent.Executors
 
 object QuickLogger {
-  private const val GO_ASYNC = true
+  private var evaluateAsync = true
 
   private var tag: String? = null
   private var isLoggingEnabled = false
 
   // a single-thread background dispatcher
+  @OptIn(ExperimentalCoroutinesApi::class, DelicateCoroutinesApi::class)
   private val loggerDispatcher: CoroutineDispatcher by lazy {
-	Executors.newSingleThreadExecutor { Thread(it, "LoggerThread") }
-	  .asCoroutineDispatcher()
+	newSingleThreadContext("LoggerContextThread")
   }
   private val scope: CoroutineScope by lazy { CoroutineScope(SupervisorJob() + loggerDispatcher) }
 
@@ -33,6 +34,20 @@ object QuickLogger {
    */
   fun enableLogging(enable: Boolean) {
 	isLoggingEnabled = enable
+  }
+
+  /**
+   * Sets whether log messages should be evaluated asynchronously.
+   *
+   * If `async` is true, log messages will be evaluated in the `loggerDispatcher`,
+   * a dedicated single-thread background dispatcher. Otherwise, they will be evaluated
+   * synchronously on the calling thread.
+   *
+   * @param async True to evaluate log messages asynchronously using the `loggerDispatcher`,
+   *              false to evaluate them synchronously.
+   */
+  fun setLogMessageEvaluationAsync(async: Boolean) {
+	evaluateAsync = async
   }
 
   /** Set a one-time tag for use on the next logging call. */
@@ -95,7 +110,7 @@ object QuickLogger {
   fun DebugTree() = Timber.DebugTree()
 
   private fun log(tag: String? = null, level: Int, messageBlock: () -> String?) {
-	if (GO_ASYNC) logAsync(tag, level, messageBlock)
+	if (evaluateAsync) logAsync(tag, level, messageBlock)
 	else logSync(tag, level, messageBlock)
   }
 
