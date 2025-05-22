@@ -1,16 +1,16 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-parcelize'
 }
 
 ext {
     PUBLISH_GROUP_ID = rootProject.groupId
     PUBLISH_VERSION = rootProject.versionName
-    PUBLISH_ARTIFACT_ID = "base"
+    PUBLISH_ARTIFACT_ID = "log"
 }
 
 apply from: "${rootProject.projectDir}/scripts/publish-mavencentral.gradle"
-
 
 android {
     compileSdk rootProject.compileSdk
@@ -40,11 +40,13 @@ android {
     kotlinOptions {
         jvmTarget = "21"
     }
-    namespace 'com.dadino.quickstart3.base'
+    namespace 'com.dadino.quickstart3.log'
 }
 
 dependencies {
-    api project(":log")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version")
-    implementation 'androidx.annotation:annotation:1.9.1'
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:$kotlin_version"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version")
+
+    //Timber
+    api 'com.jakewharton.timber:timber:5.0.1'
 }

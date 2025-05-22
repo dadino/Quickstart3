@@ -1,10 +1,10 @@
 package com.dadino.quickstart3.ui.adapters
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
+import com.dadino.quickstart3.core.utils.QuickLogger
 
 class GenericAdapter(val log: Boolean = false) : BaseListAdapter<ListItem, ListItemHolder>() {
   private var itemsToReportWhenNotVisible: Map<Int, ListItem> = emptyMap()
@@ -25,14 +25,14 @@ class GenericAdapter(val log: Boolean = false) : BaseListAdapter<ListItem, ListI
 	  try {
 		if (log) {
 		  val bundle = payloads.firstOrNull() as? Bundle
-		  Log.d("GenericAdapter", "Updating holder ${holder::class.java.simpleName} at position $position with bundle $bundle")
+		  QuickLogger.tag("GenericAdapter").d { "Updating holder ${holder::class.java.simpleName} at position $position with bundle $bundle" }
 		}
 	  } catch (e: Exception) {
 		e.printStackTrace()
 	  }
 	  holder.updateWithPayloads(getItem(position)!!, payloads)
 	} else {
-	  if (log) Log.d("GenericAdapter", "Binding holder ${holder::class.java.simpleName} at position $position")
+	  if (log) QuickLogger.tag("GenericAdapter").d { "Binding holder ${holder::class.java.simpleName} at position $position" }
 	  super.onBindViewHolder(holder, position, payloads)
 	}
   }
@@ -55,7 +55,7 @@ class GenericAdapter(val log: Boolean = false) : BaseListAdapter<ListItem, ListI
 		index to listItem
 	  else null
 	}.toMap()
-	Log.d("GenericAdapter", "itemsToReportWhenNotVisible: ${itemsToReportWhenNotVisible.entries.joinToString(", ") { "(${it.key} - ${it.value::class.java.simpleName})" }}")
+	QuickLogger.tag("GenericAdapter").d { "itemsToReportWhenNotVisible: ${itemsToReportWhenNotVisible.entries.joinToString(", ") { "(${it.key} - ${it.value::class.java.simpleName})" }}" }
 
 	if (itemList.all { it.indent.indent == 0 }) return itemList
 	for (i in itemList.indices) {
