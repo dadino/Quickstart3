@@ -52,21 +52,21 @@ dependencies {
 
     //Support
     implementation "com.google.android.material:material:1.12.0"
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom:2.0.0"))
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:$kotlin_version"))
 
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'androidx.appcompat:appcompat-resources:1.7.0'
-    implementation 'androidx.core:core-ktx:1.15.0'
-    implementation "androidx.activity:activity-ktx:1.10.0"
-    implementation "androidx.fragment:fragment-ktx:1.8.5"
+    implementation 'androidx.core:core-ktx:1.16.0'
+    implementation "androidx.activity:activity-ktx:1.10.1"
+    implementation "androidx.fragment:fragment-ktx:1.8.7"
     implementation 'androidx.preference:preference-ktx:1.2.1'
 
     //Arch Components
-    api 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.7'
-    api 'androidx.lifecycle:lifecycle-common-java8:2.8.7'
+    api 'androidx.lifecycle:lifecycle-runtime-ktx:2.9.0'
+    api 'androidx.lifecycle:lifecycle-common-java8:2.9.0'
     api 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    api 'androidx.lifecycle:lifecycle-reactivestreams-ktx:2.8.7'
-    api 'androidx.lifecycle:lifecycle-common-java8:2.8.7'
+    api 'androidx.lifecycle:lifecycle-reactivestreams-ktx:2.9.0'
+    api 'androidx.lifecycle:lifecycle-common-java8:2.9.0'
 
     //RxJava
     api 'io.reactivex.rxjava2:rxjava:2.2.21'
@@ -76,9 +76,6 @@ dependencies {
     //Relay
     api 'com.jakewharton.rxrelay2:rxrelay:2.1.1'
     api 'com.jakewharton.rx2:replaying-share-kotlin:2.2.0'
-
-    //Timber
-    api 'com.jakewharton.timber:timber:5.0.1'
 }
 
 tasks.withType(Javadoc).configureEach {
