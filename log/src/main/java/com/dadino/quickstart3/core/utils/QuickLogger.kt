@@ -86,12 +86,13 @@ object QuickLogger {
 	tag = null
   }
 
+  fun printStackTrace(throwable: Throwable) {
+	log(tag, Log.ERROR, null, throwable)
+	tag = null
+  }
+
   // These functions just forward to the real timber. They aren't necessary, but they allow method
   // chaining like the normal Timber interface.
-
-  /** A view into Timber's planted trees as a tree itself. */
-  @JvmStatic
-  fun asTree(): Timber.Tree = Timber.asTree()
 
   /** Add a new logging tree. */
   @JvmStatic
@@ -109,9 +110,11 @@ object QuickLogger {
   @JvmStatic
   fun DebugTree() = Timber.DebugTree()
 
-  private fun log(tag: String? = null, level: Int, messageBlock: () -> String?) {
-	if (evaluateAsync) logAsync(tag, level, messageBlock)
-	else logSync(tag, level, messageBlock)
+  private fun log(tag: String? = null, level: Int, messageBlock: (() -> String?)?, throwable: Throwable? = null) {
+	if (isLoggingEnabled) {
+	  if (evaluateAsync) logAsync(tag, level, messageBlock, throwable)
+	  else logSync(tag, level, messageBlock, throwable)
+	}
   }
 
   /**
@@ -126,21 +129,16 @@ object QuickLogger {
    * @param messageBlock A lambda function that returns the message string to be logged.
    *                     This block is only evaluated if logging is enabled.
    */
-  private fun logSync(tag: String? = null, level: Int, messageBlock: () -> String?) {
-	// cheap sync guard
-	if (Timber.treeCount == 0) return
-
-	if (isLoggingEnabled) {
-	  // run the actual Timber call on Default (Log.* is thread-safe)
-	  val timber = if (tag != null) Timber.tag(tag) else Timber
-	  when (level) {
-		Log.VERBOSE -> timber.v(messageBlock())
-		Log.DEBUG   -> timber.d(messageBlock())
-		Log.INFO    -> timber.i(messageBlock())
-		Log.WARN    -> timber.w(messageBlock())
-		Log.ERROR   -> timber.e(messageBlock())
-		Log.ASSERT  -> timber.wtf(messageBlock())
-	  }
+  private fun logSync(tag: String? = null, level: Int, messageBlock: (() -> String?)?, throwable: Throwable? = null) {
+	// run the actual Timber call on Default (Log.* is thread-safe)
+	val timber = if (tag != null) Timber.tag(tag) else Timber
+	when (level) {
+	  Log.VERBOSE -> timber.v(throwable, messageBlock?.invoke())
+	  Log.DEBUG   -> timber.d(throwable, messageBlock?.invoke())
+	  Log.INFO    -> timber.i(throwable, messageBlock?.invoke())
+	  Log.WARN    -> timber.w(throwable, messageBlock?.invoke())
+	  Log.ERROR   -> timber.e(throwable, messageBlock?.invoke())
+	  Log.ASSERT  -> timber.wtf(throwable, messageBlock?.invoke())
 	}
   }
 
@@ -148,7 +146,9 @@ object QuickLogger {
    * Always returns immediately with a Job.
    * The block runs off the main thread once the check passes.
    */
-  private fun logAsync(tag: String? = null, level: Int, messageBlock: () -> String?): Job = scope.launch {
-	logSync(tag, level, messageBlock)
+  private fun logAsync(tag: String? = null, level: Int, messageBlock: (() -> String?)?, throwable: Throwable? = null): Job = scope.launch {
+	logSync(tag, level, messageBlock, throwable)
   }
 }
+
+fun Throwable.printQuickStackTrace(tag: String? = null) = (if (tag != null) QuickLogger.tag(tag) else QuickLogger).printStackTrace(this)

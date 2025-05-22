@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import com.dadino.quickstart3.core.utils.QuickLogger
+import com.dadino.quickstart3.core.utils.printQuickStackTrace
 
 class GenericAdapter(val log: Boolean = false) : BaseListAdapter<ListItem, ListItemHolder>() {
   private var itemsToReportWhenNotVisible: Map<Int, ListItem> = emptyMap()
@@ -28,7 +29,7 @@ class GenericAdapter(val log: Boolean = false) : BaseListAdapter<ListItem, ListI
 		  QuickLogger.tag("GenericAdapter").d { "Updating holder ${holder::class.java.simpleName} at position $position with bundle $bundle" }
 		}
 	  } catch (e: Exception) {
-		e.printStackTrace()
+		e.printQuickStackTrace("GenericAdapter")
 	  }
 	  holder.updateWithPayloads(getItem(position)!!, payloads)
 	} else {

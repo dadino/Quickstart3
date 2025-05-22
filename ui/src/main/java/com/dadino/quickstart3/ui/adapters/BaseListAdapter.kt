@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import com.dadino.quickstart3.contextformattable.ContextFormattable
 import com.dadino.quickstart3.core.utils.QuickLogger
+import com.dadino.quickstart3.core.utils.printQuickStackTrace
 import com.dadino.quickstart3.ui.utils.OnDiffDispatchedCallbacks
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -71,7 +72,7 @@ abstract class BaseListAdapter<ITEM, HOLDER : BaseHolder<ITEM>> : BaseAdapter<IT
 		  )
 		},
 		onError = {
-		  it.printStackTrace()
+		  it.printQuickStackTrace("ItemsDispatched")
 		  onDiffDispatchedCallbacks?.onDiffError(System.currentTimeMillis() - startTimeMillis)
 		})
   }

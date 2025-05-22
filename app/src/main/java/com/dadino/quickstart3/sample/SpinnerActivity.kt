@@ -12,6 +12,7 @@ import com.dadino.quickstart3.core.entities.Signal
 import com.dadino.quickstart3.core.entities.State
 import com.dadino.quickstart3.core.entities.VMStarter
 import com.dadino.quickstart3.core.utils.QuickLogger
+import com.dadino.quickstart3.core.utils.printQuickStackTrace
 import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerEvent
 import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerSaveState
 import com.dadino.quickstart3.sample.viewmodels.spinner.SpinnerSignal
@@ -61,6 +62,12 @@ class SpinnerActivity : BaseActivity() {
 	)
 	eventManager.eventTransformer = SpinnerTransformer()
 	eventManager.tag = "SpinnerEventManager"
+
+	try {
+	  throw RuntimeException("Test")
+	} catch (e: Exception) {
+	  e.printQuickStackTrace("Test")
+	}
   }
 
   override fun onStart() {

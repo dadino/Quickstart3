@@ -18,11 +18,11 @@
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/flow" />
             <option value="$PROJECT_DIR$/icon" />
+            <option value="$PROJECT_DIR$/log" />
             <option value="$PROJECT_DIR$/selectable" />
             <option value="$PROJECT_DIR$/ui" />
           </set>
         </option>
-        <option name="resolveExternalAnnotations" value="false" />
       </GradleProjectSettings>
     </option>
   </component>
