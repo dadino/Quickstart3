@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.annotation.IntegerRes
 import androidx.annotation.LayoutRes
+import androidx.compose.ui.Modifier
 import com.dadino.quickstart3.ui.utils.Indent
 
 abstract class ListItem {
@@ -64,7 +65,12 @@ abstract class ListItem {
 		&& this.showInCard == oldItem.showInCard
 		&& this.spanSizeRes == oldItem.spanSizeRes
 		&& this.indent == oldItem.indent
+		&& this.focused == oldItem.focused
 		&& this == oldItem
+  }
+
+  @androidx.compose.runtime.Composable
+  open fun Render(modifier: Modifier) {
   }
 
   companion object {
