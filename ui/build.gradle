@@ -62,8 +62,6 @@ dependencies {
     api 'com.jakewharton.rxbinding3:rxbinding-swiperefreshlayout:3.1.0'
     api 'com.jakewharton.rxbinding3:rxbinding-viewpager:3.1.0'
     api 'com.jakewharton.rxbinding3:rxbinding-material:3.1.0'
-
-    api 'androidx.compose.foundation:foundation:1.8.2'
 }
 
 tasks.withType(Javadoc).configureEach {

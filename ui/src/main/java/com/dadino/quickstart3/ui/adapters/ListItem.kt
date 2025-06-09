@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.annotation.IntegerRes
 import androidx.annotation.LayoutRes
-import androidx.compose.ui.Modifier
-import com.dadino.quickstart3.core.components.EventManager
 import com.dadino.quickstart3.ui.utils.Indent
 
 abstract class ListItem {
@@ -68,19 +66,6 @@ abstract class ListItem {
 		&& this.indent == oldItem.indent
 		&& this.focused == oldItem.focused
 		&& this == oldItem
-  }
-
-  /**
-   * Renders the list item using Jetpack Compose.
-   * This function is a Composable and should be overridden by subclasses to provide the specific UI representation of the item.
-   * By default, it throws a [RuntimeException] if not implemented.
-   *
-   * @param eventManager The [EventManager] to handle user interactions or other events within the composable.
-   * @param modifier The [Modifier] to be applied to the root composable of this item.
-   */
-  @androidx.compose.runtime.Composable
-  open fun Render(eventManager: EventManager, modifier: Modifier) {
-	throw RuntimeException("Render not implemented")
   }
 
   companion object {
