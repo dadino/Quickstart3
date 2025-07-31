@@ -13,14 +13,14 @@ package com.dadino.quickstart3.base
  */
 open class Event
 
-object InitializeState : Event()
-object NoOpEvent : Event()
+data object InitializeState : Event()
+data object NoOpEvent : Event()
 
 sealed class LifecycleEvent : Event() {
-	object OnCreate : Event()
-	object OnStart : Event()
-	object OnResume : Event()
-	object OnPause : Event()
-	object OnStop : Event()
-	object OnDestroy : Event()
+  data object OnCreate : Event()
+  data object OnStart : Event()
+  data object OnResume : Event()
+  data object OnPause : Event()
+  data object OnStop : Event()
+  data object OnDestroy : Event()
 }

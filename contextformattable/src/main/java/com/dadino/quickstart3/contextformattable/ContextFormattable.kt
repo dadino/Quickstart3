@@ -2,6 +2,7 @@ package com.dadino.quickstart3.contextformattable
 
 import android.content.Context
 import android.os.Parcelable
+import java.io.Serializable
 
 /**
  * An interface for objects that can be formatted into a CharSequence based on a given Android [Context] and optional [CFModifier]s.
@@ -35,7 +36,7 @@ import android.os.Parcelable
  *  }
  *
  * */
-interface ContextFormattable : Parcelable {
+interface ContextFormattable : Parcelable, Serializable {
 
   fun format(context: Context, modifiers: List<CFModifier>): CharSequence?
   fun format(context: Context): CharSequence? = format(context, listOf())

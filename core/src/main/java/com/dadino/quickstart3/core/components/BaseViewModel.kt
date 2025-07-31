@@ -112,12 +112,12 @@ abstract class BaseViewModel<STATE : State> : ViewModel(), DefaultLifecycleObser
   abstract fun getSideEffectHandlers(): List<SideEffectHandler>
 
   fun canReceiveEvents() = loop.canReceiveEvents
-  open protected fun wantOnCreateEvent() = false
-  open protected fun wantOnStartEvent() = false
-  open protected fun wantOnResumeEvent() = false
-  open protected fun wantOnPauseEvent() = false
-  open protected fun wantOnStopEvent() = false
-  open protected fun wantOnDestroyEvent() = false
+  open fun wantOnCreateEvent() = false
+  open fun wantOnStartEvent() = false
+  open fun wantOnResumeEvent() = false
+  open fun wantOnPauseEvent() = false
+  open fun wantOnStopEvent() = false
+  open fun wantOnDestroyEvent() = false
 }
 
 /**
