@@ -14,8 +14,8 @@ data class GridCell(
 	val onPlusClick: Event,
 ) : ListItem() {
 
-	override fun numericId(): Long {
-		return "gridCell:$id".hashCode().toLong()
+  override fun getStringId(): String {
+	return "gridCell:$id"
 	}
 
 	override fun getLayoutId() = GridCellHolder.layoutId

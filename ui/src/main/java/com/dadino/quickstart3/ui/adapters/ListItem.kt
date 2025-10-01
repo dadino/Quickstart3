@@ -17,7 +17,8 @@ abstract class ListItem {
   @IntegerRes
   var spanSizeRes: Int? = null
 
-  abstract fun numericId(): Long
+  abstract fun getStringId(): String
+  fun numericId(): Long = getStringId().hashCode().toLong()
 
   @LayoutRes
   abstract fun getLayoutId(): Int

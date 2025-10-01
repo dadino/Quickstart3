@@ -1,5 +1,8 @@
 package com.dadino.quickstart3.base
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
 /**
  * A base class for events.
  *
@@ -13,14 +16,21 @@ package com.dadino.quickstart3.base
  */
 open class Event
 
-data object InitializeState : Event()
-data object NoOpEvent : Event()
+@Parcelize
+open class ParcelableEvent : Event(), Parcelable
 
-sealed class LifecycleEvent : Event() {
-  data object OnCreate : Event()
-  data object OnStart : Event()
-  data object OnResume : Event()
-  data object OnPause : Event()
-  data object OnStop : Event()
-  data object OnDestroy : Event()
+@Parcelize
+data object InitializeState : ParcelableEvent()
+
+@Parcelize
+data object NoOpEvent : ParcelableEvent()
+
+@Parcelize
+sealed class LifecycleEvent : ParcelableEvent() {
+  data object OnCreate : LifecycleEvent()
+  data object OnStart : LifecycleEvent()
+  data object OnResume : LifecycleEvent()
+  data object OnPause : LifecycleEvent()
+  data object OnStop : LifecycleEvent()
+  data object OnDestroy : LifecycleEvent()
 }

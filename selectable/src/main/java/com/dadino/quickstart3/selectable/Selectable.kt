@@ -1,9 +1,11 @@
 package com.dadino.quickstart3.selectable
 
+import android.os.Parcelable
 import com.dadino.quickstart3.contextformattable.ContextFormattable
 import com.dadino.quickstart3.icon.ContextDrawable
+import kotlinx.parcelize.Parcelize
 
-interface Selectable {
+interface Selectable : Parcelable {
 
     fun getSelectionId(): Id
     fun getMainText(): ContextFormattable
@@ -13,6 +15,7 @@ interface Selectable {
     fun getSelectionEnabled(): Boolean = true
 }
 
+@Parcelize
 data class SimpleSelectable(
     private val id: Id,
     private val mainText: ContextFormattable,

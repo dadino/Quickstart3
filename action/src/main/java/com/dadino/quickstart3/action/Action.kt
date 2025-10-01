@@ -4,7 +4,7 @@ import android.content.Context
 import android.view.Menu
 import android.view.MenuItem
 import androidx.annotation.DrawableRes
-import com.dadino.quickstart3.base.Event
+import com.dadino.quickstart3.base.ParcelableEvent
 import com.dadino.quickstart3.color.SurfaceColor
 import com.dadino.quickstart3.contextformattable.ContextFormattable
 import com.dadino.quickstart3.contextformattable.asFormattable
@@ -12,7 +12,9 @@ import com.dadino.quickstart3.icon.ContextDrawable
 import com.dadino.quickstart3.icon.asIcon
 import com.dadino.quickstart3.selectable.Id
 import com.dadino.quickstart3.selectable.Selectable
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 open class Action(
   val id: Int,
   val text: ContextFormattable? = null,
@@ -20,7 +22,7 @@ open class Action(
   val icon: ContextDrawable? = null,
   val enabled: Boolean = true,
   val showAsAction: Int = MenuItem.SHOW_AS_ACTION_IF_ROOM,
-  val eventOnClick: Event
+  val eventOnClick: ParcelableEvent
 ) : Selectable {
   constructor(
 	id: Int,
@@ -28,7 +30,7 @@ open class Action(
 	@DrawableRes icon: Int?,
 	enabled: Boolean = true,
 	showAsAction: Int = MenuItem.SHOW_AS_ACTION_IF_ROOM,
-	eventOnClick: Event
+	eventOnClick: ParcelableEvent
   ) : this(
 	id = id,
 	text = text,
