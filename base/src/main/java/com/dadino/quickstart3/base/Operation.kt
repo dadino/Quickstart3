@@ -29,4 +29,28 @@ sealed class Operation : Parcelable {
 	  return "Operation.ERROR {$error}"
 	}
   }
+
+  companion object {
+	fun idle(): Operation = Idle
+	fun inProgress(): Operation = InProgress
+	fun done(): Operation = Done
+	fun error(error: Throwable): Operation = Error(error)
+
+	fun combine(operations: List<Operation>): Operation {
+	  return if (operations.any { it is Error }) {
+		val errorOperations = operations.filterIsInstance<Error>()
+		if (errorOperations.size == 1) error(errorOperations.first().error)
+		else error(CompositeException(errorOperations.map { it.error }))
+	  } else if (operations.any { it is InProgress }) {
+		inProgress()
+	  } else if (operations.all { it is Done }) {
+		done()
+	  } else idle()
+	}
+  }
 }
+
+fun Operation.combine(vararg other: Operation): Operation = Operation.combine(listOf(this) + other.toList())
+
+class CompositeException(val throwables: List<Throwable>) : Throwable()
+

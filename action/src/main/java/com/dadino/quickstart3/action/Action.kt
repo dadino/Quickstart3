@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.Menu
 import android.view.MenuItem
 import androidx.annotation.DrawableRes
+import com.dadino.quickstart3.base.Operation
 import com.dadino.quickstart3.base.ParcelableEvent
 import com.dadino.quickstart3.color.SurfaceColor
 import com.dadino.quickstart3.contextformattable.ContextFormattable
@@ -20,6 +21,7 @@ open class Action(
   val text: ContextFormattable? = null,
   val shortText: ContextFormattable? = text,
   val icon: ContextDrawable? = null,
+  val inProgress: Boolean = false,
   val enabled: Boolean = true,
   val showAsAction: Int = MenuItem.SHOW_AS_ACTION_IF_ROOM,
   val eventOnClick: ParcelableEvent
@@ -28,7 +30,9 @@ open class Action(
 	id: Int,
 	text: ContextFormattable? = null,
 	@DrawableRes icon: Int?,
-	enabled: Boolean = true,
+	operation: Operation? = null,
+	enabled: Boolean = if (operation != null) operation !is Operation.InProgress else true,
+	inProgress: Boolean = if (operation != null) operation is Operation.InProgress else false,
 	showAsAction: Int = MenuItem.SHOW_AS_ACTION_IF_ROOM,
 	eventOnClick: ParcelableEvent
   ) : this(
@@ -36,6 +40,24 @@ open class Action(
 	text = text,
 	icon = icon?.asIcon(),
 	enabled = enabled,
+	inProgress = inProgress,
+	showAsAction = showAsAction,
+	eventOnClick = eventOnClick
+  )
+
+  constructor(
+	id: Int,
+	text: ContextFormattable? = null,
+	icon: ContextDrawable? = null,
+	operation: Operation?,
+	showAsAction: Int = MenuItem.SHOW_AS_ACTION_IF_ROOM,
+	eventOnClick: ParcelableEvent
+  ) : this(
+	id = id,
+	text = text,
+	icon = icon,
+	enabled = if (operation != null) operation !is Operation.InProgress else true,
+	inProgress = if (operation != null) operation is Operation.InProgress else false,
 	showAsAction = showAsAction,
 	eventOnClick = eventOnClick
   )
