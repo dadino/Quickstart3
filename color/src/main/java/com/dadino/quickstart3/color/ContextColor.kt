@@ -5,12 +5,10 @@ import android.graphics.Color
 import android.os.Parcelable
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
-import com.dadino.quickstart3.color.ContextColor.ColorStateList
-import com.dadino.quickstart3.color.ContextColor.Hex
-import com.dadino.quickstart3.color.ContextColor.Integer
-import com.dadino.quickstart3.color.ContextColor.OnSurface
-import com.dadino.quickstart3.color.ContextColor.Res
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -54,6 +52,12 @@ interface ContextColor : Parcelable {
    */
   fun getColorStateList(context: Context): android.content.res.ColorStateList = ColorStateListGenerator.createColorStateList(getColor(context))
 
+  @Composable
+  open fun getComposeColor(): androidx.compose.ui.graphics.Color {
+	val context = LocalContext.current
+	return remember { androidx.compose.ui.graphics.Color(getColor(context)) }
+  }
+
   @Parcelize
   class Res(@ColorRes private val res: Int) : ContextColor {
 	override fun getId(context: Context): String {
@@ -62,6 +66,12 @@ interface ContextColor : Parcelable {
 
 	override fun getColor(context: Context): Int {
 	  return ContextCompat.getColor(context, res)
+	}
+
+	@Composable
+	override fun getComposeColor(): androidx.compose.ui.graphics.Color {
+	  val context = LocalContext.current
+	  return remember { androidx.compose.ui.graphics.Color(getColor(context)) }
 	}
   }
 
@@ -92,6 +102,22 @@ interface ContextColor : Parcelable {
 	override fun getColor(context: Context): Int {
 	  return Color.parseColor(if (hexString.startsWith("#")) hexString else "#$hexString")
 	}
+
+	@Composable
+	override fun getComposeColor(): androidx.compose.ui.graphics.Color {
+	  val colorLong = remember {
+		val hex = hexString.trimStart('#', '0', 'x').uppercase()
+		when (hex.length) {
+		  // RRGGBB format (6 digits): Default to full opacity (FF) -> FFRRGGBB
+		  6    -> "FF$hex".toLong(16)
+		  // AARRGGBB format (8 digits): -> AARRGGBB
+		  8    -> hex.toLong(16)
+		  // Invalid format
+		  else -> throw IllegalArgumentException("Invalid hex color string format: $this")
+		}
+	  }
+	  return remember { androidx.compose.ui.graphics.Color(colorLong) }
+	}
   }
 
   /**
@@ -113,6 +139,11 @@ interface ContextColor : Parcelable {
 
 	override fun getColor(context: Context): Int {
 	  return colorInt
+	}
+
+	@Composable
+	override fun getComposeColor(): androidx.compose.ui.graphics.Color {
+	  return remember { androidx.compose.ui.graphics.Color(colorInt) }
 	}
   }
 
@@ -136,6 +167,12 @@ interface ContextColor : Parcelable {
 
 	override fun getColor(context: Context): Int {
 	  return ColorOnSurfaceProvider.getColorOn(surfaceColor, context) ?: Color.WHITE
+	}
+
+	@Composable
+	override fun getComposeColor(): androidx.compose.ui.graphics.Color {
+	  val context = LocalContext.current
+	  return remember { androidx.compose.ui.graphics.Color(getColor(context)) }
 	}
   }
 
@@ -161,6 +198,11 @@ interface ContextColor : Parcelable {
 
 	override fun getColorStateList(context: Context): android.content.res.ColorStateList {
 	  return colorStateList
+	}
+
+	@Composable
+	override fun getComposeColor(): androidx.compose.ui.graphics.Color {
+	  return remember { androidx.compose.ui.graphics.Color(colorStateList.defaultColor) }
 	}
   }
 }

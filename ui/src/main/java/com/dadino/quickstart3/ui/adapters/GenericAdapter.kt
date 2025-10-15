@@ -7,12 +7,12 @@ import androidx.recyclerview.widget.DiffUtil
 import com.dadino.quickstart3.core.utils.QuickLogger
 import com.dadino.quickstart3.core.utils.printQuickStackTrace
 
-class GenericAdapter(val log: Boolean = false) : BaseListAdapter<ListItem, ListItemHolder>() {
+class GenericAdapter(val log: Boolean = false) : BaseListAdapter<RecycledListItem, ListItemHolder>() {
   private var itemsToReportWhenNotVisible: Map<Int, ListItem> = emptyMap()
 
   override fun getDiffCallbacks(
-	oldList: List<ListItem>,
-	newList: List<ListItem>
+	oldList: List<RecycledListItem>,
+	newList: List<RecycledListItem>
   ): DiffUtil.Callback? {
 	return GenericDiffUtils(oldList, newList)
   }
@@ -50,7 +50,7 @@ class GenericAdapter(val log: Boolean = false) : BaseListAdapter<ListItem, ListI
 	return getItem(position)?.getLayoutId() ?: throw RuntimeException("ListItem not handled")
   }
 
-  override fun touchItemListBeforeSend(itemList: List<ListItem>): List<ListItem> {
+  override fun touchItemListBeforeSend(itemList: List<RecycledListItem>): List<RecycledListItem> {
 	itemsToReportWhenNotVisible = itemList.mapIndexedNotNull { index, listItem ->
 	  if (listItem.reportWhenNotVisible())
 		index to listItem
@@ -93,5 +93,5 @@ class GenericAdapter(val log: Boolean = false) : BaseListAdapter<ListItem, ListI
   }
 }
 
-abstract class ListItemHolder(view: View) : BaseHolder<ListItem>(view)
+abstract class ListItemHolder(view: View) : BaseHolder<RecycledListItem>(view)
 

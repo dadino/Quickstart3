@@ -8,6 +8,9 @@ import androidx.annotation.AnimRes
 import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
 import androidx.annotation.DrawableRes
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import com.dadino.quickstart3.color.ColorOnSurfaceProvider
@@ -41,6 +44,11 @@ data class Icon(
 	  DrawableCompat.setTintList(temp, getTintList(context))
 	  temp
 	}
+  }
+
+  @Composable
+  override fun getPainter(): Painter? {
+	return painterResource(id = icon)
   }
 
   override fun getAnimationRes(): Int? = animation

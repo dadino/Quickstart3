@@ -9,6 +9,7 @@ import com.dadino.quickstart3.base.NoOpEvent
 import com.dadino.quickstart3.sample.R
 import com.dadino.quickstart3.ui.adapters.ListItem
 import com.dadino.quickstart3.ui.adapters.ListItemHolder
+import com.dadino.quickstart3.ui.adapters.RecycledListItem
 import com.dadino.quickstart3.ui.adapters.UpdatableHolder
 import com.dadino.quickstart3.ui.utils.visibleIf
 import com.jakewharton.rxbinding3.view.clicks
@@ -23,7 +24,7 @@ class GridCellHolder(view: View) : ListItemHolder(view), UpdatableHolder {
 
 	private var gridCell: GridCell? = null
 
-	override fun bindItem(item: ListItem, position: Int) {
+  override fun bindItem(item: RecycledListItem, position: Int) {
 		when (item) {
 			is GridCell -> {
 				gridCell = item

@@ -5,14 +5,14 @@ import android.view.View
 import com.dadino.quickstart3.base.Event
 import com.dadino.quickstart3.contextformattable.ContextFormattable
 import com.dadino.quickstart3.ui.adapters.ListItem
-
+import com.dadino.quickstart3.ui.adapters.RecycledListItem
 
 data class GridCell(
 	val id: String,
 	val message: ContextFormattable? = null,
 	val onMinusClick: Event,
 	val onPlusClick: Event,
-) : ListItem() {
+) : RecycledListItem() {
 
   override fun getStringId(): String {
 	return "gridCell:$id"

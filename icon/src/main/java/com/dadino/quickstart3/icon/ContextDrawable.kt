@@ -9,6 +9,14 @@ import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import androidx.annotation.AnimRes
 import androidx.annotation.DimenRes
+import androidx.compose.foundation.Image
+import androidx.compose.material3.Icon
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import com.dadino.quickstart3.color.ContextColor
 import com.dadino.quickstart3.color.SurfaceColor
 
@@ -66,6 +74,42 @@ interface ContextDrawable : Parcelable {
    */
   fun getDrawable(context: Context): Drawable? {
 	return DrawableVault.getDrawable(context, this)
+  }
+
+  @Composable
+  open fun getPainter(): Painter? {
+	val context = LocalContext.current
+	val drawable = remember { getDrawable(context) } ?: return null
+	val tint = getTint()?.getComposeColor() ?: ContextColor.OnSurface(getShownOn()).getComposeColor()
+	return drawable.toBitmapPainter(tint)
+  }
+
+  @Composable
+  open fun DrawnIcon(modifier: Modifier = Modifier, contentDescription: String? = null) {
+	val tint = getTint()?.getComposeColor() ?: ContextColor.OnSurface(getShownOn()).getComposeColor()
+
+	getPainter()?.let {
+	  Icon(
+		modifier = modifier,
+		painter = it,
+		contentDescription = contentDescription,
+		tint = tint
+	  )
+	}
+  }
+
+  @Composable
+  open fun DrawnImage(modifier: Modifier = Modifier, contentDescription: String? = null) {
+	val tint = getTint()?.getComposeColor() ?: ContextColor.OnSurface(getShownOn()).getComposeColor()
+
+	getPainter()?.let {
+	  Image(
+		modifier = modifier,
+		painter = it,
+		contentDescription = contentDescription,
+		colorFilter = ColorFilter.tint(tint)
+	  )
+	}
   }
 
   /**

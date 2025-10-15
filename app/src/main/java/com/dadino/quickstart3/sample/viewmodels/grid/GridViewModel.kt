@@ -13,7 +13,7 @@ import com.dadino.quickstart3.core.entities.Start.Companion.start
 import com.dadino.quickstart3.core.entities.State
 import com.dadino.quickstart3.sample.R
 import com.dadino.quickstart3.sample.listitems.GridCell
-import com.dadino.quickstart3.ui.adapters.ListItem
+import com.dadino.quickstart3.ui.adapters.RecycledListItem
 
 class GridViewModel : BaseViewModel<GridState>() {
 
@@ -41,9 +41,8 @@ data class GridState(
 	)
 ) : State {
 
-
-	fun getListItems(): List<ListItem> {
-		val temp = arrayListOf<ListItem>()
+  fun getListItems(): List<RecycledListItem> {
+	val temp = arrayListOf<RecycledListItem>()
 		grid.entries.forEach { entry ->
 			temp.add(
 				GridCell(

@@ -18,11 +18,31 @@ abstract class ListItem {
   var spanSizeRes: Int? = null
 
   abstract fun getStringId(): String
+  open fun reportWhenNotVisible(): Boolean = false
+
+  companion object {
+
+	const val PAYLOAD_SELECTED = "PAYLOAD_SELECTED"
+	const val PAYLOAD_FOCUSED = "PAYLOAD_FOCUSED"
+	const val PAYLOAD_CARD = "PAYLOAD_CARD"
+	const val PAYLOAD_SPAN_SIZE = "PAYLOAD_SPAN_SIZE"
+  }
+}
+
+abstract class RecycledListItem : ListItem() {
+
   fun numericId(): Long = getStringId().hashCode().toLong()
 
   @LayoutRes
   abstract fun getLayoutId(): Int
-  open fun reportWhenNotVisible(): Boolean = false
+
+  fun canGenerateHolder(viewType: Int): Boolean = viewType == getLayoutId()
+
+  fun generateHolder(getView: (Int) -> View): ListItemHolder {
+	return generateHolderForItem(getView(getLayoutId()))
+  }
+
+  abstract fun generateHolderForItem(view: View): ListItemHolder
 
   fun createUpdateBundle(oldItem: ListItem): Bundle? {
 	val diff = Bundle()
@@ -34,14 +54,6 @@ abstract class ListItem {
 	  null
 	} else diff
   }
-
-  fun canGenerateHolder(viewType: Int): Boolean = viewType == getLayoutId()
-
-  fun generateHolder(getView: (Int) -> View): ListItemHolder {
-	return generateHolderForItem(getView(getLayoutId()))
-  }
-
-  abstract fun generateHolderForItem(view: View): ListItemHolder
 
   protected abstract fun createUpdateBundleForItem(diff: Bundle, oldItem: ListItem)
   private fun createBaseUpdateBundle(diff: Bundle, oldItem: ListItem) {
@@ -68,13 +80,4 @@ abstract class ListItem {
 		&& this.focused == oldItem.focused
 		&& this == oldItem
   }
-
-  companion object {
-
-	const val PAYLOAD_SELECTED = "PAYLOAD_SELECTED"
-	const val PAYLOAD_FOCUSED = "PAYLOAD_FOCUSED"
-	const val PAYLOAD_CARD = "PAYLOAD_CARD"
-	const val PAYLOAD_SPAN_SIZE = "PAYLOAD_SPAN_SIZE"
-  }
 }
-

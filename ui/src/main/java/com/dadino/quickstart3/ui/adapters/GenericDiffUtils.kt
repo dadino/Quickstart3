@@ -2,7 +2,7 @@ package com.dadino.quickstart3.ui.adapters
 
 import androidx.recyclerview.widget.DiffUtil
 
-class GenericDiffUtils(private val oldList: List<ListItem>, private val newList: List<ListItem>) :
+class GenericDiffUtils(private val oldList: List<RecycledListItem>, private val newList: List<RecycledListItem>) :
 		DiffUtil.Callback() {
 
 	override fun getOldListSize(): Int {
