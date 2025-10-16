@@ -42,6 +42,10 @@ android {
         jvmTarget = "21"
     }
     namespace 'com.dadino.quickstart3.icon'
+
+    buildFeatures {
+        compose = true
+    }
 }
 
 dependencies {
