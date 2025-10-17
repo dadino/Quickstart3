@@ -89,7 +89,8 @@ interface ContextDrawable : Parcelable {
   open fun DrawnIcon(modifier: Modifier = Modifier, forcedTint: Color? = null, contentDescription: String? = null) {
 	val tint = forcedTint ?: getTint()?.getComposeColor() ?: ContextColor.OnSurface(getShownOn()).getComposeColor()
 
-	getPainter()?.let {
+	val painter = getPainter()
+	painter?.let {
 	  Icon(
 		modifier = modifier,
 		painter = it,
@@ -103,7 +104,8 @@ interface ContextDrawable : Parcelable {
   open fun DrawnImage(modifier: Modifier = Modifier, forcedTint: Color? = null, contentDescription: String? = null) {
 	val tint = forcedTint ?: getTint()?.getComposeColor() ?: ContextColor.OnSurface(getShownOn()).getComposeColor()
 
-	getPainter()?.let {
+	val painter = getPainter()
+	painter?.let {
 	  Image(
 		modifier = modifier,
 		painter = it,
@@ -115,13 +117,13 @@ interface ContextDrawable : Parcelable {
 
   @Composable
   fun asDrawnIcon(): IconSlotComposable? =
-	remember {
+	remember(this) {
 	  this.let { { modifier, tint, description -> this.DrawnIcon(modifier = modifier, forcedTint = tint, contentDescription = description) } }
 	}
 
   @Composable
   fun asDrawnImage(): ImageSlotComposable? =
-	remember {
+	remember(this) {
 	  this.let { { modifier, tint, description -> this.DrawnImage(modifier = modifier, forcedTint = tint, contentDescription = description) } }
 	}
 
