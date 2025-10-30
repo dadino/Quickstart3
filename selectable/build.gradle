@@ -46,6 +46,7 @@ android {
 dependencies {
     implementation project(":icon")
     implementation project(":contextformattable")
+    implementation project(":color")
     implementation project(":base")
 
     implementation 'androidx.annotation:annotation:1.9.1'
