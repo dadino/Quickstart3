@@ -1,11 +1,13 @@
 package com.dadino.quickstart3.contextformattable
 
 import android.content.Context
+import androidx.compose.runtime.Stable
 import kotlinx.parcelize.Parcelize
 import java.text.SimpleDateFormat
 import java.util.*
 
 @Parcelize
+@Stable
 class DateFormattable(private val date: Date, private val dateFormat: String = "dd/MM/yyyy") : ContextFormattable {
 
   private val formatter by lazy { SimpleDateFormat(dateFormat, Locale.ITALIAN) }
@@ -31,6 +33,7 @@ class DateFormattable(private val date: Date, private val dateFormat: String = "
 }
 
 @Parcelize
+@Stable
 class DateRangeFormattable(private val fromDate: Date, private val toDate: Date, private val dateFormat: String = "dd/MM/yyyy") : ContextFormattable {
 
   private val formatter by lazy { SimpleDateFormat(dateFormat, Locale.ITALIAN) }

@@ -12,6 +12,7 @@ import androidx.annotation.DimenRes
 import androidx.compose.foundation.Image
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,6 +30,7 @@ import com.dadino.quickstart3.color.SurfaceColor
  * [DrawableVault], handling resource retrieval based on the application context, and
  * applying visual customizations.
  */
+@Stable
 interface ContextDrawable : Parcelable {
   fun getVaultId(context: Context): String
 
@@ -82,7 +84,7 @@ interface ContextDrawable : Parcelable {
 	val context = LocalContext.current
 	val drawable = remember { getDrawable(context) } ?: return null
 	val tint = getTint()?.getComposeColor() ?: ContextColor.OnSurface(getShownOn()).getComposeColor()
-	return drawable.toBitmapPainter(tint)
+	return toBitmapPainter(drawable, tint)
   }
 
   @Composable
@@ -118,13 +120,13 @@ interface ContextDrawable : Parcelable {
   @Composable
   fun asDrawnIcon(): IconSlotComposable? =
 	remember(this) {
-	  this.let { { modifier, tint, description -> this.DrawnIcon(modifier = modifier, forcedTint = tint, contentDescription = description) } }
+	  IconSlotComposable { modifier, tint, description -> this.DrawnIcon(modifier = modifier, forcedTint = tint, contentDescription = description) }
 	}
 
   @Composable
   fun asDrawnImage(): ImageSlotComposable? =
 	remember(this) {
-	  this.let { { modifier, tint, description -> this.DrawnImage(modifier = modifier, forcedTint = tint, contentDescription = description) } }
+	  ImageSlotComposable { modifier, tint, description -> this.DrawnImage(modifier = modifier, forcedTint = tint, contentDescription = description) }
 	}
 
   /**
@@ -191,14 +193,22 @@ fun ImageView.drawContextDrawable(contextDrawable: ContextDrawable?) {
   contextDrawable?.getAnimationRes()?.let { this.startAnimation(AnimationUtils.loadAnimation(context, it)) }?.run { clearAnimation() }
 }
 
-typealias IconSlotComposable = @Composable (
-  modifier: Modifier,
-  forcedTint: Color?,
-  contentDescription: String?
-) -> Unit
+@Stable
+fun interface IconSlotComposable {
+  @Composable
+  operator fun invoke(
+	modifier: Modifier,
+	forcedTint: Color?,
+	contentDescription: String?
+  )
+}
 
-typealias ImageSlotComposable = @Composable (
-  modifier: Modifier,
-  forcedTint: Color?,
-  contentDescription: String?
-) -> Unit
+@Stable
+fun interface ImageSlotComposable {
+  @Composable
+  operator fun invoke(
+	modifier: Modifier,
+	forcedTint: Color?,
+	contentDescription: String?
+  )
+}

@@ -13,9 +13,9 @@ import androidx.core.graphics.createBitmap
 import androidx.core.graphics.drawable.DrawableCompat
 
 @Composable
-fun Drawable.toBitmapPainter(tintColor: Color? = null): BitmapPainter {
-  return remember(this, tintColor) {
-	val bitmap = this.toBitmap(tintColor)
+fun toBitmapPainter(drawable: Drawable, tintColor: Color? = null): BitmapPainter {
+  return remember(drawable, tintColor) {
+    val bitmap = drawable.toBitmap(tintColor)
 	BitmapPainter(bitmap.asImageBitmap())
   }
 }

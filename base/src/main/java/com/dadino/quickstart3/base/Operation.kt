@@ -1,29 +1,35 @@
 package com.dadino.quickstart3.base
 
 import android.os.Parcelable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
+@Stable
 sealed class Operation : Parcelable {
-
+  @Immutable
   object Idle : Operation() {
 	override fun toString(): String {
 	  return "Operation.IDLE"
 	}
   }
 
+  @Immutable
   object InProgress : Operation() {
 	override fun toString(): String {
 	  return "Operation.IN_PROGRESS"
 	}
   }
 
+  @Immutable
   object Done : Operation() {
 	override fun toString(): String {
 	  return "Operation.DONE"
 	}
   }
 
+  @Stable
   class Error(val error: Throwable) : Operation() {
 	override fun toString(): String {
 	  return "Operation.ERROR {$error}"

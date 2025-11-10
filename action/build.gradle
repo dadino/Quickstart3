@@ -51,4 +51,8 @@ dependencies {
     implementation project(":base")
 
     implementation 'androidx.annotation:annotation:1.9.1'
+
+    //COMPOSE
+    implementation platform("androidx.compose:compose-bom:$compose_bom")
+    implementation 'androidx.compose.ui:ui'
 }

@@ -3,10 +3,12 @@ package com.dadino.quickstart3.contextformattable
 import android.content.Context
 import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
+import androidx.compose.runtime.Stable
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
 
 @Parcelize
+@Stable
 open class ResFormattable(
   @StringRes private val textRes: Int,
   private vararg val args: @RawValue Any

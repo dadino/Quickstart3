@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.Menu
 import android.view.MenuItem
 import androidx.annotation.DrawableRes
+import androidx.compose.runtime.Stable
 import com.dadino.quickstart3.base.Operation
 import com.dadino.quickstart3.base.ParcelableEvent
 import com.dadino.quickstart3.color.SurfaceColor
@@ -16,6 +17,7 @@ import com.dadino.quickstart3.selectable.Selectable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
+@Stable
 open class Action(
   val id: Int,
   val text: ContextFormattable? = null,

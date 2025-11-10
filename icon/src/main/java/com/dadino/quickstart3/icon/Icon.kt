@@ -9,6 +9,7 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.core.content.ContextCompat
@@ -30,6 +31,7 @@ import kotlinx.parcelize.Parcelize
  * @property shownOn The surface color on which the icon will be displayed. This affects the default tint when no explicit tint is provided.
  */
 @Parcelize
+@Stable
 data class Icon(
   @DrawableRes val icon: Int,
   private val tint: ContextColor? = null,

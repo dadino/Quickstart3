@@ -1,6 +1,7 @@
 package com.dadino.quickstart3.base
 
 import android.os.Parcelable
+import androidx.compose.runtime.Immutable
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -14,6 +15,7 @@ import kotlinx.parcelize.Parcelize
  * class UserLoggedInEvent(val userId: String) : Event()
  * ```
  */
+@Immutable
 open class Event
 
 @Parcelize

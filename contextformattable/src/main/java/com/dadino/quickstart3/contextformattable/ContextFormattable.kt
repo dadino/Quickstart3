@@ -2,6 +2,7 @@ package com.dadino.quickstart3.contextformattable
 
 import android.content.Context
 import android.os.Parcelable
+import androidx.compose.runtime.Stable
 import java.io.Serializable
 
 /**
@@ -36,6 +37,7 @@ import java.io.Serializable
  *  }
  *
  * */
+@Stable
 interface ContextFormattable : Parcelable, Serializable {
 
   fun format(context: Context, modifiers: List<CFModifier>): CharSequence?

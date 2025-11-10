@@ -1,10 +1,12 @@
 package com.dadino.quickstart3.contextformattable
 
 import android.content.Context
+import androidx.compose.runtime.Stable
 import androidx.core.text.HtmlCompat
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
+@Stable
 open class MapFormattable(val map: Map<ContextFormattable, ContextFormattable?>) : ContextFormattable {
 
   override fun format(context: Context, modifiers: List<CFModifier>): CharSequence? {

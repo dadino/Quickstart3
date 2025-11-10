@@ -6,6 +6,7 @@ import android.os.Parcelable
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
@@ -26,6 +27,7 @@ import kotlinx.parcelize.Parcelize
  *  - [OnSurface]: A color that is dynamically determined based on a provided [SurfaceColor].
  *  - [ColorStateList]: A color defined by an existing [ColorStateList].
  */
+@Stable
 interface ContextColor : Parcelable {
 
   fun getId(context: Context): String
@@ -59,6 +61,7 @@ interface ContextColor : Parcelable {
   }
 
   @Parcelize
+  @Stable
   class Res(@ColorRes private val res: Int) : ContextColor {
 	override fun getId(context: Context): String {
 	  return "Res:$res:${context.resources.getResourceName(res)}"
@@ -71,7 +74,7 @@ interface ContextColor : Parcelable {
 	@Composable
 	override fun getComposeColor(): androidx.compose.ui.graphics.Color {
 	  val context = LocalContext.current
-	  return remember { androidx.compose.ui.graphics.Color(getColor(context)) }
+	  return remember(this) { androidx.compose.ui.graphics.Color(getColor(context)) }
 	}
   }
 
@@ -94,6 +97,7 @@ interface ContextColor : Parcelable {
    * @property hexString The hexadecimal string representation of the color.  Can include or exclude the leading "#".
    */
   @Parcelize
+  @Stable
   class Hex(private val hexString: String) : ContextColor {
 	override fun getId(context: Context): String {
 	  return "Hex:$hexString"
@@ -116,7 +120,7 @@ interface ContextColor : Parcelable {
 		  else -> throw IllegalArgumentException("Invalid hex color string format: $this")
 		}
 	  }
-	  return remember { androidx.compose.ui.graphics.Color(colorLong) }
+	  return remember(this) { androidx.compose.ui.graphics.Color(colorLong) }
 	}
   }
 
@@ -132,6 +136,7 @@ interface ContextColor : Parcelable {
    *                    color integer, typically obtained from resources or color constants.
    */
   @Parcelize
+  @Stable
   class Integer(@ColorInt private val colorInt: Int) : ContextColor {
 	override fun getId(context: Context): String {
 	  return "Int:$colorInt"
@@ -143,7 +148,7 @@ interface ContextColor : Parcelable {
 
 	@Composable
 	override fun getComposeColor(): androidx.compose.ui.graphics.Color {
-	  return remember { androidx.compose.ui.graphics.Color(colorInt) }
+	  return remember(this) { androidx.compose.ui.graphics.Color(colorInt) }
 	}
   }
 
@@ -160,6 +165,7 @@ interface ContextColor : Parcelable {
    * @see SurfaceColor
    */
   @Parcelize
+  @Stable
   class OnSurface(private val surfaceColor: SurfaceColor) : ContextColor {
 	override fun getId(context: Context): String {
 	  return "OnSurface:$surfaceColor"
@@ -172,7 +178,7 @@ interface ContextColor : Parcelable {
 	@Composable
 	override fun getComposeColor(): androidx.compose.ui.graphics.Color {
 	  val context = LocalContext.current
-	  return remember { androidx.compose.ui.graphics.Color(getColor(context)) }
+	  return remember(this) { androidx.compose.ui.graphics.Color(getColor(context)) }
 	}
   }
 
@@ -187,6 +193,7 @@ interface ContextColor : Parcelable {
    * @property colorStateList The underlying Android ColorStateList.
    */
   @Parcelize
+  @Stable
   class ColorStateList(private val colorStateList: android.content.res.ColorStateList) : ContextColor {
 	override fun getId(context: Context): String {
 	  return "ColorStateList:$colorStateList"
@@ -202,7 +209,7 @@ interface ContextColor : Parcelable {
 
 	@Composable
 	override fun getComposeColor(): androidx.compose.ui.graphics.Color {
-	  return remember { androidx.compose.ui.graphics.Color(colorStateList.defaultColor) }
+	  return remember(this) { androidx.compose.ui.graphics.Color(colorStateList.defaultColor) }
 	}
   }
 }

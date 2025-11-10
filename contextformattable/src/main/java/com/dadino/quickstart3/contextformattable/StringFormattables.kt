@@ -1,11 +1,13 @@
 package com.dadino.quickstart3.contextformattable
 
 import android.content.Context
+import androidx.compose.runtime.Stable
 import androidx.core.text.HtmlCompat
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
 
 @Parcelize
+@Stable
 open class StringFormattable(
   private val text: String,
   private vararg val args: @RawValue Any
