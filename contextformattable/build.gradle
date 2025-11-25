@@ -2,6 +2,7 @@ plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-parcelize'
+    id "org.jetbrains.kotlin.plugin.compose"
 }
 
 ext {
@@ -57,4 +58,6 @@ dependencies {
     //COMPOSE
     implementation platform("androidx.compose:compose-bom:$compose_bom")
     implementation 'androidx.compose.ui:ui'
+    implementation 'io.github.aghajari:AnnotatedText:1.0.3'
+    api("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.4.0")
 }

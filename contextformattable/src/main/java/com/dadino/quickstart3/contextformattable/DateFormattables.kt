@@ -2,6 +2,7 @@ package com.dadino.quickstart3.contextformattable
 
 import android.content.Context
 import androidx.compose.runtime.Stable
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.parcelize.Parcelize
 import java.text.SimpleDateFormat
 import java.util.*
@@ -11,7 +12,7 @@ import java.util.*
 class DateFormattable(private val date: Date, private val dateFormat: String = "dd/MM/yyyy") : ContextFormattable {
 
   private val formatter by lazy { SimpleDateFormat(dateFormat, Locale.ITALIAN) }
-  override fun format(context: Context, modifiers: List<CFModifier>): CharSequence? {
+  override fun format(context: Context, modifiers: ImmutableList<CFModifier>): CharSequence? {
 	return formatter.format(date)
   }
 
@@ -37,7 +38,7 @@ class DateFormattable(private val date: Date, private val dateFormat: String = "
 class DateRangeFormattable(private val fromDate: Date, private val toDate: Date, private val dateFormat: String = "dd/MM/yyyy") : ContextFormattable {
 
   private val formatter by lazy { SimpleDateFormat(dateFormat, Locale.ITALIAN) }
-  override fun format(context: Context, modifiers: List<CFModifier>): CharSequence? {
+  override fun format(context: Context, modifiers: ImmutableList<CFModifier>): CharSequence? {
 	return "${formatter.format(fromDate)} - ${formatter.format(toDate)}"
   }
 
@@ -60,5 +61,4 @@ class DateRangeFormattable(private val fromDate: Date, private val toDate: Date,
   }
 }
 
-fun Date.asFormattable() = DateFormattable(this)
-fun Date.asFormattable(dateFormat: String) = DateFormattable(this, dateFormat = dateFormat)
+fun Date.asFormattable(dateFormat: String? = null) = if (dateFormat != null) DateFormattable(this, dateFormat = dateFormat) else DateFormattable(this)

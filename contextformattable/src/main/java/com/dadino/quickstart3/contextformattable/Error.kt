@@ -2,13 +2,14 @@ package com.dadino.quickstart3.contextformattable
 
 import android.content.Context
 import androidx.compose.runtime.Stable
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 @Stable
 open class Error(val error: Throwable?, val formattable: ContextFormattable?) : ContextFormattable {
 
-  override fun format(context: Context, modifiers: List<CFModifier>): CharSequence? {
+  override fun format(context: Context, modifiers: ImmutableList<CFModifier>): CharSequence? {
 		return formattable?.format(context)
 	}
 

@@ -2,7 +2,16 @@ package com.dadino.quickstart3.contextformattable
 
 import android.content.Context
 import android.os.Parcelable
+import android.text.Spanned
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
+import com.aghajari.compose.text.ContentAnnotatedString
+import com.aghajari.compose.text.asAnnotatedString
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import java.io.Serializable
 
 /**
@@ -39,15 +48,27 @@ import java.io.Serializable
  * */
 @Stable
 interface ContextFormattable : Parcelable, Serializable {
+  fun format(context: Context, modifiers: ImmutableList<CFModifier>): CharSequence?
+  fun format(context: Context): CharSequence? = format(context, persistentListOf())
+  fun format(context: Context, modifier: CFModifier): CharSequence? = format(context, persistentListOf(modifier))
 
-  fun format(context: Context, modifiers: List<CFModifier>): CharSequence?
-  fun format(context: Context): CharSequence? = format(context, listOf())
-  fun format(context: Context, modifier: CFModifier): CharSequence? = format(context, listOf(modifier))
+  @Composable
+  fun asAnnotatedString(modifiers: ImmutableList<CFModifier> = persistentListOf()): ContentAnnotatedString? {
+	val context = LocalContext.current
+	val formatted: CharSequence? = remember(this, modifiers) { this.format(context, modifiers) }
+	return remember(formatted) {
+	  when (formatted) {
+		null       -> null
+		is Spanned -> formatted.asAnnotatedString()
+		else       -> ContentAnnotatedString(AnnotatedString(formatted.toString()), inlineContents = listOf(), paragraphContents = listOf())
+	  }
+	}
+  }
 
   override fun equals(other: Any?): Boolean
 }
 
-fun ContextFormattable?.isNullOrEmpty(context: Context, modifiers: List<CFModifier> = listOf()): Boolean {
+fun ContextFormattable?.isNullOrEmpty(context: Context, modifiers: ImmutableList<CFModifier> = persistentListOf()): Boolean {
   val charSequence = this?.format(context, modifiers)
   return this == null || charSequence.isNullOrBlank()
 }
