@@ -3,12 +3,10 @@ package com.dadino.quickstart3.core.utils
 import android.util.Log
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.newSingleThreadContext
 import timber.log.Timber
 
 object QuickLogger {
@@ -18,9 +16,8 @@ object QuickLogger {
   private var isLoggingEnabled = false
 
   // a single-thread background dispatcher
-  @OptIn(ExperimentalCoroutinesApi::class, DelicateCoroutinesApi::class)
   private val loggerDispatcher: CoroutineDispatcher by lazy {
-	newSingleThreadContext("LoggerContextThread")
+	Dispatchers.IO.limitedParallelism(1, name = "LoggerContextThread")
   }
   private val scope: CoroutineScope by lazy { CoroutineScope(SupervisorJob() + loggerDispatcher) }
 

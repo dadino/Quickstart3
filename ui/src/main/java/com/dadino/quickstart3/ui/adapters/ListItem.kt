@@ -1,24 +1,17 @@
 package com.dadino.quickstart3.ui.adapters
 
-import android.os.Bundle
-import android.view.View
-import androidx.annotation.IntegerRes
-import androidx.annotation.LayoutRes
-import com.dadino.quickstart3.ui.utils.Indent
-
-abstract class ListItem {
-
-  var focused: Boolean = false
-  var selected: Boolean = false
-  var selectionType: SelectionType = SelectionType.NoSelection
-  var showInCard: Boolean = false
-  var indent: Indent = Indent(0)
-
-  @IntegerRes
-  var spanSizeRes: Int? = null
+abstract class ListItem(open val metadata: ListItemMetadata = ListItemMetadata()) {
+  val focused get() = metadata.focused
+  val selected get() = metadata.selected
+  val selectionType get() = metadata.selectionType
+  val showInCard get() = metadata.showInCard
+  val indent get() = metadata.indent
+  val spanSizeRes get() = metadata.spanSizeRes
 
   abstract fun getStringId(): String
   open fun reportWhenNotVisible(): Boolean = false
+
+  abstract fun copyWithMetadata(metadata: ListItemMetadata): ListItem
 
   companion object {
 
@@ -29,55 +22,9 @@ abstract class ListItem {
   }
 }
 
-abstract class RecycledListItem : ListItem() {
-
-  fun numericId(): Long = getStringId().hashCode().toLong()
-
-  @LayoutRes
-  abstract fun getLayoutId(): Int
-
-  fun canGenerateHolder(viewType: Int): Boolean = viewType == getLayoutId()
-
-  fun generateHolder(getView: (Int) -> View): ListItemHolder {
-	return generateHolderForItem(getView(getLayoutId()))
-  }
-
-  abstract fun generateHolderForItem(view: View): ListItemHolder
-
-  fun createUpdateBundle(oldItem: ListItem): Bundle? {
-	val diff = Bundle()
-
-	createUpdateBundleForItem(diff, oldItem)
-	createBaseUpdateBundle(diff, oldItem)
-
-	return if (diff.size() == 0) {
-	  null
-	} else diff
-  }
-
-  protected abstract fun createUpdateBundleForItem(diff: Bundle, oldItem: ListItem)
-  private fun createBaseUpdateBundle(diff: Bundle, oldItem: ListItem) {
-	if (this.selected != oldItem.selected || this.selectionType != oldItem.selectionType) {
-	  diff.putString(PAYLOAD_SELECTED, PAYLOAD_SELECTED)
-	}
-	if (this.focused != oldItem.focused) {
-	  diff.putString(PAYLOAD_FOCUSED, PAYLOAD_FOCUSED)
-	}
-	if (this.showInCard != oldItem.showInCard || this.indent != oldItem.indent) {
-	  diff.putString(PAYLOAD_CARD, PAYLOAD_CARD)
-	}
-	if (this.spanSizeRes != oldItem.spanSizeRes) {
-	  diff.putString(PAYLOAD_SPAN_SIZE, PAYLOAD_SPAN_SIZE)
-	}
-  }
-
-  fun isContentTheSame(oldItem: ListItem): Boolean {
-	return this.selected == oldItem.selected
-		&& this.selectionType == oldItem.selectionType
-		&& this.showInCard == oldItem.showInCard
-		&& this.spanSizeRes == oldItem.spanSizeRes
-		&& this.indent == oldItem.indent
-		&& this.focused == oldItem.focused
-		&& this == oldItem
-  }
+@Suppress("UNCHECKED_CAST")
+inline fun <T : ListItem> T.mutate(block: ListItemMetadata.Builder.() -> Unit): T {
+  val builder = ListItemMetadata.Builder(this.metadata)
+  builder.block()
+  return this.copyWithMetadata(builder.build()) as T
 }
