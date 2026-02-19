@@ -18,6 +18,9 @@ import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import java.util.*
+import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.reflect.KClass
 
 /**
@@ -38,43 +41,85 @@ import kotlin.reflect.KClass
  *    - **Updater:**  A critical component that defines the state transition logic.  Its `internalUpdate` method takes the current state and an event as input, returning a `Next` object.  The `Next` object describes the new state, any signals to emit, and any side effects to handle.
  *    - **Signal:** Represents an */
 class QuickLoop<STATE : State>(
-	private val loopName: String,
-	private val updater: Updater<STATE>,
-	private val sideEffectHandlers: List<SideEffectHandler> = listOf(),
-	private val onConnectCallback: OnConnectCallback
+  private val loopName: String,
+  private val updater: Updater<STATE>,
+  private val sideEffectHandlers: List<SideEffectHandler> = listOf(),
+  private val onConnectCallback: OnConnectCallback
 
 ) {
 
-	var enableLogging = false
-	var canReceiveEvents = false
+  var enableLogging = false
+  var canReceiveEvents = false
 
-	private val eventSourcesCompositeDisposable = CompositeDisposable()
-	private val eventSourcesMap: HashMap<String, Disposable> = hashMapOf()
+  private val eventSourcesCompositeDisposable = CompositeDisposable()
+  private val eventSourcesMap: HashMap<String, Disposable> = hashMapOf()
 
-	private val mainStateRelay: BehaviorRelay<STATE> by lazy { BehaviorRelay.createDefault(updater.getInitialMainState()) }
-	private val stateRelayMap: Map<KClass<out State>, BehaviorRelay<State>> by lazy {
-		val relays = hashMapOf<KClass<out State>, BehaviorRelay<State>>()
-		relays[mainStateRelay.value!!::class] = mainStateRelay as BehaviorRelay<State>
-		updater.getInitialSubStates().forEach { subState -> relays[subState::class] = BehaviorRelay.createDefault(subState) }
-		relays
+  private val mainStateRelay: BehaviorRelay<STATE> by lazy { BehaviorRelay.createDefault(updater.getInitialMainState()) }
+  private val stateRelayMap: Map<KClass<out State>, BehaviorRelay<State>> by lazy {
+	val relays = hashMapOf<KClass<out State>, BehaviorRelay<State>>()
+	relays[mainStateRelay.value!!::class] = mainStateRelay as BehaviorRelay<State>
+	updater.getInitialSubStates().forEach { subState -> relays[subState::class] = BehaviorRelay.createDefault(subState) }
+	relays
+  }
+  private val stateFlowableMap: Map<KClass<out State>, Flowable<out State>> by lazy {
+	val flowables = hashMapOf<KClass<out State>, Flowable<out State>>()
+	stateRelayMap.entries.forEach {
+	  flowables[it.key] = it.value
+		.toFlowable(BackpressureStrategy.LATEST)
+		.replay(1)
+		.autoConnect(0)
 	}
-	private val stateFlowableMap: Map<KClass<out State>, Flowable<out State>> by lazy {
-		val flowables = hashMapOf<KClass<out State>, Flowable<out State>>()
-		stateRelayMap.entries.forEach {
-			flowables[it.key] = it.value
-				.toFlowable(BackpressureStrategy.LATEST)
-				.replay(1)
-				.autoConnect(0)
+	flowables
+  }
+
+  private val signalRelay: PublishRelay<Signal> by lazy { PublishRelay.create<Signal>() }
+  private val buffer = CopyOnWriteArrayList<Signal>()
+  private val subscriberCount = AtomicInteger(0)
+  val signals: Flowable<Signal> by lazy {
+	signalRelay.toFlowable(BackpressureStrategy.BUFFER)
+	  .doOnSubscribe {
+		val count = subscriberCount.incrementAndGet()
+		logSignalQueue { "$loopName - New subscriber to SignalQueue -> new count: $count" }
+
+		if (count == 1) {
+		  flushBuffer()
 		}
-		flowables
-	}
+	  }
+	  .doFinally {
+		val count = subscriberCount.decrementAndGet()
+		logSignalQueue { "$loopName - Removing subscriber from SignalQueue -> new count: $count" }
+	  }
+  }
 
-	private val signalRelay: PublishRelay<Signal> by lazy { PublishRelay.create<Signal>() }
-	val signals: Flowable<Signal> by lazy {
-		signalRelay.toFlowable(BackpressureStrategy.BUFFER)
+  fun sendSignal(signal: Signal) {
+	if (subscriberCount.get() > 0) {
+	  logSignalQueue { "$loopName - Sending signal to subscribers (${subscriberCount.get()}): $signal" }
+	  signalRelay.accept(signal)
+	} else {
+	  logSignalQueue { "$loopName - Saving signal to buffer: $signal" }
+	  buffer.add(signal)
 	}
+  }
 
-	private val eventRelay: PublishRelay<Event> = PublishRelay.create<Event>()
+  private var flushBufferDisposable: Disposable? = null
+  private fun flushBuffer() {
+	if (buffer.isNotEmpty()) {
+	  flushBufferDisposable?.dispose()
+	  flushBufferDisposable = Observable
+		.timer(10, TimeUnit.MILLISECONDS)
+		.subscribe {
+		  logSignalQueue { "$loopName - Flushing buffer (${buffer.size})" }
+		  val backlog = ArrayList(buffer)
+		  buffer.clear()
+		  backlog.forEach {
+			logSignalQueue { "$loopName - Sending saved signal $it" }
+			signalRelay.accept(it)
+		  }
+		}
+	}
+  }
+
+  private val eventRelay: PublishRelay<Event> = PublishRelay.create<Event>()
 
   /**
    * This disposable manages the internal reactive stream that processes events, updates the state,
@@ -96,42 +141,42 @@ class QuickLoop<STATE : State>(
    * The result of each event processing is mapped to `true` (indicating successful processing).
    * The Flowable is then converted to an async operation and subscribed, starting the event processing loop.
    */
-	private val internalDisposable: Disposable = eventRelay.filter { it !is NoOpEvent }
-		.toFlowable(BackpressureStrategy.BUFFER)
-		.startWith(InitializeState)
-		.map { event ->
-			val previousState = currentState()
-			val next = updater.internalUpdate(previousState, event)
-			val newState = next.state ?: previousState
-			val isInitialization = next is Start<STATE>
-			val updatedSubStates = updater.getStatesToPropagate(previousState, newState, isInitialization)
+  private val internalDisposable: Disposable = eventRelay.filter { it !is NoOpEvent }
+	.toFlowable(BackpressureStrategy.BUFFER)
+	.startWith(InitializeState)
+	.map { event ->
+	  val previousState = currentState()
+	  val next = updater.internalUpdate(previousState, event)
+	  val newState = next.state ?: previousState
+	  val isInitialization = next is Start<STATE>
+	  val updatedSubStates = updater.getStatesToPropagate(previousState, newState, isInitialization)
 
-			if (updatedSubStates.isNotEmpty()) {
-				propagateStates(updatedSubStates)
-			}
-			if (next.signals.isNotEmpty()) {
-				propagateSignals(next.signals)
-			}
-			if (next.effects.isNotEmpty()) {
-				handleSideEffects(next.effects)
-			}
+	  if (updatedSubStates.isNotEmpty()) {
+		propagateStates(updatedSubStates)
+	  }
+	  if (next.signals.isNotEmpty()) {
+		propagateSignals(next.signals)
+	  }
+	  if (next.effects.isNotEmpty()) {
+		handleSideEffects(next.effects)
+	  }
 
-			if (isInitialization) {
-				canReceiveEvents = true
-				onConnectCallback.onConnect()
-			}
+	  if (isInitialization) {
+		canReceiveEvents = true
+		onConnectCallback.onConnect()
+	  }
 
-			true
-		}
-		.toAsync()
-		.subscribe()
-
-	fun disconnect() {
-		internalDisposable.dispose()
-		eventSourcesCompositeDisposable.clear()
-		eventSourcesMap.clear()
-		sideEffectHandlers.forEach { it.onClear() }
+	  true
 	}
+	.toAsync()
+	.subscribe()
+
+  fun disconnect() {
+	internalDisposable.dispose()
+	eventSourcesCompositeDisposable.clear()
+	eventSourcesMap.clear()
+	sideEffectHandlers.forEach { it.onClear() }
+  }
 
   /**
    * Returns a list of Flowables, each emitting a stream of application states.
@@ -140,7 +185,7 @@ class QuickLoop<STATE : State>(
    *
    * @return A list of Flowables, where each Flowable emits a sequence of states.  The specific type of `State` emitted by each Flowable is determined by the underlying state management implementation.
    */
-	fun getStateFlows(): List<Flowable<out State>> = stateFlowableMap.entries.map { it.value }
+  fun getStateFlows(): List<Flowable<out State>> = stateFlowableMap.entries.map { it.value }
 
   /**
    * Retrieves a Flowable representing the state flow for a specific sub-state class.
@@ -156,8 +201,8 @@ class QuickLoop<STATE : State>(
    * @throws RuntimeException if no Flowable is found for the provided `subStateClass` in the
    *                          `stateFlowableMap`, indicating that the sub-state is not registered.
    */
-	fun getStateFlow(subStateClass: KClass<out State>): Flowable<out State> =
-		stateFlowableMap[subStateClass] ?: throw RuntimeException("No states for class ${subStateClass.qualifiedName}")
+  fun getStateFlow(subStateClass: KClass<out State>): Flowable<out State> =
+	stateFlowableMap[subStateClass] ?: throw RuntimeException("No states for class ${subStateClass.qualifiedName}")
 
   /**
    * Retrieves a list of the current values of all `StateFlow` instances held within the `stateRelayMap`.
@@ -167,7 +212,7 @@ class QuickLoop<STATE : State>(
    *
    * @return A list of `State` objects representing the current values of the `StateFlow`s in the `stateRelayMap`.
    */
-	fun getSubStates(): List<State> = stateRelayMap.entries.mapNotNull { it.value.value }
+  fun getSubStates(): List<State> = stateRelayMap.entries.mapNotNull { it.value.value }
 
   /**
    * Retrieves the current sub-state of a specific type.
@@ -178,17 +223,17 @@ class QuickLoop<STATE : State>(
    * @param subStateClass The KClass representing the type of sub-state to retrieve.  Must be a subclass of `State`.
    * @return The current sub-state of the specified type, or `null` if no sub-state of that type is currently active or if the associated relay is empty.
    */
-	fun getSubState(subStateClass: KClass<out State>): State? {
-		return stateRelayMap[subStateClass]?.value
-	}
+  fun getSubState(subStateClass: KClass<out State>): State? {
+	return stateRelayMap[subStateClass]?.value
+  }
 
-	fun currentState(): STATE {
-		return mainStateRelay.value!!
-	}
+  fun currentState(): STATE {
+	return mainStateRelay.value!!
+  }
 
-	fun receiveEvent(event: Event) {
-		eventRelay.accept(event)
-	}
+  fun receiveEvent(event: Event) {
+	eventRelay.accept(event)
+  }
 
   /**
    * Attaches an event source to the event system.
@@ -203,33 +248,33 @@ class QuickLoop<STATE : State>(
    * @param eventObservable An Observable that emits Events. The event system will subscribe to this
    *                        Observable and relay any emitted events to its listeners.
    */
-	fun attachEventSource(tag: String, eventObservable: Observable<Event>) {
-		if (eventSourcesMap.containsKey(tag).not()) {
-			val newDisposable = eventObservable.subscribe(eventRelay)
+  fun attachEventSource(tag: String, eventObservable: Observable<Event>) {
+	if (eventSourcesMap.containsKey(tag).not()) {
+	  val newDisposable = eventObservable.subscribe(eventRelay)
 
-			eventSourcesMap[tag] = newDisposable
-			eventSourcesCompositeDisposable.add(newDisposable)
-		}
+	  eventSourcesMap[tag] = newDisposable
+	  eventSourcesCompositeDisposable.add(newDisposable)
 	}
+  }
 
-	fun attachEventSource(tag: String, newDisposable: Disposable) {
-		if (eventSourcesMap.containsKey(tag).not()) {
+  fun attachEventSource(tag: String, newDisposable: Disposable) {
+	if (eventSourcesMap.containsKey(tag).not()) {
 
-			eventSourcesMap[tag] = newDisposable
-			eventSourcesCompositeDisposable.add(newDisposable)
-		}
+	  eventSourcesMap[tag] = newDisposable
+	  eventSourcesCompositeDisposable.add(newDisposable)
 	}
+  }
 
-	private fun propagateStates(states: List<State>) {
-		states.forEach { state ->
-			val behaviorRelay: BehaviorRelay<State>? = stateRelayMap[state::class]
-			behaviorRelay?.accept(state)
-		}
+  private fun propagateStates(states: List<State>) {
+	states.forEach { state ->
+	  val behaviorRelay: BehaviorRelay<State>? = stateRelayMap[state::class]
+	  behaviorRelay?.accept(state)
 	}
+  }
 
-	private fun propagateSignals(signals: List<Signal>) {
-		signals.forEach { signalRelay.accept(it) }
-	}
+  private fun propagateSignals(signals: List<Signal>) {
+	signals.forEach { sendSignal(it) }
+  }
 
   /**
    * Handles a list of side effects by iterating through them and attempting to find a suitable handler.
@@ -246,35 +291,38 @@ class QuickLoop<STATE : State>(
    * @param sideEffects The list of side effects to handle.
    * @throws SideEffectNotHandledException if no handler is found for a side effect.
    */
-	private fun handleSideEffects(sideEffects: List<SideEffect>) {
-		sideEffects.forEach { sideEffect ->
-			var handled = false
-			for (handler in sideEffectHandlers) {
-				val result = handler.createFlowable(sideEffect)
-				val effectIsHandled = result.first
-				val flowable = result.second
-				if (flowable != null) {
-					val disposable = flowable.subscribe(eventRelay)
-					handler.setDisposable(disposable)
-					val tag = "SideEffect:${sideEffect.javaClass.canonicalName}:${UUID.randomUUID()}"
-					attachEventSource(tag, disposable)
-				}
-				if (effectIsHandled) {
-					handled = true
-					break
-				}
-			}
-
-			if (handled.not()) throw SideEffectNotHandledException(sideEffect)
+  private fun handleSideEffects(sideEffects: List<SideEffect>) {
+	sideEffects.forEach { sideEffect ->
+	  var handled = false
+	  for (handler in sideEffectHandlers) {
+		val result = handler.createFlowable(sideEffect)
+		val effectIsHandled = result.first
+		val flowable = result.second
+		if (flowable != null) {
+		  val disposable = flowable.subscribe(eventRelay)
+		  handler.setDisposable(disposable)
+		  val tag = "SideEffect:${sideEffect.javaClass.canonicalName}:${UUID.randomUUID()}"
+		  attachEventSource(tag, disposable)
 		}
-	}
+		if (effectIsHandled) {
+		  handled = true
+		  break
+		}
+	  }
 
-	@VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-	fun getEventSources() = eventSourcesCompositeDisposable
+	  if (handled.not()) throw SideEffectNotHandledException(sideEffect)
+	}
+  }
+
+  @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+  fun getEventSources() = eventSourcesCompositeDisposable
 }
 
 interface OnConnectCallback {
 
-	fun onConnect()
+  fun onConnect()
 }
 
+fun logSignalQueue(message: () -> String?) {
+  //QuickLogger.tag("SignalQueue").d(message)
+}
