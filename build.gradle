@@ -1,14 +1,14 @@
 buildscript {
-    ext.kotlin_version = '2.2.0'
+    ext.kotlin_version = '2.2.21'
     ext.kotlin_coroutines_version = '1.10.2'
-    ext.compose_bom = "2025.11.00"
+    ext.compose_bom = "2026.02.01"
     repositories {
         google()
         mavenCentral()
         mavenLocal()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.13.1'
+        classpath 'com.android.tools.build:gradle:8.13.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -30,11 +30,11 @@ tasks.register('clean', Delete) {
 
 ext {
     compileSdk = 36
-    minSdk = 21
+    minSdk = 23
     targetSdk = 36
 
-    versionCode = 82
-    versionName = "0.17.10"
+    versionCode = 83
+    versionName = "0.17.11"
 
     groupId = "io.github.dadino.quickstart3"
 
