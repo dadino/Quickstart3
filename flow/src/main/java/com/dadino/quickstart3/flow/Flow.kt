@@ -7,8 +7,13 @@ abstract class Flow<FLOW : Flow<FLOW, STATE, STEP>, STATE, STEP : FlowStep<STATE
   constructor(root: STEP) : this(root = root, steps = listOf(root))
 
   fun hasRemainingSteps() = steps.isNotEmpty()
+  fun getStep(stepId: String?): STEP? = steps.firstOrNull { it.key == stepId }
   fun getCurrentStep(): STEP? {
 	return steps.lastOrNull()
+  }
+
+  fun getStepIds(): List<String> {
+	return steps.map { it.key }
   }
 
   fun onEvent(state: STATE, onEvent: Event): FlowAdvancement<STATE>? {
@@ -76,6 +81,51 @@ abstract class Flow<FLOW : Flow<FLOW, STATE, STEP>, STATE, STEP : FlowStep<STATE
 	  }
 	}
 
+	return updateFlowWithSteps(steps)
+  }
+
+  fun applyBackAdvancement(currentStep: STEP?, advancement: FlowAdvancement<STATE>): FLOW {
+	QuickLogger.tag(tag()).d { "---- Preparing flow for back advancement: $advancement" }
+	val steps: List<STEP> = when (advancement) {
+	  is FlowAdvancement.ExitFlow               -> {
+		listOfNotNull(currentStep)
+	  }
+
+	  is FlowAdvancement.GoToRoot               -> {
+		val rootIndex = steps.indexOfFirst { root.key == it.key }
+		val temp = arrayListOf<STEP>()
+		temp.addAll(steps.subList(0, rootIndex + 1))
+		if (currentStep != null) temp.add(currentStep)
+		temp
+	  }
+
+	  is FlowAdvancement.GoToStep<STATE, *>     -> steps
+
+	  is FlowAdvancement.GoBackToStep<STATE, *> -> {
+		val index = when {
+		  advancement.steps.isEmpty() -> null
+		  advancement.steps.size == 1 -> {
+			val i = steps.indexOfLast { advancement.steps[0].key == it.key }
+			if (i >= 0) i else null
+		  }
+
+		  else                        -> advancement.steps.firstOrNull { targetStep -> steps.indexOfLast { stepInFlow -> targetStep.key == stepInFlow.key } >= 0 }
+			?.let { targetStep -> steps.indexOfLast { targetStep.key == it.key } }
+		}
+
+		if (index != null) {
+		  val temp = arrayListOf<STEP>()
+		  temp.addAll(steps.subList(0, index + 1))
+		  if (currentStep != null) temp.add(currentStep)
+		  temp
+		} else {
+		  steps
+		}
+	  }
+
+	  is FlowAdvancement.GoBackOneStep          -> steps
+	}
+	QuickLogger.tag(tag()).d { "Updated flow steps:\n${steps.joinToString("\n") { it.key }}" }
 	return updateFlowWithSteps(steps)
   }
 

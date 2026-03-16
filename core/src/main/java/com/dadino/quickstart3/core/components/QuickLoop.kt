@@ -9,6 +9,7 @@ import com.dadino.quickstart3.core.entities.SideEffectNotHandledException
 import com.dadino.quickstart3.core.entities.Signal
 import com.dadino.quickstart3.core.entities.Start
 import com.dadino.quickstart3.core.entities.State
+import com.dadino.quickstart3.core.utils.QuickLogger
 import com.dadino.quickstart3.core.utils.toAsync
 import com.jakewharton.rxrelay2.BehaviorRelay
 import com.jakewharton.rxrelay2.PublishRelay
@@ -324,5 +325,5 @@ interface OnConnectCallback {
 }
 
 fun logSignalQueue(message: () -> String?) {
-  //QuickLogger.tag("SignalQueue").d(message)
+  QuickLogger.tag("SignalQueue").d(message)
 }

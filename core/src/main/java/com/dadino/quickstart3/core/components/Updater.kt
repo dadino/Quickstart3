@@ -1,7 +1,9 @@
 package com.dadino.quickstart3.core.components
 
+import androidx.annotation.CallSuper
 import com.dadino.quickstart3.base.Event
 import com.dadino.quickstart3.base.InitializeState
+import com.dadino.quickstart3.core.components.OnNoChangesAttachedUpdater.Companion.consumeEventOnNoChangesUpdate
 import com.dadino.quickstart3.core.entities.Next
 import com.dadino.quickstart3.core.entities.Next.Companion.noChanges
 import com.dadino.quickstart3.core.entities.SideEffect
@@ -51,8 +53,8 @@ interface Updater<STATE : State> {
    * @return A `Next` object representing the next state, associated effects, and signals.
    */
   fun internalUpdate(previous: STATE, event: Event): Next<STATE> {
-	if (canLog()) QuickLogger.tag(tag(previous)).d { "________________${previous.javaClass.simpleName}______________________" }
-	if (canLog()) QuickLogger.tag(tag(previous)).d { "IN: ${event.javaClass.simpleName}: $event" }
+	log(previous) { "________________${previous.javaClass.simpleName}______________________" }
+	log(previous) { "IN: ${event.javaClass.simpleName}: $event" }
 	val next = if (event is InitializeState) {
 	  var start = start()
 	  if (this is StartEffectsProvider) {
@@ -74,8 +76,8 @@ interface Updater<STATE : State> {
 
 	  nextAfterUpdate ?: noChanges()
 	}
-	if (canLog()) QuickLogger.tag(tag(previous)).d { "OUT: $next" }
-	if (canLog()) QuickLogger.tag(tag(previous)).d { "¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯${previous.javaClass.simpleName}¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯" }
+	log(previous) { "OUT: $next" }
+	log(previous) { "¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯${previous.javaClass.simpleName}¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯" }
 	return next
   }
 
@@ -90,6 +92,11 @@ interface Updater<STATE : State> {
   fun getInitialSubStates(): List<State> = listOf()
   fun canLog() = true
   private fun tag(state: STATE) = "${state::class.simpleName}Updater"
+  fun log(state: STATE, message: () -> String) {
+	if (canLog()) {
+	  QuickLogger.tag(tag(state)).d(message)
+	}
+  }
 }
 
 /**
@@ -233,6 +240,7 @@ interface StartEffectsProvider {
    *
    * @return A list of [SideEffect] instances to be applied.  Returns an empty list if no side effects are needed.
    */
+  @CallSuper
   fun provideAdditionalStartEffects(): List<SideEffect>
 }
 
@@ -264,5 +272,6 @@ interface StartSignalsProvider {
    * @return A list of [Signal] objects representing the additional start signals.  An empty list indicates that there are no
    *         additional start signals beyond the default set.
    */
+  @CallSuper
   fun provideAdditionalStartSignals(): List<Signal>
 }

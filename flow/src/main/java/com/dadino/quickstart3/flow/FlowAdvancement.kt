@@ -5,13 +5,11 @@ import com.dadino.quickstart3.core.entities.Signal
 sealed class FlowAdvancement<STATE>(val advancementType: AdvancementType) {
   class GoToRoot<STATE> : FlowAdvancement<STATE>(AdvancementType.Exit)
   class ExitFlow<STATE> : FlowAdvancement<STATE>(AdvancementType.Exit)
-  class GoToStep<STATE, STEP : FlowStep<STATE>>(val steps: List<STEP>) :
-	  FlowAdvancement<STATE>(AdvancementType.Enter) {
+  data class GoToStep<STATE, STEP : FlowStep<STATE>>(val steps: List<STEP>) : FlowAdvancement<STATE>(AdvancementType.Enter) {
 	constructor(step: STEP) : this(listOf(step))
   }
 
-  class GoBackToStep<STATE, STEP : FlowStep<STATE>>(val steps: List<STEP>) :
-	  FlowAdvancement<STATE>(AdvancementType.Exit) {
+  data class GoBackToStep<STATE, STEP : FlowStep<STATE>>(val steps: List<STEP>) : FlowAdvancement<STATE>(AdvancementType.Exit) {
 	constructor(step: STEP) : this(listOf(step))
   }
 
@@ -19,8 +17,8 @@ sealed class FlowAdvancement<STATE>(val advancementType: AdvancementType) {
 }
 
 sealed class AdvancementType {
-  object Enter : AdvancementType()
-  object Exit : AdvancementType()
+  data object Enter : AdvancementType()
+  data object Exit : AdvancementType()
 }
 
-class CloseFlow(val results: Map<String, Any> = mapOf()) : Signal()
+data class CloseFlow(val results: Map<String, Any> = mapOf()) : Signal()

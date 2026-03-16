@@ -4,9 +4,11 @@ import com.dadino.quickstart3.base.Event
 
 abstract class FlowStep<STATE>(val key: String) {
 
-	abstract fun onEvent(state: STATE, event: Event): FlowAdvancement<STATE>?
+  open fun getAdvancementForBack(state: STATE): FlowAdvancement<STATE>? = null
 
-	override fun toString(): String {
-		return key
-	}
+  abstract fun onEvent(state: STATE, event: Event): FlowAdvancement<STATE>?
+
+  override fun toString(): String {
+	return key
+  }
 }
