@@ -33,6 +33,8 @@ object QuickLogger {
 	isLoggingEnabled = enable
   }
 
+  fun isLoggingEnabled(): Boolean = isLoggingEnabled
+
   /**
    * Sets whether log messages should be evaluated asynchronously.
    *

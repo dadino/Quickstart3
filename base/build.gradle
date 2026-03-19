@@ -10,7 +10,7 @@ ext {
     PUBLISH_ARTIFACT_ID = "base"
 }
 
-apply from: "${rootProject.projectDir}/scripts/publish-mavencentral.gradle"
+apply from: "${rootProject.projectDir}/scripts/vannitech-mavencentral.gradle"
 
 
 android {
