@@ -11,7 +11,7 @@ ext {
     PUBLISH_ARTIFACT_ID = "contextformattable"
 }
 
-apply from: "${rootProject.projectDir}/scripts/publish-mavencentral.gradle"
+apply from: "${rootProject.projectDir}/scripts/vannitech-mavencentral.gradle"
 
 android {
     compileSdk rootProject.compileSdk

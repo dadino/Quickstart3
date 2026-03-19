@@ -15,6 +15,8 @@ buildscript {
 plugins {
     id 'org.jetbrains.kotlin.jvm' version "$kotlin_version" apply false
     id "org.jetbrains.kotlin.plugin.compose" version "$kotlin_version"
+    id "com.vanniktech.maven.publish" version "0.36.0"
+    id "org.jetbrains.dokka" version "2.1.0"
 }
 
 allprojects {
@@ -22,10 +24,6 @@ allprojects {
         google()
         mavenCentral()
     }
-}
-
-tasks.register('clean', Delete) {
-    delete rootProject.buildDir
 }
 
 ext {
@@ -37,8 +35,4 @@ ext {
     versionName = "0.17.12"
 
     groupId = "io.github.dadino.quickstart3"
-
-    sonatypeStagingProfileId = System.properties['sonatypeStagingProfileId']
-    ossrhToken = System.properties['ossrhToken']
-    ossrhTokenPassword = System.properties['ossrhTokenPassword']
 }

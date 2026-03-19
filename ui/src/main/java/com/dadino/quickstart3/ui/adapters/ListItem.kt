@@ -1,5 +1,8 @@
 package com.dadino.quickstart3.ui.adapters
 
+import androidx.compose.runtime.Stable
+
+@Stable
 abstract class ListItem(open val metadata: ListItemMetadata = ListItemMetadata()) {
   val focused get() = metadata.focused
   val selected get() = metadata.selected

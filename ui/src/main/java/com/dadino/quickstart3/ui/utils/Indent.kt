@@ -8,8 +8,8 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Indent(
   val indent: Int,
-  var hasFollowingChild: Boolean = false,
-  var hasFollowingSibling: Boolean = false,
-  var hasPrecedingSibling: Boolean = false,
-  var isFirstChild: Boolean = false
+  val hasFollowingChild: Boolean = false,
+  val hasFollowingSibling: Boolean = false,
+  val hasPrecedingSibling: Boolean = false,
+  val isFirstChild: Boolean = false
 ) : Parcelable
