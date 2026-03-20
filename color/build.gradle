@@ -49,7 +49,7 @@ dependencies {
     implementation project(":base")
 
     implementation 'androidx.annotation:annotation:1.9.1'
-    implementation 'androidx.core:core-ktx:1.17.0'
+    implementation "androidx.core:core-ktx:$core_ktx_version"
 
     //COMPOSE
     implementation platform("androidx.compose:compose-bom:$compose_bom")
