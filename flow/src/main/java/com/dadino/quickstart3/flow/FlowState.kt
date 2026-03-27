@@ -4,8 +4,8 @@ import com.dadino.quickstart3.core.entities.State
 import kotlin.reflect.KClass
 
 abstract class FlowState<FLOW : Flow<FLOW, STATE, STEP>, STATE, STEP : FlowStep<STATE>>(
-	open val flow: FLOW,
-	open val resultOnCloseMap: Map<String, Any> = mapOf()
+  open val flow: FLOW,
+  open val resultOnCloseMap: Map<String, Any> = mapOf()
 ) : State {
 
   protected abstract fun getState(): STATE

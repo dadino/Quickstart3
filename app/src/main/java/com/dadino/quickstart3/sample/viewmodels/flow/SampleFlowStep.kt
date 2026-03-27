@@ -4,7 +4,7 @@ import com.dadino.quickstart3.action.Action
 import com.dadino.quickstart3.contextformattable.ContextFormattable
 import com.dadino.quickstart3.ui.adapters.ListItem
 
-abstract class SampleFlowStep<STATE>(key: String) : com.dadino.quickstart3.flow.FlowStep<STATE>(key) {
+abstract class SampleFlowStep<STATE>(key: String) : com.dadino.quickstart3.flow.FlowStepWithAdvancements<STATE>(key) {
 
 	abstract fun getTitle(state: STATE): ContextFormattable
 	abstract fun getListItems(state: STATE): List<ListItem>

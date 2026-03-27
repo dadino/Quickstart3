@@ -3,7 +3,7 @@ package com.dadino.quickstart3.flow
 import com.dadino.quickstart3.base.Event
 import com.dadino.quickstart3.core.utils.QuickLogger
 
-abstract class Flow<FLOW : Flow<FLOW, STATE, STEP>, STATE, STEP : FlowStep<STATE>>(protected val root: FlowStep<STATE>, protected val steps: List<STEP>) {
+abstract class Flow<FLOW : Flow<FLOW, STATE, STEP>, STATE, STEP : FlowStep<STATE>>(protected val root: STEP, protected val steps: List<STEP>) {
   constructor(root: STEP) : this(root = root, steps = listOf(root))
 
   fun hasRemainingSteps() = steps.isNotEmpty()
@@ -12,13 +12,32 @@ abstract class Flow<FLOW : Flow<FLOW, STATE, STEP>, STATE, STEP : FlowStep<STATE
 	return steps.lastOrNull()
   }
 
-  fun getStepIds(): List<String> {
-	return steps.map { it.key }
+  fun getStepsToPublish(state: STATE): Map<String, Map<String, String>> {
+	return steps.associate { it.key to it.getMetadata(state) }
   }
+
+  abstract fun getFlow(): FLOW
+  abstract fun updateFlowWithSteps(steps: List<STEP>): FLOW
+
+  protected fun tag() = this::class.simpleName
+
+  override fun toString(): String {
+	return "Flow(root= ${root.key}, steps= ${steps.joinToString(", ") { it.key }})"
+  }
+}
+
+abstract class FlowWithStepGeneration<FLOW : Flow<FLOW, STATE, STEP>, STATE, STEP : FlowStepWithGeneration<STATE>>(root: STEP, steps: List<STEP>) : Flow<FLOW, STATE, STEP>(root, steps) {
+  constructor(root: STEP) : this(root = root, steps = listOf(root))
+}
+
+abstract class FlowWithAdvancements<FLOW : Flow<FLOW, STATE, STEP>, STATE, STEP : FlowStepWithAdvancements<STATE>>(root: STEP, steps: List<STEP>) : Flow<FLOW, STATE, STEP>(root, steps) {
+  constructor(root: STEP) : this(root = root, steps = listOf(root))
 
   fun onEvent(state: STATE, onEvent: Event): FlowAdvancement<STATE>? {
 	val currentStep = getCurrentStep() ?: return FlowAdvancement.ExitFlow()
-	return currentStep.onEvent(state, onEvent)
+	return if (currentStep is FlowStepWithAdvancements<*>) {
+	  (currentStep as FlowStepWithAdvancements<STATE>).onEvent(state, onEvent)
+	} else null
   }
 
   fun applyAdvancement(advancement: FlowAdvancement<STATE>?): FLOW {
@@ -127,15 +146,6 @@ abstract class Flow<FLOW : Flow<FLOW, STATE, STEP>, STATE, STEP : FlowStep<STATE
 	}
 	QuickLogger.tag(tag()).d { "Updated flow steps:\n${steps.joinToString("\n") { it.key }}" }
 	return updateFlowWithSteps(steps)
-  }
-
-  abstract fun getFlow(): FLOW
-  abstract fun updateFlowWithSteps(steps: List<STEP>): FLOW
-
-  private fun tag() = this::class.simpleName
-
-  override fun toString(): String {
-	return "Flow(root= ${root.key}, steps= ${steps.joinToString(", ") { it.key }})"
   }
 }
 
