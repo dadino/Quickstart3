@@ -23,10 +23,23 @@ interface SideEffectHandler {
    *
    * @param effect The side effect to be represented by the Flowable.
    * @return A Pair containing a Boolean indicating whether a Flowable was created and the Flowable itself (or null if no Flowable was created).
-   *         - If the first element of the Pair is `true`, the second element will contain a non-null Flowable.
+   *         - If the first element of the Pair is `true`, the effect was handled, but second element could contain a null Flowable (meaning no new Flowable was needed).
    *         - If the first element of the Pair is `false`, the second element will be `null`.  This indicates that the side effect could not be represented as a Flowable, likely due to its type.
    */
-	fun createFlowable(effect: SideEffect): Pair<Boolean, Flowable<Event>?>
+  fun createFlowable(effect: SideEffect): Pair<Boolean, Flowable<Event>?>
+
+  /**
+   * Creates a Flowable that represents a side effect.
+   *
+   * @param effect The side effect to be represented by the Flowable.
+   * @return A Pair containing a Boolean indicating whether a Flowable was created and the Flowable itself (or null if no Flowable was created).
+   *         - If the first element of the Pair is `true`, the effect was handled, but second element could contain a null Flowable (meaning no new Flowable was needed).
+   *         - If the first element of the Pair is `false`, the second element will be `null`.  This indicates that the side effect could not be represented as a Flowable, likely due to its type.
+   */
+  fun createKeyedFlowable(effect: SideEffect): Triple<Boolean, Flowable<Event>?, String?> {
+	val pair = createFlowable(effect)
+	return Triple(pair.first, pair.second, null)
+  }
 
   /**
    * Sets the provided [Disposable] to be managed by the current context (e.g., a ViewModel or Presenter).
@@ -38,8 +51,8 @@ interface SideEffectHandler {
    *
    * @param disposable The [Disposable] representing an active RxJava subscription to be managed.
    */
-	fun setDisposable(disposable: Disposable)
-	fun onClear()
+  fun setDisposable(disposable: Disposable, key: String?)
+  fun onClear()
 }
 
 /**
@@ -54,45 +67,45 @@ interface SideEffectHandler {
  * @param observeOn The scheduler on which the resulting events will be observed. Defaults to `AndroidSchedulers.mainThread()`. This is usually where UI updates occur.
  */
 abstract class RxSingleSideEffectHandler<E : SideEffect>(
-	private val disposeOnNewEffect: Boolean = false,
-	private val disposeOnClear: Boolean = true,
-	private val subscribeOn: Scheduler = Schedulers.io(),
-	private val observeOn: Scheduler = AndroidSchedulers.mainThread()
+  private val disposeOnNewEffect: Boolean = false,
+  private val disposeOnClear: Boolean = true,
+  private val subscribeOn: Scheduler = Schedulers.io(),
+  private val observeOn: Scheduler = AndroidSchedulers.mainThread()
 ) : SideEffectHandler {
 
-	private var compositeDisposable: CompositeDisposable = CompositeDisposable()
-	override fun createFlowable(effect: SideEffect): Pair<Boolean, Flowable<Event>?> {
-		val disposable = if (checkClass(effect)) {
-			effectToFlowable(effect as E)
-				.subscribeOn(subscribeOn)
-				.observeOn(observeOn)
-		} else {
-			null
-		}
-
-		if (disposable != null) {
-			if (disposeOnNewEffect) {
-				compositeDisposable.clear()
-			}
-		}
-		return Pair(overrideEffectHandled(effect) || disposable != null, disposable)
+  private var compositeDisposable: CompositeDisposable = CompositeDisposable()
+  override fun createFlowable(effect: SideEffect): Pair<Boolean, Flowable<Event>?> {
+	val disposable = if (checkClass(effect)) {
+	  effectToFlowable(effect as E)
+		.subscribeOn(subscribeOn)
+		.observeOn(observeOn)
+	} else {
+	  null
 	}
 
-	override fun setDisposable(disposable: Disposable) {
-		compositeDisposable.add(disposable)
+	if (disposable != null) {
+	  if (disposeOnNewEffect) {
+		compositeDisposable.clear()
+	  }
 	}
+	return Pair(overrideEffectHandled(effect) || disposable != null, disposable)
+  }
 
-	abstract fun checkClass(effect: SideEffect): Boolean
+  override fun setDisposable(disposable: Disposable, key: String?) {
+	compositeDisposable.add(disposable)
+  }
 
-	protected abstract fun effectToFlowable(effect: E): Flowable<Event>
+  abstract fun checkClass(effect: SideEffect): Boolean
 
-	open fun overrideEffectHandled(effect: SideEffect): Boolean {
-		return false
-	}
+  protected abstract fun effectToFlowable(effect: E): Flowable<Event>
 
-	override fun onClear() {
-		if (disposeOnClear) compositeDisposable.clear()
-	}
+  open fun overrideEffectHandled(effect: SideEffect): Boolean {
+	return false
+  }
+
+  override fun onClear() {
+	if (disposeOnClear) compositeDisposable.clear()
+  }
 }
 
 /**
@@ -113,43 +126,43 @@ abstract class RxSingleSideEffectHandler<E : SideEffect>(
  *   effect).
  */
 abstract class SingleSideEffectHandler<E : SideEffect>(
-	private val disposeOnNewEffect: Boolean = true,
-	private val disposeOnClear: Boolean = true
+  private val disposeOnNewEffect: Boolean = true,
+  private val disposeOnClear: Boolean = true
 ) : SideEffectHandler {
 
-	private var compositeDisposable: CompositeDisposable = CompositeDisposable()
+  private var compositeDisposable: CompositeDisposable = CompositeDisposable()
 
-	override fun createFlowable(effect: SideEffect): Pair<Boolean, Flowable<Event>?> {
-		val disposable = if (checkClass(effect)) {
-			Single.fromCallable {
-				effectToEvent(effect as E)
-			}
-				.toFlowable()
-		} else {
-			null
-		}
-
-		if (disposable != null) {
-			if (disposeOnNewEffect) {
-				compositeDisposable.clear()
-			}
-		}
-		return Pair(overrideEffectHandled(effect) || disposable != null, disposable)
+  override fun createFlowable(effect: SideEffect): Pair<Boolean, Flowable<Event>?> {
+	val disposable = if (checkClass(effect)) {
+	  Single.fromCallable {
+		effectToEvent(effect as E)
+	  }
+		.toFlowable()
+	} else {
+	  null
 	}
 
-	override fun setDisposable(disposable: Disposable) {
-		compositeDisposable.add(disposable)
+	if (disposable != null) {
+	  if (disposeOnNewEffect) {
+		compositeDisposable.clear()
+	  }
 	}
+	return Pair(overrideEffectHandled(effect) || disposable != null, disposable)
+  }
 
-	abstract fun checkClass(effect: SideEffect): Boolean
+  override fun setDisposable(disposable: Disposable, key: String?) {
+	compositeDisposable.add(disposable)
+  }
 
-	protected abstract fun effectToEvent(effect: E): Event
+  abstract fun checkClass(effect: SideEffect): Boolean
 
-	open fun overrideEffectHandled(effect: SideEffect): Boolean {
-		return false
-	}
+  protected abstract fun effectToEvent(effect: E): Event
 
-	override fun onClear() {
-		if (disposeOnClear) compositeDisposable.clear()
-	}
+  open fun overrideEffectHandled(effect: SideEffect): Boolean {
+	return false
+  }
+
+  override fun onClear() {
+	if (disposeOnClear) compositeDisposable.clear()
+  }
 }

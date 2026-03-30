@@ -296,12 +296,13 @@ class QuickLoop<STATE : State>(
 	sideEffects.forEach { sideEffect ->
 	  var handled = false
 	  for (handler in sideEffectHandlers) {
-		val result = handler.createFlowable(sideEffect)
+		val result = handler.createKeyedFlowable(sideEffect)
 		val effectIsHandled = result.first
 		val flowable = result.second
+		val key = result.third
 		if (flowable != null) {
 		  val disposable = flowable.subscribe(eventRelay)
-		  handler.setDisposable(disposable)
+		  handler.setDisposable(disposable, key)
 		  val tag = "SideEffect:${sideEffect.javaClass.canonicalName}:${UUID.randomUUID()}"
 		  attachEventSource(tag, disposable)
 		}
