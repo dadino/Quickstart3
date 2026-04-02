@@ -1,8 +1,9 @@
 package com.dadino.quickstart3.flow
 
+import androidx.annotation.CallSuper
 import com.dadino.quickstart3.base.Event
-import com.dadino.quickstart3.core.components.StartSignalsProvider
 import com.dadino.quickstart3.core.components.Updater
+import com.dadino.quickstart3.core.components.UpdaterDecorator
 import com.dadino.quickstart3.core.entities.Next
 import com.dadino.quickstart3.core.entities.NextBuilder
 import com.dadino.quickstart3.core.entities.Signal
@@ -11,15 +12,21 @@ import com.dadino.quickstart3.core.entities.Signal
   "Use FlowUpdaterWithAdvancements for most cases, or FlowUpdaterWithStepGeneration for specific ones",
   replaceWith = ReplaceWith("FlowUpdaterWithAdvancements", imports = ["com.dadino.quickstart3.flow.FlowUpdaterWithAdvancements"])
 )
-interface FlowUpdater<FLOW : Flow<FLOW, STATE, STEP>, STATE : FlowState<FLOW, STATE, STEP>, STEP : FlowStep<STATE>> : Updater<STATE>, StartSignalsProvider {
+interface FlowUpdater<FLOW : Flow<FLOW, STATE, STEP>, STATE : FlowState<FLOW, STATE, STEP>, STEP : FlowStep<STATE>> : Updater<STATE> {
 
   override fun update(previous: STATE, event: Event): Next<STATE>?
 
-  override fun provideAdditionalStartSignals(): List<Signal> {
-	val state = getInitialMainState()
-	val signal = PublishFlowChange<STATE>(advancement = null, updatedFlowSteps = state.flow.getStepsToPublish(state))
-	log(state) { "Signal for start: $signal" }
-	return listOf(signal)
+  @CallSuper
+  override fun getDecorators(): List<UpdaterDecorator<STATE>> {
+	return listOf(
+	  object : UpdaterDecorator<STATE> {
+		override fun getInitialSignals(initialState: STATE): List<Signal> {
+		  val signal = PublishFlowChange<STATE>(advancement = null, updatedFlowSteps = initialState.flow.getStepsToPublish(initialState))
+		  log(initialState) { "Signal for start: $signal" }
+		  return listOf(signal)
+		}
+	  }
+	)
   }
 
   fun updateForFlow(previous: STATE, event: Event): Next<STATE>?

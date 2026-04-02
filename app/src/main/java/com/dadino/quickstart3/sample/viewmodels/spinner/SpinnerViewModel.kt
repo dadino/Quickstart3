@@ -139,4 +139,8 @@ class SpinnerUpdater : SampleFlowUpdater<SpinnerState>() {
 	  else                                    -> noChanges()
 	}
   }
+
+  override fun getFlowForBackEvent(state: SpinnerState): SampleFlow<SpinnerState> {
+	TODO("Not yet implemented")
+  }
 }

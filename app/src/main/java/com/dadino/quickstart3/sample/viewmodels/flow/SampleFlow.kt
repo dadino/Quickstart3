@@ -1,9 +1,10 @@
 package com.dadino.quickstart3.sample.viewmodels.flow
 
-import com.dadino.quickstart3.flow.Flow
-import com.dadino.quickstart3.flow.FlowStepWithAdvancements
+import com.dadino.quickstart3.flow.FlowState
+import com.dadino.quickstart3.flow.FlowWithAdvancements
 
-class SampleFlow<STATE>(root: FlowStepWithAdvancements<STATE>, steps: List<SampleFlowStep<STATE>>) : Flow<SampleFlow<STATE>, STATE, SampleFlowStep<STATE>>(root, steps) {
+class SampleFlow<STATE : FlowState<*, STATE, SampleFlowStep<STATE>>>(root: SampleFlowStep<STATE>, steps: List<SampleFlowStep<STATE>>) :
+  FlowWithAdvancements<SampleFlow<STATE>, STATE, SampleFlowStep<STATE>>(root, steps) {
 	constructor(root: SampleFlowStep<STATE>) : this(root = root, steps = listOf(root))
 
 	override fun getFlow(): SampleFlow<STATE> {

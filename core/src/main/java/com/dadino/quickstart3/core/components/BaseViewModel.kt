@@ -18,7 +18,7 @@ import kotlin.reflect.KClass
  *
  * @param STATE The type of state managed by the ViewModel.  Must implement the [State] interface.
  */
-abstract class BaseViewModel<STATE : State> : ViewModel(), DefaultLifecycleObserver {
+abstract class BaseViewModel<STATE : State>(val decorators: List<ViewModelDecorator<STATE>> = listOf()) : ViewModel(), DefaultLifecycleObserver {
 
   var onConnectCallback: OnConnectCallback? = null
   private val internalOnConnectCallback = object : OnConnectCallback {
@@ -29,8 +29,8 @@ abstract class BaseViewModel<STATE : State> : ViewModel(), DefaultLifecycleObser
   private val loop: QuickLoop<STATE> by lazy {
 	QuickLoop(
 	  loopName = javaClass.simpleName,
-	  sideEffectHandlers = getSideEffectHandlers() + (if (this is SideEffectHandlerProvider) this.provideAdditionalSideEffectHandlers() else listOf()),
-	  updater = updater(),
+	  sideEffectHandlers = getSideEffectHandlers() + decorators.flatMap { it.provideAdditionalSideEffectHandlers() },
+	  updater = DecoratedUpdater(delegateUpdater = updater(), decorators = decorators.flatMap { it.getUpdaterDecorators() }),
 	  onConnectCallback = internalOnConnectCallback
 	)
   }
@@ -118,29 +118,4 @@ abstract class BaseViewModel<STATE : State> : ViewModel(), DefaultLifecycleObser
   open fun wantOnPauseEvent() = false
   open fun wantOnStopEvent() = false
   open fun wantOnDestroyEvent() = false
-}
-
-/**
- * A provider interface for additional side effect handlers.
- *
- * Implementations of this interface should provide a list of [SideEffectHandler] instances
- * that can be used to extend the functionality of a system that handles side effects.
- * This allows for modularization and easy addition of new side effect handling logic without
- * modifying the core system.
- */
-interface SideEffectHandlerProvider {
-  /**
-   * Provides a list of additional [SideEffectHandler] instances that should be
-   * registered with the system. These handlers will be responsible for handling
-   * side effects emitted by the application's business logic.
-   *
-   * Note: The handlers returned by this function are added to the default set of
-   * handlers.  If a side effect type is handled by both a default handler and
-   * one provided by this function, the handler provided by this function will
-   * take precedence.
-   *
-   * @return A list of [SideEffectHandler] instances.  An empty list indicates that
-   *         no additional handlers are required.
-   */
-  fun provideAdditionalSideEffectHandlers(): List<SideEffectHandler>
 }
