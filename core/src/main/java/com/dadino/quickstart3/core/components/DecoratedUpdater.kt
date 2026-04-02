@@ -75,7 +75,7 @@ data class DecoratedUpdater<STATE : State>(
 		event = event,
 		effectAccumulator = allEffects,
 		signalAccumulator = allSignals,
-		updaterToEvaluateOnSecondPass = updatersToEvaluateOnlyOnNullOrNoChanges,
+		updaterToEvaluateOnSecondPass = null,
 		isSecondPass = true,
 		onStateUpdated = { accumulatedState = it })
 
@@ -102,7 +102,7 @@ data class DecoratedUpdater<STATE : State>(
 	event: Event,
 	effectAccumulator: MutableList<SideEffect>,
 	signalAccumulator: MutableList<Signal>,
-	updaterToEvaluateOnSecondPass: MutableList<UpdaterDecorator<STATE>>,
+	updaterToEvaluateOnSecondPass: MutableList<UpdaterDecorator<STATE>>?,
 	isSecondPass: Boolean = false,
 	onStateUpdated: (STATE) -> Unit
   ): Boolean {
@@ -110,13 +110,16 @@ data class DecoratedUpdater<STATE : State>(
 	if (updater.skipEventEvaluation(previous, event)) return false
 
 	val evaluateOnlyOnNullOrNoChanges = updater.evaluateOnlyOnNullOrNoChanges(event)
-	if (!evaluateOnlyOnNullOrNoChanges
-	  || (isSecondPass
-		  && updatedState == null
-		  && effectAccumulator.isEmpty()
-		  && signalAccumulator.isEmpty())
+	if (evaluateOnlyOnNullOrNoChanges && !isSecondPass) {
+	  updaterToEvaluateOnSecondPass?.add(updater)
+	  return false
+	}
+
+	if (evaluateOnlyOnNullOrNoChanges &&
+	  (updatedState != null
+		  || effectAccumulator.isNotEmpty()
+		  || signalAccumulator.isNotEmpty())
 	) {
-	  updaterToEvaluateOnSecondPass.add(updater)
 	  return false
 	}
 
