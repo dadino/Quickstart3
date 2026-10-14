@@ -8,8 +8,9 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Indent(
   val indent: Int,
-  val hasFollowingChild: Boolean = false,
+  @Deprecated("Not used anymore") val hasFollowingChild: Boolean = false,
   val hasFollowingSibling: Boolean = false,
-  val hasPrecedingSibling: Boolean = false,
-  val isFirstChild: Boolean = false
+  @Deprecated("Not used anymore") val hasPrecedingSibling: Boolean = false,
+  val isFirstChild: Boolean = false,
+  val activeParentLines: List<Int> = emptyList()
 ) : Parcelable

@@ -29,8 +29,8 @@ data class ListItemMetadata(
   }
 }
 
-inline fun metadata(block: ListItemMetadata.Builder.() -> Unit): ListItemMetadata {
-  val builder = ListItemMetadata.Builder()
+inline fun metadata(metadata: ListItemMetadata? = null, block: ListItemMetadata.Builder.() -> Unit): ListItemMetadata {
+  val builder = ListItemMetadata.Builder(metadata ?: ListItemMetadata())
   builder.block()
   return builder.build()
 }

@@ -60,15 +60,11 @@ class GenericAdapter(val log: Boolean = false) : BaseListAdapter<RecycledListIte
 
 	if (itemList.all { it.indent.indent == 0 }) return itemList
 	for (i in itemList.indices) {
-	  val hasPrecedingSibling = i > 0 && itemList[i - 1].indent.indent == itemList[i].indent.indent
 	  val hasFollowingSibling = i < itemList.size - 1 && itemList[i + 1].indent.indent == itemList[i].indent.indent
-	  val hasFollowingChild = i < itemList.size - 1 && itemList[i + 1].indent.indent > itemList[i].indent.indent
 	  val isFirstChild = i == 0 || itemList[i - 1].indent.indent < itemList[i].indent.indent
 	  itemList[i].mutate {
 		indent = itemList[i].indent.copy(
-		  hasPrecedingSibling = hasPrecedingSibling,
 		  hasFollowingSibling = hasFollowingSibling,
-		  hasFollowingChild = hasFollowingChild,
 		  isFirstChild = isFirstChild
 		)
 	  }

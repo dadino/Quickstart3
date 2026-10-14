@@ -62,7 +62,7 @@ interface ContextColor : Parcelable {
 
   @Parcelize
   @Stable
-  class Res(@ColorRes private val res: Int) : ContextColor {
+  data class Res(@ColorRes private val res: Int) : ContextColor {
 	override fun getId(context: Context): String {
 	  return "Res:$res:${context.resources.getResourceName(res)}"
 	}
@@ -98,7 +98,7 @@ interface ContextColor : Parcelable {
    */
   @Parcelize
   @Stable
-  class Hex(private val hexString: String) : ContextColor {
+  data class Hex(private val hexString: String) : ContextColor {
 	override fun getId(context: Context): String {
 	  return "Hex:$hexString"
 	}
@@ -137,7 +137,7 @@ interface ContextColor : Parcelable {
    */
   @Parcelize
   @Stable
-  class Integer(@ColorInt private val colorInt: Int) : ContextColor {
+  data class Integer(@ColorInt private val colorInt: Int) : ContextColor {
 	override fun getId(context: Context): String {
 	  return "Int:$colorInt"
 	}
@@ -166,7 +166,7 @@ interface ContextColor : Parcelable {
    */
   @Parcelize
   @Stable
-  class OnSurface(private val surfaceColor: SurfaceColor) : ContextColor {
+  data class OnSurface(private val surfaceColor: SurfaceColor) : ContextColor {
 	override fun getId(context: Context): String {
 	  return "OnSurface:$surfaceColor"
 	}
@@ -194,7 +194,7 @@ interface ContextColor : Parcelable {
    */
   @Parcelize
   @Stable
-  class ColorStateList(private val colorStateList: android.content.res.ColorStateList) : ContextColor {
+  data class ColorStateList(private val colorStateList: android.content.res.ColorStateList) : ContextColor {
 	override fun getId(context: Context): String {
 	  return "ColorStateList:$colorStateList"
 	}
