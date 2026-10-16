@@ -11,6 +11,7 @@ data class ListItemMetadata(
   val selected: Boolean = false,
   val selectionType: SelectionType = SelectionType.NoSelection,
   val showInCard: Boolean = false,
+  val redacted: Boolean = false,
   val indent: Indent = Indent(0),
   @IntegerRes val spanSizeRes: Int? = null
 ) : Parcelable {
@@ -20,11 +21,18 @@ data class ListItemMetadata(
 	var selected = metadata.selected
 	var selectionType = metadata.selectionType
 	var showInCard = metadata.showInCard
+	var redacted = metadata.redacted
 	var indent = metadata.indent
 	var spanSizeRes = metadata.spanSizeRes
 
 	fun build() = ListItemMetadata(
-	  focused, selected, selectionType, showInCard, indent, spanSizeRes
+	  focused = focused,
+	  selected = selected,
+	  selectionType = selectionType,
+	  showInCard = showInCard,
+	  redacted = redacted,
+	  indent = indent,
+	  spanSizeRes = spanSizeRes
 	)
   }
 }
