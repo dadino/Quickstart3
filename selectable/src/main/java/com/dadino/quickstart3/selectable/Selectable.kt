@@ -11,6 +11,7 @@ interface Selectable : Parcelable {
   fun getSelectionId(): Id
   fun getMainText(): ContextFormattable
   fun getSecondaryText(): ContextFormattable? = null
+  fun getCounterText(): ContextFormattable? = null
   fun getSelectionIcon(): ContextDrawable? = null
   fun getSelectionColor(): ContextColor? = null
 
@@ -22,6 +23,7 @@ data class SimpleSelectable(
   private val id: Id,
   private val mainText: ContextFormattable,
   private val secondaryText: ContextFormattable? = null,
+  private val counterText: ContextFormattable? = null,
   private val icon: ContextDrawable? = null,
   private val color: ContextColor? = null,
   private val enabled: Boolean = true
@@ -37,6 +39,10 @@ data class SimpleSelectable(
 
   override fun getSecondaryText(): ContextFormattable? {
     return secondaryText
+  }
+
+  override fun getCounterText(): ContextFormattable? {
+    return counterText
   }
 
   override fun getSelectionIcon(): ContextDrawable? {

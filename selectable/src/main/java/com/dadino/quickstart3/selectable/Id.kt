@@ -36,4 +36,4 @@ abstract class Id(private val type: String, val identifier: String) : Parcelable
   }
 }
 
-fun String?.toId(): Id.Generic? = if (this == null) null else Id.Generic(this)
+fun String.toId(): Id.Generic = Id.Generic(this)
